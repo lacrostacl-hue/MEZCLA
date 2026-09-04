@@ -166,25 +166,25 @@
         }
         .btn-pedido:hover { background: #e6b800; }
         
-        /* Divisor entre buscar y agregar */
-        .divisor {
-            height: 1px;
-            background: #554400;
-            margin: 15px 0;
-        }
-        .etiqueta-pequena {
-            font-size: 12px;
-            color: #aaa;
-            margin-bottom: 5px;
-            display: block;
+        .divisor { height: 1px; background: #554400; margin: 15px 0; }
+        .etiqueta-pequena { font-size: 12px; color: #aaa; margin-bottom: 5px; display: block; }
+        
+        .bloque-separador {
+            background-color: #00ffcc; 
+            color: #000; 
+            padding: 8px 15px; 
+            margin: 15px 0 5px 0; 
+            font-weight: bold; 
+            border-radius: 5px; 
+            text-transform: uppercase;
         }
 
     </style>
 </head>
 <body>
 
-    <h1>📻 Radio Web: Cabina Interactiva</h1>
-    <p class="subtitle">Mezcladora + Setlist + Pedidos en Vivo</p>
+    <h1>📻 Radio Web: Cabina Interactiva DJ</h1>
+    <p class="subtitle">Mezcladora + Setlist por Estilos + Pedidos en Vivo</p>
 
     <div class="dj-booth">
         <!-- DECK A -->
@@ -226,9 +226,9 @@
         
         <!-- LISTA PRINCIPAL -->
         <div class="playlist">
-            <h2>🎵 Setlist Principal</h2>
+            <h2>🎵 Setlist Principal (Clásicos)</h2>
             <div class="tracklist-container" id="tracklist">
-                <!-- Se inyecta con JS -->
+                <!-- Se inyecta con JS agrupado por estilos -->
             </div>
         </div>
 
@@ -249,7 +249,7 @@
             <span class="etiqueta-pequena">Paso 2: Pega el enlace aquí para añadirlo al Set</span>
             <div class="input-pedido-container">
                 <input type="text" id="inputUrl" placeholder="Pega el enlace de YT...">
-                <input type="text" id="inputNombre" placeholder="Nombre" style="flex: 0.5;">
+                <input type="text" id="inputNombre" placeholder="Nombre (Opcional)" style="flex: 0.5;">
                 <button class="btn-pedido" onclick="agregarPedido()">➕ Añadir</button>
             </div>
 
@@ -265,39 +265,164 @@
         let playerA, playerB;
         let contadorPedidos = 1;
 
-        // Base de datos de prueba (Aquí van tus 100 canciones)
+        // =========================================================
+        // 💽 BASE DE DATOS DE LA RADIO (Agrupada por Estilos)
+        // Puedes agregar más objetos aquí hasta llegar a 500 o más
+        // =========================================================
         const tracks = [
-            { id: '3cQNkIrg-Tk', artist: 'Earth, Wind & Fire - September', bpm: 125, decade: '70s' },
-            { id: '_Vj092UgKwQ', artist: 'Bee Gees - Stayin\' Alive', bpm: 104, decade: '70s' },
-            { id: 'djV11Xbc914', artist: 'A-ha - Take On Me', bpm: 169, decade: '80s' },
-            { id: 'HEXWRTEbj1I', artist: 'Haddaway - What Is Love', bpm: 124, decade: '90s' },
-            { id: 'gGdGFtwPNsQ', artist: 'The Killers - Mr. Brightside', bpm: 148, decade: '00s' },
-            { id: 'ZbZSe6N_BXs', artist: 'Pharrell Williams - Happy', bpm: 160, decade: 'Actual' }
+            // 🕺 ESTILO: 70s DISCO & FUNK
+            { id: '3cQNkIrg-Tk', artist: 'Earth, Wind & Fire - September', bpm: 125, decade: '70s Disco' },
+            { id: '_Vj092UgKwQ', artist: 'Bee Gees - Stayin\' Alive', bpm: 104, decade: '70s Disco' },
+            { id: 'QRoWiTcO7dI', artist: 'ABBA - Dancing Queen', bpm: 100, decade: '70s Disco' },
+            { id: 'F-vXJckqL78', artist: 'Gloria Gaynor - I Will Survive', bpm: 116, decade: '70s Disco' },
+            { id: 'pT68FS3YbQ4', artist: 'Queen - Don\'t Stop Me Now', bpm: 156, decade: '70s Disco' },
+            { id: 'ZorRGrz7LWE', artist: 'Michael Jackson - Don\'t Stop \'Til You Get Enough', bpm: 119, decade: '70s Disco' },
+            { id: 'otna9Pe3jWg', artist: 'Boney M. - Daddy Cool', bpm: 124, decade: '70s Disco' },
+            { id: 'Vc0gYbTNZLQ', artist: 'Village People - Y.M.C.A.', bpm: 126, decade: '70s Disco' },
+            { id: 'aeXjEqkR0os', artist: 'Kool & The Gang - Celebration', bpm: 121, decade: '70s Disco' },
+            { id: 'uyGY2NfYpeE', artist: 'Sister Sledge - We Are Family', bpm: 114, decade: '70s Disco' },
+            { id: 'aXgSHL7efKg', artist: 'CHIC - Le Freak', bpm: 119, decade: '70s Disco' },
+            { id: 'OwwX-y_x-tY', artist: 'The Trammps - Disco Inferno', bpm: 129, decade: '70s Disco' },
+            { id: 'kHjOACJ-R_c', artist: 'Anita Ward - Ring My Bell', bpm: 128, decade: '70s Disco' },
+            { id: 'xF77Y1JLScc', artist: 'Lipps Inc. - Funkytown', bpm: 122, decade: '70s Disco' },
+            { id: 'EQmSqGEvIsU', artist: 'Elton John - Don\'t Go Breaking My Heart', bpm: 131, decade: '70s Disco' },
+            { id: 'ftdZ363R9kQ', artist: 'Stevie Wonder - Superstition', bpm: 101, decade: '70s Disco' },
+            { id: 'SKXWqP3MhRM', artist: 'Blondie - Heart Of Glass', bpm: 114, decade: '70s Disco' },
+            { id: 'aqO8LpEktvM', artist: 'Donna Summer - Hot Stuff', bpm: 120, decade: '70s Disco' },
+            { id: 'Cq7XkC-1tK4', artist: 'The Jacksons - Blame It On the Boogie', bpm: 113, decade: '70s Disco' },
+            { id: 'o41A91X5pjc', artist: 'KC & The Sunshine Band - That\'s The Way', bpm: 109, decade: '70s Disco' },
+            
+            // 🎹 ESTILO: 80s SYNTH POP & ROCK
+            { id: 'djV11Xbc914', artist: 'A-ha - Take On Me', bpm: 169, decade: '80s Pop' },
+            { id: 'Zi_XLOBDo_Y', artist: 'Michael Jackson - Billie Jean', bpm: 117, decade: '80s Pop' },
+            { id: 'eH3giaIzONA', artist: 'Whitney Houston - I Wanna Dance With Somebody', bpm: 119, decade: '80s Pop' },
+            { id: '79fzeNUqQbQ', artist: 'Madonna - Like A Prayer', bpm: 111, decade: '80s Pop' },
+            { id: 'PIb6AZdTr-A', artist: 'Cyndi Lauper - Girls Just Want To Have Fun', bpm: 120, decade: '80s Pop' },
+            { id: 'dQw4w9WgXcQ', artist: 'Rick Astley - Never Gonna Give You Up', bpm: 113, decade: '80s Pop' },
+            { id: '1k8craCGpgs', artist: 'Journey - Don\'t Stop Believin\'', bpm: 119, decade: '80s Pop' },
+            { id: 'lDK9QqIzhwk', artist: 'Bon Jovi - Livin\' On A Prayer', bpm: 123, decade: '80s Pop' },
+            { id: 'm-c07a3lBhk', artist: 'Eurythmics - Sweet Dreams', bpm: 125, decade: '80s Pop' },
+            { id: 'uPudE8nDog0', artist: 'The Human League - Don\'t You Want Me', bpm: 118, decade: '80s Pop' },
+            { id: 'aGCdLKXNF3w', artist: 'Tears For Fears - Everybody Wants To Rule The World', bpm: 112, decade: '80s Pop' },
+            { id: 'bC7-zSnb6zQ', artist: 'Dexys Midnight Runners - Come On Eileen', bpm: 107, decade: '80s Pop' },
+            { id: 'pIgZ7gMze7A', artist: 'Wham! - Wake Me Up Before You Go-Go', bpm: 163, decade: '80s Pop' },
+            { id: 'iPUmE-tne5U', artist: 'Katrina & The Waves - Walking On Sunshine', bpm: 110, decade: '80s Pop' },
+            { id: 'ltrhG-RkKJE', artist: 'Kenny Loggins - Footloose', bpm: 174, decade: '80s Pop' },
+            { id: 'VbD_lNWAqbI', artist: 'David Bowie - Let\'s Dance', bpm: 114, decade: '80s Pop' },
+            { id: 'H9tEvfIsDyo', artist: 'Prince - Kiss', bpm: 111, decade: '80s Pop' },
+            { id: 'nqAvVuIQIGc', artist: 'Lionel Richie - All Night Long', bpm: 109, decade: '80s Pop' },
+            { id: 'c1GxjzHm5us', artist: 'New Order - Blue Monday', bpm: 119, decade: '80s Pop' },
+            { id: 'eqyU9vRSvls', artist: 'Queen - Another One Bites The Dust', bpm: 110, decade: '80s Pop' },
+
+            // 💿 ESTILO: 90s EURODANCE & LATIN POP
+            { id: 'HEXWRTEbj1I', artist: 'Haddaway - What Is Love', bpm: 124, decade: '90s Eurodance' },
+            { id: 'gJLIiF15wjQ', artist: 'Spice Girls - Wannabe', bpm: 110, decade: '90s Eurodance' },
+            { id: '6M6samPEMpM', artist: 'Backstreet Boys - Everybody', bpm: 108, decade: '90s Eurodance' },
+            { id: 'C-u5WLJ9Yk4', artist: 'Britney Spears - ...Baby One More Time', bpm: 93, decade: '90s Eurodance' },
+            { id: 'p47fEXGabaY', artist: 'Ricky Martin - Livin\' La Vida Loca', bpm: 166, decade: '90s Eurodance' },
+            { id: 'EK_LN3XEcnw', artist: 'Lou Bega - Mambo No. 5', bpm: 174, decade: '90s Eurodance' },
+            { id: 'zWaymcVmJ-A', artist: 'Los del Río - Macarena', bpm: 103, decade: '90s Eurodance' },
+            { id: 'llyiQ4I-mcQ', artist: 'Vengaboys - Boom, Boom, Boom, Boom!!', bpm: 138, decade: '90s Eurodance' },
+            { id: 'u3ltZmI5jdE', artist: 'Corona - The Rhythm of the Night', bpm: 128, decade: '90s Eurodance' },
+            { id: '68ugkg9RePc', artist: 'Eiffel 65 - Blue (Da Ba Dee)', bpm: 128, decade: '90s Eurodance' },
+            { id: 'p3l7fgvrEKM', artist: 'Gala - Freed From Desire', bpm: 129, decade: '90s Eurodance' },
+            { id: 'Pav2f4b-1EQ', artist: 'Real McCoy - Another Night', bpm: 126, decade: '90s Eurodance' },
+            { id: 'iqu132vTl5Y', artist: 'Ace of Base - The Sign', bpm: 97, decade: '90s Eurodance' },
+            { id: '_Ka01Y_pYgM', artist: 'La Bouche - Be My Lover', bpm: 135, decade: '90s Eurodance' },
+            { id: 'ZyhrYis509A', artist: 'Aqua - Barbie Girl', bpm: 130, decade: '90s Eurodance' },
+            { id: 'D-NvQ6VIRYw', artist: 'Jamiroquai - Cosmic Girl', bpm: 119, decade: '90s Eurodance' },
+            { id: 'Ps2Jc28tQrw', artist: 'Robin S - Show Me Love', bpm: 120, decade: '90s Eurodance' },
+            { id: '_KztNIg4cvE', artist: 'Crystal Waters - Gypsy Woman', bpm: 120, decade: '90s Eurodance' },
+            { id: 'FrLequ6dUdM', artist: 'TLC - No Scrubs', bpm: 93, decade: '90s Eurodance' },
+            { id: 'LKYPYj2XX80', artist: 'Daft Punk - Around The World', bpm: 121, decade: '90s Eurodance' },
+
+            // 🎛️ ESTILO: 2000s HOUSE & CLUB HITS
+            { id: 'PWgvGjAhvIw', artist: 'Outkast - Hey Ya!', bpm: 160, decade: '2000s Club' },
+            { id: 'gGdGFtwPNsQ', artist: 'The Killers - Mr. Brightside', bpm: 148, decade: '2000s Club' },
+            { id: 'DUT5rEU6pqM', artist: 'Shakira - Hips Don\'t Lie', bpm: 100, decade: '2000s Club' },
+            { id: 'ViwtNLUqkMY', artist: 'Beyoncé - Crazy In Love', bpm: 99, decade: '2000s Club' },
+            { id: '2Abk1jAIGvk', artist: 'Lady Gaga - Just Dance', bpm: 119, decade: '2000s Club' },
+            { id: 'uSD4vsh1zDA', artist: 'Black Eyed Peas - I Gotta Feeling', bpm: 128, decade: '2000s Club' },
+            { id: 'yd8jh9QYfOU', artist: 'Rihanna - Don\'t Stop The Music', bpm: 123, decade: '2000s Club' },
+            { id: '3gOHvDP_vCs', artist: 'Justin Timberlake - SexyBack', bpm: 117, decade: '2000s Club' },
+            { id: '0J3vgcE5i2o', artist: 'Nelly Furtado - Promiscuous', bpm: 114, decade: '2000s Club' },
+            { id: 'Kgjkth6BRRY', artist: 'Gwen Stefani - Hollaback Girl', bpm: 110, decade: '2000s Club' },
+            { id: 'c184Hr3cG_Y', artist: 'Kylie Minogue - Can\'t Get You Out Of My Head', bpm: 126, decade: '2000s Club' },
+            { id: 'vVK1GTO4Z6E', artist: 'Bob Sinclar - Love Generation', bpm: 128, decade: '2000s Club' },
+            { id: 'zudbz4hOcbc', artist: 'David Guetta - When Love Takes Over', bpm: 130, decade: '2000s Club' },
+            { id: 'L_fCqg92qks', artist: 'Eric Prydz - Call On Me', bpm: 126, decade: '2000s Club' },
+            { id: 'mMfxI3r_LyA', artist: 'Modjo - Lady (Hear Me Tonight)', bpm: 126, decade: '2000s Club' },
+            { id: '7iqpzJ-U4Qk', artist: 'Alcazar - Crying At The Discoteque', bpm: 137, decade: '2000s Club' },
+            { id: 'hxcv4Q5EHQE', artist: 'Sophie Ellis-Bextor - Murder On The Dancefloor', bpm: 117, decade: '2000s Club' },
+            { id: 'SPlQpGeTbIE', artist: 'Junior Senior - Move Your Feet', bpm: 119, decade: '2000s Club' },
+            { id: 'HyHNuVaZJ-k', artist: 'Gorillaz - Feel Good Inc.', bpm: 139, decade: '2000s Club' },
+            { id: 'dvgZvnPR4tA', artist: 'Coldplay - Viva La Vida', bpm: 138, decade: '2000s Club' },
+
+            // 🌟 ESTILO: HITS ACTUALES (2010s - HOY)
+            { id: 'ZbZSe6N_BXs', artist: 'Pharrell Williams - Happy', bpm: 160, decade: 'Actualidad' },
+            { id: 'OPf0YbXqDm0', artist: 'Mark Ronson - Uptown Funk', bpm: 115, decade: 'Actualidad' },
+            { id: 'oygrmJFKYZY', artist: 'Dua Lipa - Don\'t Start Now', bpm: 124, decade: 'Actualidad' },
+            { id: '4NRXx6U8ABQ', artist: 'The Weeknd - Blinding Lights', bpm: 171, decade: 'Actualidad' },
+            { id: 'orJSJGHjBLI', artist: 'Ed Sheeran - Bad Habits', bpm: 126, decade: 'Actualidad' },
+            { id: 'dGghkjpNCQ8', artist: 'Calvin Harris - Feel So Close', bpm: 128, decade: 'Actualidad' },
+            { id: 'IcrbM1l_BoI', artist: 'Avicii - Wake Me Up', bpm: 124, decade: 'Actualidad' },
+            { id: '5NV6Rdv1a3I', artist: 'Daft Punk - Get Lucky', bpm: 116, decade: 'Actualidad' },
+            { id: 'ru0K8uYEZWw', artist: 'Justin Timberlake - Can\'t Stop the Feeling!', bpm: 113, decade: 'Actualidad' },
+            { id: 'UqyT8IEBkvY', artist: 'Bruno Mars - 24K Magic', bpm: 107, decade: 'Actualidad' },
+            { id: 'G7KNmW9a75Y', artist: 'Miley Cyrus - Flowers', bpm: 118, decade: 'Actualidad' },
+            { id: 'H5v3kku4y6Q', artist: 'Harry Styles - As It Was', bpm: 174, decade: 'Actualidad' },
+            { id: 'IXXxciRUMzE', artist: 'Lizzo - About Damn Time', bpm: 109, decade: 'Actualidad' },
+            { id: 'PNAUedq8rEU', artist: 'Elton John, Dua Lipa - Cold Heart', bpm: 116, decade: 'Actualidad' },
+            { id: 'adLGHcj_fmA', artist: 'Silk Sonic - Leave the Door Open', bpm: 148, decade: 'Actualidad' },
+            { id: '90RLzVUuOe4', artist: 'David Guetta - I\'m Good (Blue)', bpm: 128, decade: 'Actualidad' },
+            { id: 'ntoq0RGbJR8', artist: 'Rosalía - Despechá', bpm: 130, decade: 'Actualidad' },
+            { id: 'CocEMWdc7Cv', artist: 'Bizarrap, Shakira - Bzrp Vol. 53', bpm: 122, decade: 'Actualidad' },
+            { id: 'nCg3ufihKw0', artist: 'Tiesto - The Business', bpm: 120, decade: 'Actualidad' },
+            { id: 'eVli-tstM5E', artist: 'Sabrina Carpenter - Espresso', bpm: 104, decade: 'Actualidad' }
         ];
 
-        // 1. LLENAMOS LA LISTA PRINCIPAL
-        tracks.sort((a, b) => a.bpm - b.bpm);
+        // =========================================================
+        // MAGIA DEL DJ: Agrupar por estilo y ordenar por BPM
+        // =========================================================
         const tracklistDiv = document.getElementById('tracklist');
-        tracks.forEach(track => {
+        tracklistDiv.innerHTML = ''; // Limpiar la lista inicial
+
+        // Extraemos los nombres de los estilos únicos de la base de datos
+        const estilos = [...new Set(tracks.map(t => t.decade))];
+
+        estilos.forEach(estilo => {
+            // Añadir el bloque separador de color para cada estilo
             tracklistDiv.innerHTML += `
-                <div class="song-item">
-                    <div class="song-info">
-                        <span class="song-title">${track.artist}</span>
-                        <span class="song-meta">Estilo: ${track.decade} | ⚡ ${track.bpm} BPM</span>
-                    </div>
-                    <div class="load-buttons">
-                        <button class="btn-a" onclick="loadVideo('A', '${track.id}')">Deck A</button>
-                        <button class="btn-b" onclick="loadVideo('B', '${track.id}')">Deck B</button>
-                    </div>
+                <div class="bloque-separador">
+                    📂 BLOQUE: ${estilo}
                 </div>
             `;
+
+            // Filtrar las canciones de este estilo y ordenarlas por BPM
+            let cancionesEstilo = tracks.filter(t => t.decade === estilo).sort((a, b) => a.bpm - b.bpm);
+
+            cancionesEstilo.forEach(track => {
+                tracklistDiv.innerHTML += `
+                    <div class="song-item">
+                        <div class="song-info">
+                            <span class="song-title">${track.artist}</span>
+                            <span class="song-meta">⚡ ${track.bpm} BPM</span>
+                        </div>
+                        <div class="load-buttons">
+                            <button class="btn-a" onclick="loadVideo('A', '${track.id}')">Deck A</button>
+                            <button class="btn-b" onclick="loadVideo('B', '${track.id}')">Deck B</button>
+                        </div>
+                    </div>
+                `;
+            });
         });
 
-        // 2. FUNCIÓN PARA BUSCAR EN YOUTUBE DIRECTAMENTE
+        // =========================================================
+        // FUNCIONES DE BÚSQUEDA Y PEDIDOS EN VIVO
+        // =========================================================
         function buscarEnYouTube() {
             const query = document.getElementById('inputBuscar').value.trim();
             if (query) {
-                // Abre YouTube en una nueva pestaña con los resultados de búsqueda
                 const ytSearchUrl = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(query);
                 window.open(ytSearchUrl, '_blank');
             } else {
@@ -306,12 +431,9 @@
         }
 
         function handleEnterSearch(event) {
-            if (event.key === 'Enter') {
-                buscarEnYouTube();
-            }
+            if (event.key === 'Enter') buscarEnYouTube();
         }
 
-        // 3. LÓGICA PARA AÑADIR PEDIDOS (Mantenida igual)
         function extraerIDYouTube(url) {
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
             const match = url.match(regExp);
@@ -347,43 +469,59 @@
             contadorPedidos++;
         }
 
-        // 4. API DE YOUTUBE Y REPRODUCTORES
+        // =========================================================
+        // INICIALIZACIÓN DE LOS REPRODUCTORES (VINILOS)
+        // =========================================================
         function onYouTubeIframeAPIReady() {
             playerA = new YT.Player('playerA', {
                 height: '300', width: '300',
-                videoId: tracks[0].id, 
+                videoId: tracks[0].id, // Carga la primera canción para evitar errores
                 playerVars: { 'controls': 0, 'disablekb': 1, 'rel': 0 },
                 events: { 'onReady': onPlayerReady, 'onStateChange': (e) => onStateChange(e, 'A') }
             });
             playerB = new YT.Player('playerB', {
                 height: '300', width: '300',
-                videoId: tracks[1].id,
+                videoId: tracks[1].id, // Carga la segunda canción para evitar errores
                 playerVars: { 'controls': 0, 'disablekb': 1, 'rel': 0 },
                 events: { 'onReady': onPlayerReady, 'onStateChange': (e) => onStateChange(e, 'B') }
             });
         }
 
-        function onPlayerReady() { updateVolumes(); }
+        function onPlayerReady() { 
+            updateVolumes(); 
+        }
 
         function onStateChange(event, deck) {
             let deckElement = document.getElementById(deck === 'A' ? 'deckA' : 'deckB');
-            if (event.data === YT.PlayerState.PLAYING) deckElement.classList.add('spinning');
-            else deckElement.classList.remove('spinning');
+            if (event.data === YT.PlayerState.PLAYING) {
+                deckElement.classList.add('spinning');
+            } else {
+                deckElement.classList.remove('spinning');
+            }
         }
 
+        // =========================================================
+        // CONTROLES DE REPRODUCCIÓN Y VOLUMEN
+        // =========================================================
         function loadVideo(deck, videoId) {
-            if (deck === 'A') playerA.cueVideoById(videoId);
-            else playerB.cueVideoById(videoId);
+            if (deck === 'A') {
+                playerA.cueVideoById(videoId);
+            } else {
+                playerB.cueVideoById(videoId);
+            }
         }
 
         function togglePlay(deck) {
             let p = deck === 'A' ? playerA : playerB;
-            if (p.getPlayerState() === 1) p.pauseVideo();
-            else p.playVideo();
+            if (p.getPlayerState() === 1) {
+                p.pauseVideo();
+            } else {
+                p.playVideo();
+            }
         }
 
         function updateVolumes() {
-            if (!playerA || !playerB) return;
+            if (!playerA || !playerB || !playerA.setVolume || !playerB.setVolume) return;
             let f = document.getElementById('crossfader').value;
             playerA.setVolume(f <= 50 ? 100 : 100 - ((f - 50) * 2));
             playerB.setVolume(f >= 50 ? 100 : f * 2);

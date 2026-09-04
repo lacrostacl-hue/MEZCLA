@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Alegria - Mezcladora Web Profesional</title>
+    <title>Radio Alegria - Mezcladora Web Profesional (Firebase)</title>
     <style>
         body {
             background-color: #121212; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -78,12 +78,16 @@
         .divisor { height: 1px; background: #554400; margin: 15px 0; }
         .etiqueta-pequena { font-size: 12px; color: #aaa; margin-bottom: 5px; display: block; }
     </style>
+
+    <!-- FIREBASE SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
     <div class="header-title">
         <h1>📻 Radio Web: Cabina Profesional DJ</h1>
-        <p class="subtitle">180 Canciones con Enlaces Funcionales por Categoría</p>
+        <p class="subtitle">Sincronizado con Firebase Cloud Database</p>
     </div>
 
     <!-- CABINA STICKY -->
@@ -127,8 +131,8 @@
     <div class="playlists-container">
         <!-- LISTA PRINCIPAL -->
         <div class="playlist">
-            <h2 style="font-size: 1.4em;">🎵 Setlist Principal (180 Tracks)</h2>
-            <div id="tracklist"></div>
+            <h2 style="font-size: 1.4em;">🎵 Setlist Principal (Cloud)</h2>
+            <div id="tracklist">Cargando canciones desde Firebase...</div>
         </div>
 
         <!-- BUSCADOR -->
@@ -153,12 +157,27 @@
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        let playerA, playerB;
-        let contadorPedidos = 1;
+        // =========================================================
+        // CONFIGURACIÓN DE FIREBASE (INTEGRADA)
+        // =========================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgJM6TtDDpGYRrQRKmxKH3S6XBy8TettY",
+            authDomain: "mezcla-bad5e.firebaseapp.com",
+            databaseURL: "https://mezcla-bad5e-default-rtdb.firebaseio.com",
+            projectId: "mezcla-bad5e",
+            storageBucket: "mezcla-bad5e.firebasestorage.app",
+            messagingSenderId: "852290612625",
+            appId: "1:852290612625:web:439cabe2c3494cdbe93e30"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-        // 180 CÓDIGOS COMPLETOS Y FUNCIONALES (INCLUYENDO BALADAS CON AUDIO/LYRIC VERIFICADOS)
-        const tracks = [
-            // 🕺 70s DISCO (20)
+        let playerA, playerB;
+        let tracks = [];
+
+        // Base de datos de respaldo con las 180 canciones verificadas
+        const tracksIniciales = [
+            // 🕺 70s DISCO
             { id: 'Gs069dndIYk', artist: 'Earth, Wind & Fire - September', bpm: 125, decade: '70s Disco' },
             { id: 'I_izvAbhExY', artist: 'Bee Gees - Stayin\' Alive', bpm: 104, decade: '70s Disco' },
             { id: 'xFrGuyw1V8s', artist: 'ABBA - Dancing Queen', bpm: 100, decade: '70s Disco' },
@@ -180,7 +199,7 @@
             { id: 'mkBS4zUjJZo', artist: 'The Jacksons - Blame It On the Boogie', bpm: 113, decade: '70s Disco' },
             { id: 'q3svW8PM_jc', artist: 'KC & The Sunshine Band - That\'s The Way', bpm: 109, decade: '70s Disco' },
 
-            // 🎹 80s POP (20)
+            // 🎹 80s POP
             { id: 'djV11Xbc914', artist: 'A-ha - Take On Me', bpm: 169, decade: '80s Pop' },
             { id: 'Zi_XLOBDo_Y', artist: 'Michael Jackson - Billie Jean', bpm: 117, decade: '80s Pop' },
             { id: 'eH3giaIzONA', artist: 'Whitney Houston - I Wanna Dance With Somebody', bpm: 119, decade: '80s Pop' },
@@ -202,7 +221,7 @@
             { id: 'c1GxjzHm5us', artist: 'New Order - Blue Monday', bpm: 119, decade: '80s Pop' },
             { id: 'eqyU9vRSvls', artist: 'Queen - Another One Bites The Dust', bpm: 110, decade: '80s Pop' },
 
-            // 💿 90s EURODANCE (20)
+            // 💿 90s EURODANCE
             { id: 'HEXWRTEbj1I', artist: 'Haddaway - What Is Love', bpm: 124, decade: '90s Eurodance' },
             { id: 'gJLIiF15wjQ', artist: 'Spice Girls - Wannabe', bpm: 110, decade: '90s Eurodance' },
             { id: '6M6samPEMpM', artist: 'Backstreet Boys - Everybody', bpm: 108, decade: '90s Eurodance' },
@@ -224,7 +243,7 @@
             { id: 'FrLequ6dUdM', artist: 'TLC - No Scrubs', bpm: 93, decade: '90s Eurodance' },
             { id: 'LKYPYj2XX80', artist: 'Daft Punk - Around The World', bpm: 121, decade: '90s Eurodance' },
 
-            // 🎛️ 2000s CLUB (20)
+            // 🎛️ 2000s CLUB
             { id: 'PWgvGjAhvIw', artist: 'Outkast - Hey Ya!', bpm: 160, decade: '2000s Club' },
             { id: 'gGdGFtwPNsQ', artist: 'The Killers - Mr. Brightside', bpm: 148, decade: '2000s Club' },
             { id: 'DUT5rEU6pqM', artist: 'Shakira - Hips Don\'t Lie', bpm: 100, decade: '2000s Club' },
@@ -246,7 +265,7 @@
             { id: 'HyHNuVaZJ-k', artist: 'Gorillaz - Feel Good Inc.', bpm: 139, decade: '2000s Club' },
             { id: 'dvgZvnPR4tA', artist: 'Coldplay - Viva La Vida', bpm: 138, decade: '2000s Club' },
 
-            // 🌟 ACTUALIDAD (20)
+            // 🌟 ACTUALIDAD
             { id: 'ZbZSe6N_BXs', artist: 'Pharrell Williams - Happy', bpm: 160, decade: 'Actualidad' },
             { id: 'OPf0YbXqDm0', artist: 'Mark Ronson - Uptown Funk', bpm: 115, decade: 'Actualidad' },
             { id: 'oygrmJFKYZY', artist: 'Dua Lipa - Don\'t Start Now', bpm: 124, decade: 'Actualidad' },
@@ -268,7 +287,7 @@
             { id: 'nCg3ufihKw0', artist: 'Tiesto - The Business', bpm: 120, decade: 'Actualidad' },
             { id: 'eVli-tstM5E', artist: 'Sabrina Carpenter - Espresso', bpm: 104, decade: 'Actualidad' },
 
-            // 🔥 REGGAETON (20)
+            // 🔥 REGGAETON
             { id: 'qGKrc3A6HHM', artist: 'Daddy Yankee - Gasolina', bpm: 96, decade: 'Reggaeton' },
             { id: '7zp1TbLFPp8', artist: 'Don Omar - Danza Kuduro', bpm: 130, decade: 'Reggaeton' },
             { id: 'kJQP7kiw5Fk', artist: 'Luis Fonsi - Despacito', bpm: 89, decade: 'Reggaeton' },
@@ -290,7 +309,7 @@
             { id: 'y8trd3gjJt0', artist: 'Farruko - Pepas', bpm: 130, decade: 'Reggaeton' },
             { id: 'CFPLIaEpSAI', artist: 'Rauw Alejandro - Todo De Ti', bpm: 128, decade: 'Reggaeton' },
 
-            // 🎺 TROPICAL Y SALSA (20)
+            // 🎺 TROPICAL Y SALSA
             { id: 'YXnjy5YlDwk', artist: 'Marc Anthony - Vivir Mi Vida', bpm: 105, decade: 'Tropical y Salsa' },
             { id: 'l-Kswx9L-m8', artist: 'Celia Cruz - La Vida Es Un Carnaval', bpm: 104, decade: 'Tropical y Salsa' },
             { id: 'QFs3PIZb3js', artist: 'Romeo Santos - Propuesta Indecente', bpm: 124, decade: 'Tropical y Salsa' },
@@ -312,7 +331,7 @@
             { id: 'iOe6dI2JhgU', artist: 'Ricky Martin - Vente Pa\' Ca', bpm: 100, decade: 'Tropical y Salsa' },
             { id: 'zXk-2xNlHww', artist: 'Chayanne - Torero', bpm: 100, decade: 'Tropical y Salsa' },
 
-            // 🎸 POP LATINO (20)
+            // 🎸 POP LATINO
             { id: 'pRpeEdMmi3I', artist: 'Shakira - Waka Waka', bpm: 127, decade: 'Pop Latino' },
             { id: 'tLcfAnN2QgY', artist: 'Enrique Iglesias - El Perdedor', bpm: 130, decade: 'Pop Latino' },
             { id: 'rs4Hcs6-B8w', artist: 'Enrique Iglesias - Loco', bpm: 90, decade: 'Pop Latino' },
@@ -334,12 +353,12 @@
             { id: 'kRt2sRyup6A', artist: 'Juanes - La Camisa Negra', bpm: 98, decade: 'Pop Latino' },
             { id: 'NUsoVlDFqZg', artist: 'Enrique Iglesias - Bailando', bpm: 91, decade: 'Pop Latino' },
 
-            // 🌹 BALADAS Y ROMÁNTICOS (20 - USANDO AUDIOS / LYRIC ALTERNATIVOS QUE NO BLOQUEAN EMBED)
-            { id: 'h9tXY5j3NY8', artist: 'Chayanne - Dejaría Todo (Audio)', bpm: 80, decade: 'Baladas y Románticos' },
-            { id: '3LUc45vKalU', artist: 'Luis Miguel - La Incondicional (Audio)', bpm: 85, decade: 'Baladas y Románticos' },
-            { id: '0OhIPWcuMPc', artist: 'Ricky Martin - Vuelve (Audio)', bpm: 75, decade: 'Baladas y Románticos' },
-            { id: 'J9jJ4MTLBZI', artist: 'Alejandro Sanz - Corazón Partío (Audio)', bpm: 88, decade: 'Baladas y Románticos' },
-            { id: 'HwH8H3G3G_8', artist: 'Enrique Iglesias - Experiencia Religiosa (Audio)', bpm: 82, decade: 'Baladas y Románticos' },
+            // 🌹 BALADAS Y ROMÁNTICOS
+            { id: 'h9tXY5j3NY8', artist: 'Chayanne - Dejaría Todo', bpm: 80, decade: 'Baladas y Románticos' },
+            { id: '3LUc45vKalU', artist: 'Luis Miguel - La Incondicional', bpm: 85, decade: 'Baladas y Románticos' },
+            { id: '0OhIPWcuMPc', artist: 'Ricky Martin - Vuelve', bpm: 75, decade: 'Baladas y Románticos' },
+            { id: 'J9jJ4MTLBZI', artist: 'Alejandro Sanz - Corazón Partío', bpm: 88, decade: 'Baladas y Románticos' },
+            { id: 'HwH8H3G3G_8', artist: 'Enrique Iglesias - Experiencia Religiosa', bpm: 82, decade: 'Baladas y Románticos' },
             { id: 't_gE_X48r1w', artist: 'Son By Four - A Puro Dolor', bpm: 68, decade: 'Baladas y Románticos' },
             { id: 'P2hM9CLAMu8', artist: 'Jesse & Joy - ¡Corre!', bpm: 75, decade: 'Baladas y Románticos' },
             { id: 'YQHsXMglC9A', artist: 'Adele - Hello', bpm: 79, decade: 'Baladas y Románticos' },
@@ -357,6 +376,18 @@
             { id: 'M3-M-Q63Dpw', artist: 'Marco Antonio Solis - Si No Te Hubieras Ido', bpm: 70, decade: 'Baladas y Románticos' }
         ];
 
+        // Sincronizar canciones en tiempo real desde Firebase
+        db.ref('tracks').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                tracks = Object.values(data);
+            } else {
+                tracks = tracksIniciales;
+                db.ref('tracks').set(tracksIniciales);
+            }
+            renderizarBaseDatos();
+        });
+
         function renderizarBaseDatos() {
             const tracklistDiv = document.getElementById('tracklist');
             const selectDiv = document.getElementById('selectCategoriaPedido');
@@ -369,7 +400,7 @@
                 let estadoInicial = index === 0 ? 'block' : 'none';
                 let flechaInicial = index === 0 ? '▲' : '▼';
                 
-                htmlSelect += `<option value="${catId}">${estilo}</option>`;
+                htmlSelect += `<option value="${estilo}">${estilo}</option>`;
 
                 let cancionesEstilo = tracks.filter(t => t.decade === estilo).sort((a, b) => a.bpm - b.bpm);
 
@@ -388,12 +419,12 @@
             });
 
             tracklistDiv.innerHTML = htmlFinal;
-            selectDiv.innerHTML = htmlSelect + `<option value="cat-pedidos">⭐ Lista Temporal de Pedidos</option>`;
+            selectDiv.innerHTML = htmlSelect + `<option value="Pedidos Temporales">⭐ Lista Temporal de Pedidos</option>`;
         }
 
-        function generarHtmlCancion(track, esPedido = false) {
+        function generarHtmlCancion(track) {
             return `
-                <div class="song-item" data-id="${track.id}" ${esPedido ? 'style="background-color: #332b00; border-color: #554400;"' : ''}>
+                <div class="song-item" data-id="${track.id}">
                     <div class="song-info">
                         <span class="song-title">${track.artist}</span>
                         <span class="song-meta">⚡ ${track.bpm} BPM</span>
@@ -405,8 +436,6 @@
                 </div>
             `;
         }
-
-        renderizarBaseDatos();
 
         function toggleCategoria(catId) {
             let contenido = document.getElementById(catId);
@@ -437,35 +466,30 @@
             if (!url) return alert("Pega un enlace de YouTube.");
             const videoId = extraerIDYouTube(url);
             if (!videoId) return alert("Enlace inválido.");
-            if (!nombre) nombre = "Audio Nuevo " + contadorPedidos;
+            if (!nombre) nombre = "Audio Nuevo";
 
-            const nuevaCancion = { id: videoId, artist: nombre, bpm: '?' };
-            const htmlCancion = generarHtmlCancion(nuevaCancion, catSeleccionada === 'cat-pedidos');
-
-            if (catSeleccionada === 'cat-pedidos') {
+            if (catSeleccionada === 'Pedidos Temporales') {
                 const listaPedidos = document.getElementById('tracklist-pedidos');
-                listaPedidos.innerHTML = htmlCancion + listaPedidos.innerHTML;
+                listaPedidos.innerHTML = generarHtmlCancion({ id: videoId, artist: nombre, bpm: '?' }) + listaPedidos.innerHTML;
             } else {
-                const contenedorCat = document.getElementById(catSeleccionada);
-                contenedorCat.innerHTML = htmlCancion + contenedorCat.innerHTML;
-                if(contenedorCat.style.display === 'none') toggleCategoria(catSeleccionada);
+                tracks.push({ id: videoId, artist: nombre, bpm: '?', decade: catSeleccionada });
+                db.ref('tracks').set(tracks); // Se guarda en Firebase automáticamente
             }
 
             document.getElementById('inputUrl').value = '';
             document.getElementById('inputNombre').value = '';
-            contadorPedidos++;
         }
 
         function onYouTubeIframeAPIReady() {
             playerA = new YT.Player('playerA', {
                 height: '300', width: '300',
-                videoId: tracks[0].id, 
+                videoId: tracks.length > 0 ? tracks[0].id : 'Gs069dndIYk',
                 playerVars: { 'controls': 0, 'disablekb': 1, 'rel': 0 },
                 events: { 'onReady': onPlayerReady, 'onStateChange': (e) => onStateChange(e, 'A') }
             });
             playerB = new YT.Player('playerB', {
                 height: '300', width: '300',
-                videoId: tracks[1].id,
+                videoId: tracks.length > 1 ? tracks[1].id : 'I_izvAbhExY',
                 playerVars: { 'controls': 0, 'disablekb': 1, 'rel': 0 },
                 events: { 'onReady': onPlayerReady, 'onStateChange': (e) => onStateChange(e, 'B') }
             });

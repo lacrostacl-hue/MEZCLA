@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mezcladora YouTube 70s-00s</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 { margin-bottom: 30px; color: #ff0055; text-shadow: 0 0 10px #ff0055; }
+        
+        /* Contenedor principal de los vinilos */
+        .dj-booth {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        /* Estilo de los vinilos (Decks) */
+        .deck {
+            background: #000;
+            border: 10px solid #333;
+            border-radius: 50%;
+            width: 300px;
+            height: 300px;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.1);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Oculta los bordes del video de YT para que parezca el centro del vinilo */
+        .video-container {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            overflow: hidden;
+            pointer-events: none; /* Evita clics directos en el video */
+        }
+
+        .controls { margin-top: 15px; }
+        button {
+            background: #ff0055;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        button:hover { background: #ff3377; transform: scale(1.05); }
+
+        /* Crossfader */
+        .mixer-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #444;
+        }
+        input[type=range] {
+            width: 250px;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+
+        /* Lista de canciones */
+        .playlist {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: left;
+        }
+        .song-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #444;
+        }
+        .song-item:hover { background: #333; }
+        .load-buttons button { margin-left: 10px; font-size: 12px; padding: 5px 10px; background: #0088ff; }
+        .load-buttons button:hover { background: #33aaff; }
+    </style>
+</head>
+<body>
+
+    <h1>🎛️ Mezcladora Web Especial Tecno/Disco 🎛️</h1>
+
+    <div class="dj-booth">
+        <!-- DECK A -->
+        <div>
+            <h2>DECK A</h2>
+            <div class="deck">
+                <div class="video-container">
+                    <div id="playerA"></div>
+                </div>
+            </div>
+            <div class="controls">
+                <button onclick="togglePlay('A')">▶️ Play / ⏸️ Pause</button>
+            </div>
+        </div>
+
+        <!-- CROSSFADER -->
+        <div class="mixer-controls">
+            <h3>Crossfader</h3>
+            <span>A &lt;======&gt; B</span>
+            <input type="range" id="crossfader" min="0" max="100" value="50" oninput="updateVolumes()">
+        </div>
+
+        <!-- DECK B -->
+        <div>
+            <h2>DECK B</h2>
+            <div class="deck">
+                <div class="video-container">
+                    <div id="playerB"></div>
+                </div>
+            </div>
+            <div class="controls">
+                <button onclick="togglePlay('B')">▶️ Play / ⏸️ Pause</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PLAYLIST -->
+    <div class="playlist">
+        <h2>🎵 Setlist (Cargar a los Decks)</h2>
+        <div id="tracklist">
+            <!-- Las canciones se inyectan con JavaScript -->
+        </div>
+    </div>
+
+    <!-- Script de la API de YouTube -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        let playerA, playerB;
+
+        // Lista de canciones
+        const tracks = [
+            { id: 'cmcoZJO62bQ', artist: 'Kraftwerk - The Robots', bpm: 115 },
+            { id: 'uKcU_n_d9cI', artist: 'Donna Summer - I Feel Love', bpm: 123 },
+            { id: 'fa5IWHDbftI', artist: 'Daft Punk - One More Time', bpm: 123 },
+            { id: 'G6qXeIMTUcw', artist: 'Stardust - Music Sounds Better With You', bpm: 124 },
+            { id: 'YLYxWbwXomw', artist: 'Giorgio Moroder - Chase', bpm: 125 },
+            { id: 'ifoy6_nARUc', artist: 'Technotronic - Pump Up The Jam', bpm: 125 },
+            { id: 'QkT-JxA1bBs', artist: 'The Chemical Brothers - Hey Boy Hey Girl', bpm: 127 },
+            { id: 'iOEJHNZpeck', artist: 'New Order - Blue Monday', bpm: 130 },
+            { id: 'x5sBRCNZZG0', artist: 'Jeff Mills - The Bells', bpm: 138 }
+        ];
+
+        // Rellenar la lista visual
+        const tracklistDiv = document.getElementById('tracklist');
+        tracks.forEach(track => {
+            tracklistDiv.innerHTML += `
+                <div class="song-item">
+                    <span><strong>${track.bpm} BPM</strong> | ${track.artist}</span>
+                    <div class="load-buttons">
+                        <button onclick="loadVideo('A', '${track.id}')">Cargar en A</button>
+                        <button onclick="loadVideo('B', '${track.id}')">Cargar en B</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Inicializar los reproductores de YouTube (¡Corregido con videoId inicial!)
+        function onYouTubeIframeAPIReady() {
+            playerA = new YT.Player('playerA', {
+                height: '300', width: '300',
+                videoId: 'cmcoZJO62bQ', // Kraftwerk inicial
+                playerVars: { 'controls': 0, 'disablekb': 1, 'rel': 0 },
+                events: { 'onReady': onPlayerReady }
+            });
+            playerB = new YT.Player('playerB', {
+                height: '300', width: '300',
+                videoId: 'uKcU_n_d9cI', // Donna Summer inicial
+                playerVars: { 'controls': 0, 'disablekb': 1, 'rel': 0 },
+                events: { 'onReady': onPlayerReady }
+            });
+        }
+
+        // Se ejecuta cuando los reproductores cargan
+        function onPlayerReady(event) {
+            updateVolumes();
+        }
+
+        // Cargar video en un Deck y dejarlo en pausa (cue)
+        function loadVideo(deck, videoId) {
+            if (deck === 'A') {
+                playerA.cueVideoById(videoId);
+            } else {
+                playerB.cueVideoById(videoId);
+            }
+        }
+
+        // Reproducir / Pausar verificando el estado real del reproductor (1 = Play, 2 = Pausa)
+        function togglePlay(deck) {
+            if (deck === 'A') {
+                let stateA = playerA.getPlayerState();
+                if (stateA === 1) {
+                    playerA.pauseVideo();
+                } else {
+                    playerA.playVideo();
+                }
+            } else {
+                let stateB = playerB.getPlayerState();
+                if (stateB === 1) {
+                    playerB.pauseVideo();
+                } else {
+                    playerB.playVideo();
+                }
+            }
+        }
+
+        // Lógica del Crossfader
+        function updateVolumes() {
+            if (!playerA || !playerA.setVolume || !playerB || !playerB.setVolume) return;
+            
+            let faderValue = document.getElementById('crossfader').value; // de 0 a 100
+            
+            // Cálculos para la curva de volumen
+            let volA = faderValue <= 50 ? 100 : 100 - ((faderValue - 50) * 2);
+            let volB = faderValue >= 50 ? 100 : faderValue * 2;
+
+            playerA.setVolume(volA);
+            playerB.setVolume(volB);
+        }
+    </script>
+</body>
+</html>

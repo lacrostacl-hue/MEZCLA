@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Alegria - Mezcladora Web Profesional (Firebase)</title>
+    <title>Radio Alegria - Mezcladora Web Profesional (Firebase + Pre-escucha)</title>
     <style>
         body {
             background-color: #121212; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -22,26 +22,32 @@
         }
         
         .dj-booth { display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; }
-        .deck-container { background: #1e1e1e; padding: 10px 15px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); width: 220px; }
-        h2 { margin: 0 0 10px 0; color: #fff; font-size: 1.1em; }
+        .deck-container { background: #1e1e1e; padding: 10px 15px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); width: 200px; }
+        .deck-container.preview-box { width: 140px; background: #1a170d; border: 1px solid #ffcc00; }
+        
+        h2 { margin: 0 0 10px 0; color: #fff; font-size: 1em; }
         .title-pedidos { color: #ffcc00; text-shadow: 0 0 10px rgba(255, 204, 0, 0.5); font-size: 1.4em;}
 
         .deck {
-            background: #000; border: 8px solid #333; border-radius: 50%; width: 150px; height: 150px;
+            background: #000; border: 8px solid #333; border-radius: 50%; width: 130px; height: 130px;
             position: relative; box-shadow: 0 0 15px rgba(0,0,0,0.9), inset 0 0 15px rgba(255,255,255,0.1);
             overflow: hidden; display: flex; justify-content: center; align-items: center; margin: 0 auto;
             transition: transform 0.1s linear;
         }
+        .deck.small-deck { width: 90px; height: 90px; border-width: 5px; }
+
         @keyframes spin { 100% { transform: rotate(360deg); } }
         .spinning { animation: spin 3s linear infinite; }
 
-        .video-container { width: 100px; height: 100px; border-radius: 50%; overflow: hidden; pointer-events: none; }
-        .controls { margin-top: 15px; }
-        .controls button { background: #00ffcc; color: #000; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; transition: 0.2s; }
+        .video-container { width: 90px; height: 90px; border-radius: 50%; overflow: hidden; pointer-events: none; }
+        .video-container.small-video { width: 60px; height: 60px; }
+
+        .controls { margin-top: 10px; }
+        .controls button { background: #00ffcc; color: #000; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 11px; transition: 0.2s; }
         .controls button:hover { background: #00cca3; transform: scale(1.05); }
 
-        .mixer-controls { display: flex; flex-direction: column; align-items: center; background: #2a2a2a; padding: 15px; border-radius: 12px; border: 2px solid #444; width: 160px; }
-        input[type=range] { width: 130px; margin: 10px 0; cursor: pointer; accent-color: #00ffcc; }
+        .mixer-controls { display: flex; flex-direction: column; align-items: center; background: #2a2a2a; padding: 15px; border-radius: 12px; border: 2px solid #444; width: 140px; }
+        input[type=range] { width: 110px; margin: 10px 0; cursor: pointer; accent-color: #00ffcc; }
 
         /* LISTAS Y ACORDEONES */
         .playlists-container { display: flex; justify-content: center; gap: 20px; max-width: 1200px; margin: 0 auto; flex-wrap: wrap; align-items: flex-start; padding: 0 20px; }
@@ -65,10 +71,12 @@
         .song-meta { font-size: 11px; color: #00ffcc; margin-top: 4px; }
         .pedidos-box .song-meta { color: #ffcc00; }
         
-        .load-buttons button { margin-left: 4px; font-size: 11px; padding: 6px 10px; background: #444; color: white; border: none; border-radius:4px; cursor:pointer;}
+        .load-buttons button { margin-left: 3px; font-size: 10px; padding: 6px 8px; background: #444; color: white; border: none; border-radius:4px; cursor:pointer;}
         .load-buttons button:hover { background: #666; }
         .load-buttons .btn-a:hover { background: #ff0055; }
         .load-buttons .btn-b:hover { background: #0088ff; }
+        .load-buttons .btn-preview { background: #ffcc00; color: #000; font-weight: bold; }
+        .load-buttons .btn-preview:hover { background: #e6b800; }
 
         /* Buscador */
         .input-pedido-container { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
@@ -87,7 +95,7 @@
 
     <div class="header-title">
         <h1>📻 Radio Web: Cabina Profesional DJ</h1>
-        <p class="subtitle">Sincronizado con Firebase Cloud Database + Borrado Activo</p>
+        <p class="subtitle">Cloud Database + Pre-escucha (Preview) + Borrado Activo</p>
     </div>
 
     <!-- CABINA STICKY -->
@@ -102,15 +110,28 @@
                     </div>
                 </div>
                 <div class="controls">
-                    <button onclick="togglePlay('A')" style="background: #ff0055; color: white;">▶️ Play / ⏸️ Pause A</button>
+                    <button onclick="togglePlay('A')" style="background: #ff0055; color: white;">▶️ Play / ⏸️ Pause</button>
+                </div>
+            </div>
+
+            <!-- PRE-ESCUCHA (PREVIEW DECK) -->
+            <div class="deck-container preview-box">
+                <h2 style="color: #ffcc00;">🎧 PREVIEW</h2>
+                <div class="deck small-deck" id="deckPreview">
+                    <div class="video-container small-video">
+                        <div id="playerPreview"></div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button onclick="togglePlay('Preview')" style="background: #ffcc00; color: #000;">▶️ Play / ⏸️ Pause</button>
                 </div>
             </div>
 
             <!-- CROSSFADER -->
             <div class="mixer-controls">
                 <h3>Crossfader</h3>
-                <span style="font-size: 11px; color: #888;">A &lt;=====&gt; B</span>
-                <input type="range" id="crossfader" min="0" max="100" value="50" onupdate="" oninput="updateVolumes()">
+                <span style="font-size: 11px; color: #888;">A &lt;==&gt; B</span>
+                <input type="range" id="crossfader" min="0" max="100" value="50" oninput="updateVolumes()">
             </div>
 
             <!-- DECK B -->
@@ -122,7 +143,7 @@
                     </div>
                 </div>
                 <div class="controls">
-                    <button onclick="togglePlay('B')" style="background: #0088ff; color: white;">▶️ Play / ⏸️ Pause B</button>
+                    <button onclick="togglePlay('B')" style="background: #0088ff; color: white;">▶️ Play / ⏸️ Pause</button>
                 </div>
             </div>
         </div>
@@ -170,14 +191,13 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let playerA, playerB;
+        let playerA, playerB, playerPreview;
         let tracks = [];
 
-        // Base de datos de respaldo con las canciones verificadas
+        // Base de datos de respaldo
         const tracksIniciales = [
             { id: 'Gs069dndIYk', artist: 'Earth, Wind & Fire - September', bpm: 125, decade: '70s Disco' },
             { id: 'I_izvAbhExY', artist: 'Bee Gees - Stayin\' Alive', bpm: 104, decade: '70s Disco' },
-            { id: 'xFrGuyw1V8s', artist: 'ABBA - Dancing Queen', bpm: 100, decade: '70s Disco' },
             { id: 'djV11Xbc914', artist: 'A-ha - Take On Me', bpm: 169, decade: '80s Pop' },
             { id: 'Zi_XLOBDo_Y', artist: 'Michael Jackson - Billie Jean', bpm: 117, decade: '80s Pop' },
             { id: 'HEXWRTEbj1I', artist: 'Haddaway - What Is Love', bpm: 124, decade: '90s Eurodance' },
@@ -185,8 +205,7 @@
             { id: 'ZbZSe6N_BXs', artist: 'Pharrell Williams - Happy', bpm: 160, decade: 'Actualidad' },
             { id: 'qGKrc3A6HHM', artist: 'Daddy Yankee - Gasolina', bpm: 96, decade: 'Reggaeton' },
             { id: 'YXnjy5YlDwk', artist: 'Marc Anthony - Vivir Mi Vida', bpm: 105, decade: 'Tropical y Salsa' },
-            { id: 'h9tXY5j3NY8', artist: 'Chayanne - Dejaría Todo', bpm: 80, decade: 'Baladas y Románticos' },
-            { id: '3LUc45vKalU', artist: 'Luis Miguel - La Incondicional', bpm: 85, decade: 'Baladas y Románticos' }
+            { id: 'h9tXY5j3NY8', artist: 'Chayanne - Dejaría Todo', bpm: 80, decade: 'Baladas y Románticos' }
         ];
 
         // Sincronizar canciones en tiempo real desde Firebase
@@ -223,7 +242,6 @@
                     <div id="${catId}" class="categoria-content" style="display: ${estadoInicial};">
                 `;
 
-                // Recorremos la lista global guardando el índice real para el borrado exacto
                 tracks.forEach((track, globalIndex) => {
                     if (track.decade === estilo) {
                         htmlFinal += generarHtmlCancion(track, globalIndex);
@@ -245,8 +263,9 @@
                         <span class="song-meta">⚡ ${track.bpm || '?'} BPM</span>
                     </div>
                     <div class="load-buttons">
-                        <button class="btn-a" onclick="loadVideo('A', '${track.id}')">A</button>
-                        <button class="btn-b" onclick="loadVideo('B', '${track.id}')">B</button>
+                        <button class="btn-preview" onclick="previewSong('${track.id}')" title="Probar canción (Pre-escucha)">▶️ Test</button>
+                        <button class="btn-a" onclick="loadVideo('A', '${track.id}')" title="Cargar en Deck A">A</button>
+                        <button class="btn-b" onclick="loadVideo('B', '${track.id}')" title="Cargar en Deck B">B</button>
                         <button onclick="eliminarCancion(${globalIndex})" style="background:#cc0000; color:white; border:none; padding:6px 8px; border-radius:4px; cursor:pointer;" title="Borrar canción">🗑️</button>
                     </div>
                 </div>
@@ -257,7 +276,7 @@
         function eliminarCancion(index) {
             if (confirm("¿Estás seguro de eliminar esta canción de la base de datos?")) {
                 tracks.splice(index, 1);
-                db.ref('tracks').set(tracks); // Se actualiza en la nube al instante
+                db.ref('tracks').set(tracks);
             }
         }
 
@@ -292,7 +311,7 @@
             const videoId = extraerIDYouTube(url);
             if (!videoId) return alert("Enlace inválido.");
 
-            // SI EL NOMBRE ESTÁ VACÍO, TOMA LO QUE SE ESCRIBIó EN EL BUSCADOR
+            // SI EL NOMBRE ESTÁ VACÍO, USA LO ESCRITO EN EL BUSCADOR
             if (!nombre) {
                 nombre = busqueda ? busqueda : "Audio Nuevo";
             }
@@ -306,6 +325,7 @@
                             <span class="song-meta">Temporal</span>
                         </div>
                         <div class="load-buttons">
+                            <button class="btn-preview" onclick="previewSong('${videoId}')">▶️ Test</button>
                             <button class="btn-a" onclick="loadVideo('A', '${videoId}')">A</button>
                             <button class="btn-b" onclick="loadVideo('B', '${videoId}')">B</button>
                         </div>
@@ -313,7 +333,7 @@
                 ` + listaPedidos.innerHTML;
             } else {
                 tracks.push({ id: videoId, artist: nombre, bpm: '?', decade: catSeleccionada });
-                db.ref('tracks').set(tracks); // Se guarda en Firebase y se sincroniza
+                db.ref('tracks').set(tracks);
             }
 
             document.getElementById('inputUrl').value = '';
@@ -333,14 +353,27 @@
                 playerVars: { 'controls': 0, 'disablekb': 1, 'rel': 0 },
                 events: { 'onReady': onPlayerReady, 'onStateChange': (e) => onStateChange(e, 'B') }
             });
+            playerPreview = new YT.Player('playerPreview', {
+                height: '100', width: '100',
+                videoId: tracks.length > 2 ? tracks[2].id : 'xFrGuyw1V8s',
+                playerVars: { 'controls': 0, 'disablekb': 1, 'rel': 0 },
+                events: { 'onReady': onPlayerReady, 'onStateChange': (e) => onStateChange(e, 'Preview') }
+            });
         }
 
         function onPlayerReady() { updateVolumes(); }
 
         function onStateChange(event, deck) {
-            let deckElement = document.getElementById(deck === 'A' ? 'deckA' : 'deckB');
-            if (event.data === YT.PlayerState.PLAYING) deckElement.classList.add('spinning');
-            else deckElement.classList.remove('spinning');
+            let deckElement = document.getElementById(deck === 'Preview' ? 'deckPreview' : 'deck' + deck);
+            if (deckElement && event.data === YT.PlayerState.PLAYING) deckElement.classList.add('spinning');
+            else if (deckElement) deckElement.classList.remove('spinning');
+        }
+
+        function previewSong(videoId) {
+            if (playerPreview) {
+                playerPreview.loadVideoById(videoId);
+                playerPreview.playVideo();
+            }
         }
 
         function loadVideo(deck, videoId) {
@@ -352,9 +385,16 @@
         }
 
         function togglePlay(deck) {
-            let p = deck === 'A' ? playerA : playerB;
-            if (p.getPlayerState() === 1) p.pauseVideo();
-            else p.playVideo();
+            let p;
+            if (deck === 'A') p = playerA;
+            else if (deck === 'B') p = playerB;
+            else if (deck === 'Preview') p = playerPreview;
+
+            if (p && p.getPlayerState && p.getPlayerState() === 1) {
+                p.pauseVideo();
+            } else if (p && p.playVideo) {
+                p.playVideo();
+            }
         }
 
         function updateVolumes() {
@@ -362,6 +402,9 @@
             let f = document.getElementById('crossfader').value;
             playerA.setVolume(f <= 50 ? 100 : 100 - ((f - 50) * 2));
             playerB.setVolume(f >= 50 ? 100 : f * 2);
+            if (playerPreview && playerPreview.setVolume) {
+                playerPreview.setVolume(80); // Pre-escucha a volumen fijo agradable
+            }
         }
     </script>
 </body>

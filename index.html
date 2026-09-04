@@ -91,7 +91,7 @@
         
         input[type=range] { width: 250px; margin: 20px 0; cursor: pointer; accent-color: #00ffcc; }
 
-        /* Layout de las listas (Grid para ponerlas lado a lado en pantallas grandes) */
+        /* Layout de las listas */
         .playlists-container {
             display: flex;
             justify-content: center;
@@ -112,7 +112,7 @@
             border: 1px solid #333;
         }
 
-        .playlist.pedidos-box { border-color: #554400; }
+        .playlist.pedidos-box { border-color: #554400; background: #1a170d; }
         
         .tracklist-container {
             max-height: 400px;
@@ -145,13 +145,11 @@
         .load-buttons .btn-a:hover { background: #ff0055; }
         .load-buttons .btn-b:hover { background: #0088ff; }
 
-        /* Estilos del buscador de pedidos */
+        /* Estilos del buscador y agregar pedidos */
         .input-pedido-container {
             display: flex;
             gap: 10px;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px dashed #554400;
+            margin-bottom: 10px;
         }
         .input-pedido-container input {
             flex: 1;
@@ -167,13 +165,26 @@
             padding: 10px 15px;
         }
         .btn-pedido:hover { background: #e6b800; }
+        
+        /* Divisor entre buscar y agregar */
+        .divisor {
+            height: 1px;
+            background: #554400;
+            margin: 15px 0;
+        }
+        .etiqueta-pequena {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 5px;
+            display: block;
+        }
 
     </style>
 </head>
 <body>
 
-    <h1>📻 Radio Web: 100 Hits + Pedidos en Vivo</h1>
-    <p class="subtitle">Cabina de DJ Interactiva</p>
+    <h1>📻 Radio Web: Cabina Interactiva</h1>
+    <p class="subtitle">Mezcladora + Setlist + Pedidos en Vivo</p>
 
     <div class="dj-booth">
         <!-- DECK A -->
@@ -215,7 +226,7 @@
         
         <!-- LISTA PRINCIPAL -->
         <div class="playlist">
-            <h2>🎵 Setlist (100 Canciones)</h2>
+            <h2>🎵 Setlist Principal</h2>
             <div class="tracklist-container" id="tracklist">
                 <!-- Se inyecta con JS -->
             </div>
@@ -225,13 +236,24 @@
         <div class="playlist pedidos-box">
             <h2 class="title-pedidos">🎤 Pedidos del Público</h2>
             
+            <!-- PASO 1: Buscar en YouTube -->
+            <span class="etiqueta-pequena">Paso 1: Busca la canción en YouTube</span>
             <div class="input-pedido-container">
-                <input type="text" id="inputUrl" placeholder="Pega el enlace de YouTube aquí...">
-                <input type="text" id="inputNombre" placeholder="Nombre (Opcional)" style="flex: 0.5;">
-                <button class="btn-pedido" onclick="agregarPedido()">Añadir</button>
+                <input type="text" id="inputBuscar" placeholder="Ej: Dua Lipa Audio..." onkeypress="handleEnterSearch(event)">
+                <button class="btn-pedido" onclick="buscarEnYouTube()" style="background: #ff0000; color: white;">🔍 Buscar en YT</button>
             </div>
 
-            <div class="tracklist-container" id="tracklist-pedidos">
+            <div class="divisor"></div>
+
+            <!-- PASO 2: Pegar y Añadir -->
+            <span class="etiqueta-pequena">Paso 2: Pega el enlace aquí para añadirlo al Set</span>
+            <div class="input-pedido-container">
+                <input type="text" id="inputUrl" placeholder="Pega el enlace de YT...">
+                <input type="text" id="inputNombre" placeholder="Nombre" style="flex: 0.5;">
+                <button class="btn-pedido" onclick="agregarPedido()">➕ Añadir</button>
+            </div>
+
+            <div class="tracklist-container" id="tracklist-pedidos" style="margin-top: 15px;">
                 <!-- Los pedidos nuevos caerán aquí -->
             </div>
         </div>
@@ -243,23 +265,17 @@
         let playerA, playerB;
         let contadorPedidos = 1;
 
-        // Base de datos de 100 canciones (Mantenida igual)
+        // Base de datos de prueba (Aquí van tus 100 canciones)
         const tracks = [
-            // (He dejado una pequeña muestra aquí para el ejemplo del código, pero asume que están las 100 de tu mensaje anterior)
             { id: '3cQNkIrg-Tk', artist: 'Earth, Wind & Fire - September', bpm: 125, decade: '70s' },
             { id: '_Vj092UgKwQ', artist: 'Bee Gees - Stayin\' Alive', bpm: 104, decade: '70s' },
             { id: 'djV11Xbc914', artist: 'A-ha - Take On Me', bpm: 169, decade: '80s' },
             { id: 'HEXWRTEbj1I', artist: 'Haddaway - What Is Love', bpm: 124, decade: '90s' },
             { id: 'gGdGFtwPNsQ', artist: 'The Killers - Mr. Brightside', bpm: 148, decade: '00s' },
-            { id: 'ZbZSe6N_BXs', artist: 'Pharrell Williams - Happy', bpm: 160, decade: 'Actual' },
-            // Agrega aquí el resto de las 100 canciones de la versión anterior para no hacer este bloque gigante
-            { id: 'QRoWiTcO7dI', artist: 'ABBA - Dancing Queen', bpm: 100, decade: '70s' },
-            { id: 'Zi_XLOBDo_Y', artist: 'Michael Jackson - Billie Jean', bpm: 117, decade: '80s' },
-            { id: 'zWaymcVmJ-A', artist: 'Los del Río - Macarena', bpm: 103, decade: '90s' },
-            { id: 'PWgvGjAhvIw', artist: 'Outkast - Hey Ya!', bpm: 160, decade: '00s' }
+            { id: 'ZbZSe6N_BXs', artist: 'Pharrell Williams - Happy', bpm: 160, decade: 'Actual' }
         ];
 
-        // 1. ORDENAMOS Y LLENAMOS LA LISTA PRINCIPAL
+        // 1. LLENAMOS LA LISTA PRINCIPAL
         tracks.sort((a, b) => a.bpm - b.bpm);
         const tracklistDiv = document.getElementById('tracklist');
         tracks.forEach(track => {
@@ -277,9 +293,26 @@
             `;
         });
 
-        // 2. LÓGICA PARA EXTRAER EL ID DE YOUTUBE Y AÑADIR PEDIDOS
+        // 2. FUNCIÓN PARA BUSCAR EN YOUTUBE DIRECTAMENTE
+        function buscarEnYouTube() {
+            const query = document.getElementById('inputBuscar').value.trim();
+            if (query) {
+                // Abre YouTube en una nueva pestaña con los resultados de búsqueda
+                const ytSearchUrl = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(query);
+                window.open(ytSearchUrl, '_blank');
+            } else {
+                alert("Escribe el nombre de una canción para buscar.");
+            }
+        }
+
+        function handleEnterSearch(event) {
+            if (event.key === 'Enter') {
+                buscarEnYouTube();
+            }
+        }
+
+        // 3. LÓGICA PARA AÑADIR PEDIDOS (Mantenida igual)
         function extraerIDYouTube(url) {
-            // Esta magia extrae el ID de 11 caracteres sin importar si el link es de móvil, PC o acortado
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
             const match = url.match(regExp);
             return (match && match[2].length === 11) ? match[2] : (url.length === 11 ? url : null);
@@ -289,28 +322,18 @@
             const url = document.getElementById('inputUrl').value.trim();
             let nombre = document.getElementById('inputNombre').value.trim();
             
-            if (!url) {
-                alert("Por favor pega un enlace de YouTube.");
-                return;
-            }
+            if (!url) return alert("Pega un enlace de YouTube.");
 
             const videoId = extraerIDYouTube(url);
-            
-            if (!videoId) {
-                alert("Enlace inválido. Asegúrate de pegar un enlace válido de YouTube.");
-                return;
-            }
-
+            if (!videoId) return alert("Enlace inválido.");
             if (!nombre) nombre = "Pedido " + contadorPedidos;
 
             const listaPedidos = document.getElementById('tracklist-pedidos');
-            
-            // Inyectamos el nuevo pedido arriba de todo en la lista de pedidos
             listaPedidos.innerHTML = `
                 <div class="song-item" style="background-color: #332b00;">
                     <div class="song-info">
                         <span class="song-title">${nombre}</span>
-                        <span class="song-meta">Pedido en Vivo (ID: ${videoId})</span>
+                        <span class="song-meta">ID: ${videoId}</span>
                     </div>
                     <div class="load-buttons">
                         <button class="btn-a" onclick="loadVideo('A', '${videoId}')">Deck A</button>
@@ -319,81 +342,51 @@
                 </div>
             ` + listaPedidos.innerHTML;
 
-            // Limpiamos los inputs
             document.getElementById('inputUrl').value = '';
             document.getElementById('inputNombre').value = '';
             contadorPedidos++;
         }
 
-        // 3. INICIALIZAMOS LA API DE YOUTUBE
+        // 4. API DE YOUTUBE Y REPRODUCTORES
         function onYouTubeIframeAPIReady() {
             playerA = new YT.Player('playerA', {
                 height: '300', width: '300',
                 videoId: tracks[0].id, 
                 playerVars: { 'controls': 0, 'disablekb': 1, 'rel': 0 },
-                events: { 
-                    'onReady': onPlayerReady,
-                    'onStateChange': (e) => onStateChange(e, 'A'),
-                    'onError': (e) => onPlayerError(e, 'A')
-                }
+                events: { 'onReady': onPlayerReady, 'onStateChange': (e) => onStateChange(e, 'A') }
             });
             playerB = new YT.Player('playerB', {
                 height: '300', width: '300',
                 videoId: tracks[1].id,
                 playerVars: { 'controls': 0, 'disablekb': 1, 'rel': 0 },
-                events: { 
-                    'onReady': onPlayerReady,
-                    'onStateChange': (e) => onStateChange(e, 'B'),
-                    'onError': (e) => onPlayerError(e, 'B')
-                }
+                events: { 'onReady': onPlayerReady, 'onStateChange': (e) => onStateChange(e, 'B') }
             });
         }
 
-        function onPlayerReady(event) {
-            updateVolumes();
-        }
+        function onPlayerReady() { updateVolumes(); }
 
-        // 4. ANIMACIÓN DEL VINILO Y CONTROLES
         function onStateChange(event, deck) {
             let deckElement = document.getElementById(deck === 'A' ? 'deckA' : 'deckB');
-            if (event.data === YT.PlayerState.PLAYING) {
-                deckElement.classList.add('spinning');
-            } else {
-                deckElement.classList.remove('spinning');
-            }
-        }
-
-        function onPlayerError(event, deck) {
-            if (event.data === 150 || event.data === 101) {
-                alert(`⚠️ ALERTA DJ: El video cargado en el DECK ${deck} está bloqueado por su discográfica para reproducirse fuera de YouTube. \n\n¡Carga la siguiente canción de tu lista rápido!`);
-            }
+            if (event.data === YT.PlayerState.PLAYING) deckElement.classList.add('spinning');
+            else deckElement.classList.remove('spinning');
         }
 
         function loadVideo(deck, videoId) {
-            if (deck === 'A') {
-                playerA.cueVideoById(videoId);
-            } else {
-                playerB.cueVideoById(videoId);
-            }
+            if (deck === 'A') playerA.cueVideoById(videoId);
+            else playerB.cueVideoById(videoId);
         }
 
         function togglePlay(deck) {
-            if (deck === 'A') {
-                let stateA = playerA.getPlayerState();
-                if (stateA === 1) { playerA.pauseVideo(); } else { playerA.playVideo(); }
-            } else {
-                let stateB = playerB.getPlayerState();
-                if (stateB === 1) { playerB.pauseVideo(); } else { playerB.playVideo(); }
-            }
+            let p = deck === 'A' ? playerA : playerB;
+            if (p.getPlayerState() === 1) p.pauseVideo();
+            else p.playVideo();
         }
 
         function updateVolumes() {
-            if (!playerA || !playerA.setVolume || !playerB || !playerB.setVolume) return;
-            let faderValue = document.getElementById('crossfader').value;
-            let volA = faderValue <= 50 ? 100 : 100 - ((faderValue - 50) * 2);
-            let volB = faderValue >= 50 ? 100 : faderValue * 2;
-            playerA.setVolume(volA);
-            playerB.setVolume(volB);
+            if (!playerA || !playerB) return;
+            let f = document.getElementById('crossfader').value;
+            playerA.setVolume(f <= 50 ? 100 : 100 - ((f - 50) * 2));
+            playerB.setVolume(f >= 50 ? 100 : f * 2);
         }
     </script>
 </body>

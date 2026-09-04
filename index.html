@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Alegria - Mezcladora Web Profesional (Firebase + Pre-escucha)</title>
+    <title>Radio Alegria - Mezcladora Web Profesional (Firebase + Selección Múltiple)</title>
     <style>
         body {
             background-color: #121212; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -95,7 +95,7 @@
 
     <div class="header-title">
         <h1>📻 Radio Web: Cabina Profesional DJ</h1>
-        <p class="subtitle">Cloud Database + Pre-escucha (Preview) + Borrado Activo</p>
+        <p class="subtitle">Cloud Database + Selección Múltiple para Borrado en Masa</p>
     </div>
 
     <!-- CABINA STICKY -->
@@ -152,7 +152,10 @@
     <div class="playlists-container">
         <!-- LISTA PRINCIPAL -->
         <div class="playlist">
-            <h2 style="font-size: 1.4em;">🎵 Setlist Principal (Cloud)</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 style="font-size: 1.4em; margin: 0;">🎵 Setlist Principal (Cloud)</h2>
+                <button onclick="eliminarSeleccionados()" style="background: #cc0000; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px;">🗑️ Borrar Seleccionados</button>
+            </div>
             <div id="tracklist">Conectando con la nube...</div>
         </div>
 
@@ -258,7 +261,8 @@
         function generarHtmlCancion(track, globalIndex) {
             return `
                 <div class="song-item" data-id="${track.id}">
-                    <div class="song-info">
+                    <input type="checkbox" class="track-checkbox" value="${globalIndex}" style="margin-right: 10px; cursor: pointer; transform: scale(1.2);">
+                    <div class="song-info" style="flex: 1;">
                         <span class="song-title">${track.artist}</span>
                         <span class="song-meta">⚡ ${track.bpm || '?'} BPM</span>
                     </div>
@@ -272,10 +276,28 @@
             `;
         }
 
-        // FUNCIÓN PARA ELIMINAR CANCIÓN DE FIREBASE
+        // ELIMINAR UNA SOLA CANCIÓN
         function eliminarCancion(index) {
             if (confirm("¿Estás seguro de eliminar esta canción de la base de datos?")) {
                 tracks.splice(index, 1);
+                db.ref('tracks').set(tracks);
+            }
+        }
+
+        // ELIMINAR EN MASA (SELECCIÓN MÚLTIPLE)
+        function eliminarSeleccionados() {
+            const checkboxes = document.querySelectorAll('.track-checkbox:checked');
+            if (checkboxes.length === 0) {
+                alert("No hay canciones seleccionadas para borrar.");
+                return;
+            }
+
+            if (confirm(`¿Estás seguro de eliminar las ${checkboxes.length} canciones seleccionadas?`)) {
+                const indicesAEliminar = Array.from(checkboxes).map(cb => parseInt(cb.value));
+                
+                // Filtramos el array global eliminando los índices seleccionados
+                tracks = tracks.update ? tracks : tracks.filter((_, index) => !indicesAEliminar.includes(index));
+                
                 db.ref('tracks').set(tracks);
             }
         }
@@ -311,7 +333,7 @@
             const videoId = extraerIDYouTube(url);
             if (!videoId) return alert("Enlace inválido.");
 
-            // SI EL NOMBRE ESTÁ VACÍO, USA LO ESCRITO EN EL BUSCADOR
+            // SI EL NOMBRE ESTÁ VACÍO, TOMA LO QUE SE ESCRIBIÓ EN EL BUSCADOR
             if (!nombre) {
                 nombre = busqueda ? busqueda : "Audio Nuevo";
             }
@@ -403,7 +425,7 @@
             playerA.setVolume(f <= 50 ? 100 : 100 - ((f - 50) * 2));
             playerB.setVolume(f >= 50 ? 100 : f * 2);
             if (playerPreview && playerPreview.setVolume) {
-                playerPreview.setVolume(80); // Pre-escucha a volumen fijo agradable
+                playerPreview.setVolume(80);
             }
         }
     </script>

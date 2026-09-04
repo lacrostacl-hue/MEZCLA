@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Alegria - Mezcladora Web Profesional (Firebase + Selección Múltiple)</title>
+    <title>Radio Alegria - Mezcladora Web Profesional (Firebase + CUE)</title>
     <style>
         body {
             background-color: #121212; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -22,31 +22,33 @@
         }
         
         .dj-booth { display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; }
-        .deck-container { background: #1e1e1e; padding: 10px 15px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); width: 200px; }
+        .deck-container { background: #1e1e1e; padding: 10px 12px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); width: 210px; }
         .deck-container.preview-box { width: 140px; background: #1a170d; border: 1px solid #ffcc00; }
         
-        h2 { margin: 0 0 10px 0; color: #fff; font-size: 1em; }
+        h2 { margin: 0 0 8px 0; color: #fff; font-size: 1em; }
         .title-pedidos { color: #ffcc00; text-shadow: 0 0 10px rgba(255, 204, 0, 0.5); font-size: 1.4em;}
 
         .deck {
-            background: #000; border: 8px solid #333; border-radius: 50%; width: 130px; height: 130px;
+            background: #000; border: 8px solid #333; border-radius: 50%; width: 120px; height: 120px;
             position: relative; box-shadow: 0 0 15px rgba(0,0,0,0.9), inset 0 0 15px rgba(255,255,255,0.1);
             overflow: hidden; display: flex; justify-content: center; align-items: center; margin: 0 auto;
             transition: transform 0.1s linear;
         }
-        .deck.small-deck { width: 90px; height: 90px; border-width: 5px; }
+        .deck.small-deck { width: 80px; height: 80px; border-width: 4px; }
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
         .spinning { animation: spin 3s linear infinite; }
 
-        .video-container { width: 90px; height: 90px; border-radius: 50%; overflow: hidden; pointer-events: none; }
-        .video-container.small-video { width: 60px; height: 60px; }
+        .video-container { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; pointer-events: none; }
+        .video-container.small-video { width: 50px; height: 50px; }
 
-        .controls { margin-top: 10px; }
-        .controls button { background: #00ffcc; color: #000; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 11px; transition: 0.2s; }
-        .controls button:hover { background: #00cca3; transform: scale(1.05); }
+        .controls { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+        .btn-row { display: flex; gap: 4px; justify-content: center; }
+        
+        button.dj-btn { border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; transition: 0.2s; }
+        button.dj-btn:hover { transform: scale(1.05); }
 
-        .mixer-controls { display: flex; flex-direction: column; align-items: center; background: #2a2a2a; padding: 15px; border-radius: 12px; border: 2px solid #444; width: 140px; }
+        .mixer-controls { display: flex; flex-direction: column; align-items: center; background: #2a2a2a; padding: 15px; border-radius: 12px; border: 2px solid #444; width: 130px; }
         input[type=range] { width: 110px; margin: 10px 0; cursor: pointer; accent-color: #00ffcc; }
 
         /* LISTAS Y ACORDEONES */
@@ -95,7 +97,7 @@
 
     <div class="header-title">
         <h1>📻 Radio Web: Cabina Profesional DJ</h1>
-        <p class="subtitle">Cloud Database + Selección Múltiple para Borrado en Masa</p>
+        <p class="subtitle">Cloud Database + Sistema CUE Pro + Selección Múltiple</p>
     </div>
 
     <!-- CABINA STICKY -->
@@ -110,7 +112,12 @@
                     </div>
                 </div>
                 <div class="controls">
-                    <button onclick="togglePlay('A')" style="background: #ff0055; color: white;">▶️ Play / ⏸️ Pause</button>
+                    <button class="dj-btn" onclick="togglePlay('A')" style="background: #ff0055; color: white; width: 100%;">▶️ Play / ⏸️ Pause</button>
+                    <div class="btn-row">
+                        <button class="dj-btn" onclick="setCue('A')" style="background: #444; color: #fff; flex: 1;">SET CUE</button>
+                        <button class="dj-btn" onclick="jumpCue('A')" style="background: #ffaa00; color: #000; flex: 1;">CUE</button>
+                    </div>
+                    <div id="cueDisplayA" style="font-size: 9px; color: #aaa;">Cue: 0:00</div>
                 </div>
             </div>
 
@@ -123,7 +130,7 @@
                     </div>
                 </div>
                 <div class="controls">
-                    <button onclick="togglePlay('Preview')" style="background: #ffcc00; color: #000;">▶️ Play / ⏸️ Pause</button>
+                    <button class="dj-btn" onclick="togglePlay('Preview')" style="background: #ffcc00; color: #000; width: 100%;">▶️ Play / ⏸️</button>
                 </div>
             </div>
 
@@ -143,7 +150,12 @@
                     </div>
                 </div>
                 <div class="controls">
-                    <button onclick="togglePlay('B')" style="background: #0088ff; color: white;">▶️ Play / ⏸️ Pause</button>
+                    <button class="dj-btn" onclick="togglePlay('B')" style="background: #0088ff; color: white; width: 100%;">▶️ Play / ⏸️ Pause</button>
+                    <div class="btn-row">
+                        <button class="dj-btn" onclick="setCue('B')" style="background: #444; color: #fff; flex: 1;">SET CUE</button>
+                        <button class="dj-btn" onclick="jumpCue('B')" style="background: #ffaa00; color: #000; flex: 1;">CUE</button>
+                    </div>
+                    <div id="cueDisplayB" style="font-size: 9px; color: #aaa;">Cue: 0:00</div>
                 </div>
             </div>
         </div>
@@ -196,8 +208,11 @@
 
         let playerA, playerB, playerPreview;
         let tracks = [];
+        
+        // Variables para almacenar los puntos CUE de Deck A y Deck B
+        let cuePointA = 0;
+        let cuePointB = 0;
 
-        // Base de datos de respaldo
         const tracksIniciales = [
             { id: 'Gs069dndIYk', artist: 'Earth, Wind & Fire - September', bpm: 125, decade: '70s Disco' },
             { id: 'I_izvAbhExY', artist: 'Bee Gees - Stayin\' Alive', bpm: 104, decade: '70s Disco' },
@@ -211,7 +226,6 @@
             { id: 'h9tXY5j3NY8', artist: 'Chayanne - Dejaría Todo', bpm: 80, decade: 'Baladas y Románticos' }
         ];
 
-        // Sincronizar canciones en tiempo real desde Firebase
         db.ref('tracks').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -276,7 +290,38 @@
             `;
         }
 
-        // ELIMINAR UNA SOLA CANCIÓN
+        // =========================================================
+        // FUNCIONES CUE (PUNTOS DE MARCA)
+        // =========================================================
+        function setCue(deck) {
+            let player = deck === 'A' ? playerA : playerB;
+            if (player && player.getCurrentTime) {
+                let time = player.getCurrentTime();
+                if (deck === 'A') {
+                    cuePointA = time;
+                    document.getElementById('cueDisplayA').innerText = `Cue: ${formatTime(time)}`;
+                } else {
+                    cuePointB = time;
+                    document.getElementById('cueDisplayB').innerText = `Cue: ${formatTime(time)}`;
+                }
+            }
+        }
+
+        function jumpCue(deck) {
+            let player = deck === 'A' ? playerA : playerB;
+            let time = deck === 'A' ? cuePointA : cuePointB;
+            if (player && player.seekTo) {
+                player.seekTo(time, true);
+                player.pauseVideo();
+            }
+        }
+
+        function formatTime(seconds) {
+            let mins = Math.floor(seconds / 60);
+            let secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
         function eliminarCancion(index) {
             if (confirm("¿Estás seguro de eliminar esta canción de la base de datos?")) {
                 tracks.splice(index, 1);
@@ -284,20 +329,13 @@
             }
         }
 
-        // ELIMINAR EN MASA (SELECCIÓN MÚLTIPLE)
         function eliminarSeleccionados() {
             const checkboxes = document.querySelectorAll('.track-checkbox:checked');
-            if (checkboxes.length === 0) {
-                alert("No hay canciones seleccionadas para borrar.");
-                return;
-            }
+            if (checkboxes.length === 0) return alert("No hay canciones seleccionadas.");
 
-            if (confirm(`¿Estás seguro de eliminar las ${checkboxes.length} canciones seleccionadas?`)) {
+            if (confirm(`¿Eliminar las ${checkboxes.length} canciones seleccionadas?`)) {
                 const indicesAEliminar = Array.from(checkboxes).map(cb => parseInt(cb.value));
-                
-                // Filtramos el array global eliminando los índices seleccionados
-                tracks = tracks.update ? tracks : tracks.filter((_, index) => !indicesAEliminar.includes(index));
-                
+                tracks = tracks.filter((_, index) => !indicesAEliminar.includes(index));
                 db.ref('tracks').set(tracks);
             }
         }
@@ -333,7 +371,6 @@
             const videoId = extraerIDYouTube(url);
             if (!videoId) return alert("Enlace inválido.");
 
-            // SI EL NOMBRE ESTÁ VACÍO, TOMA LO QUE SE ESCRIBIÓ EN EL BUSCADOR
             if (!nombre) {
                 nombre = busqueda ? busqueda : "Audio Nuevo";
             }
@@ -342,7 +379,8 @@
                 const listaPedidos = document.getElementById('tracklist-pedidos');
                 listaPedidos.innerHTML = `
                     <div class="song-item" style="background-color: #332b00; border-color: #554400;">
-                        <div class="song-info">
+                        <input type="checkbox" style="margin-right: 10px;">
+                        <div class="song-info" style="flex:1;">
                             <span class="song-title">${nombre}</span>
                             <span class="song-meta">Temporal</span>
                         </div>
@@ -399,8 +437,15 @@
         }
 
         function loadVideo(deck, videoId) {
-            if (deck === 'A') playerA.cueVideoById(videoId);
-            else playerB.cueVideoById(videoId);
+            if (deck === 'A') {
+                playerA.cueVideoById(videoId);
+                cuePointA = 0; // Reiniciar cue al cambiar de video
+                document.getElementById('cueDisplayA').innerText = `Cue: 0:00`;
+            } else {
+                playerB.cueVideoById(videoId);
+                cuePointB = 0;
+                document.getElementById('cueDisplayB').innerText = `Cue: 0:00`;
+            }
 
             const etiquetasCancion = document.querySelectorAll(`.song-item[data-id="${videoId}"]`);
             etiquetasCancion.forEach(el => { el.classList.add('played'); });

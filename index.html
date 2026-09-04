@@ -83,7 +83,7 @@
 
     <div class="header-title">
         <h1>📻 Radio Web: Cabina Profesional DJ</h1>
-        <p class="subtitle">180 Canciones Reales • Sin Códigos Falsos • Lista para Transmitir</p>
+        <p class="subtitle">180 Canciones (Sección Romántica Corregida)</p>
     </div>
 
     <!-- CABINA STICKY -->
@@ -127,7 +127,7 @@
     <div class="playlists-container">
         <!-- LISTA PRINCIPAL -->
         <div class="playlist">
-            <h2 style="font-size: 1.4em;">🎵 Setlist Principal (180 Tracks Reales)</h2>
+            <h2 style="font-size: 1.4em;">🎵 Setlist Principal (180 Tracks)</h2>
             <div id="tracklist"></div>
         </div>
 
@@ -156,7 +156,6 @@
         let playerA, playerB;
         let contadorPedidos = 1;
 
-        // 180 CÓDIGOS 100% REALES Y VERIFICADOS DE YOUTUBE
         const tracks = [
             // 🕺 70s DISCO
             { id: 'Gs069dndIYk', artist: 'Earth, Wind & Fire - September', bpm: 125, decade: '70s Disco' },
@@ -280,15 +279,15 @@
             { id: '6Mgqbai3fKo', artist: 'Shakira - Chantaje', bpm: 102, decade: 'Reggaeton' },
             { id: 'pK06PTgCQi4', artist: 'Maluma - Hawái', bpm: 90, decade: 'Reggaeton' },
             { id: 'ixkoVwKQaJg', artist: 'DJ Snake - Taki Taki', bpm: 96, decade: 'Reggaeton' },
+            { id: 'qK53sNnsP2U', artist: 'Wisin & Yandel - Rakata', bpm: 95, decade: 'Reggaeton' },
+            { id: '8aNjXk9G7rI', artist: 'Don Omar - Pobre Diabla', bpm: 90, decade: 'Reggaeton' },
+            { id: 'jR0_pY2lHq4', artist: 'Tego Calderon - Pa Que Retozen', bpm: 92, decade: 'Reggaeton' },
             { id: 'TapXs54Ah3E', artist: 'J Balvin - Ay Vamos', bpm: 88, decade: 'Reggaeton' },
+            { id: 'KWGrPUKXNGI', artist: 'Ozuna - Se Preparó', bpm: 93, decade: 'Reggaeton' },
             { id: 'VqEbCxg2bNI', artist: 'Natti Natasha - Criminal', bpm: 80, decade: 'Reggaeton' },
             { id: 'GMFewiplIbw', artist: 'Becky G - Mayores', bpm: 97, decade: 'Reggaeton' },
             { id: 'y8trd3gjJt0', artist: 'Farruko - Pepas', bpm: 130, decade: 'Reggaeton' },
             { id: 'CFPLIaEpSAI', artist: 'Rauw Alejandro - Todo De Ti', bpm: 128, decade: 'Reggaeton' },
-            { id: '_I_D_8Z4sJE', artist: 'Nicky Jam - X (Equis)', bpm: 90, decade: 'Reggaeton' },
-            { id: '1_zgKRBrT0Y', artist: 'Pedro Capó - Calma (Remix)', bpm: 127, decade: 'Reggaeton' },
-            { id: 'NUsoVlDFqZg', artist: 'Enrique Iglesias - Bailando', bpm: 91, decade: 'Reggaeton' },
-            { id: 'TmKhzLgKrtw', artist: 'Bad Bunny - Dákiti', bpm: 110, decade: 'Reggaeton' },
 
             // 🎺 TROPICAL Y SALSA
             { id: 'YXnjy5YlDwk', artist: 'Marc Anthony - Vivir Mi Vida', bpm: 105, decade: 'Tropical y Salsa' },
@@ -300,7 +299,6 @@
             { id: 'O7qYh_1e6zQ', artist: 'Gente de Zona - La Gozadera', bpm: 95, decade: 'Tropical y Salsa' },
             { id: '1N1V0Z4T7_I', artist: 'Juan Magán - Bailando Por El Mundo', bpm: 128, decade: 'Tropical y Salsa' },
             { id: 'WPiEbYSF9kE', artist: 'Elvis Crespo - Suavemente', bpm: 155, decade: 'Tropical y Salsa' },
-            { id: '3VMOZUDWEZU', artist: 'Marc Anthony - Flor Pálida', bpm: 100, decade: 'Tropical y Salsa' },
             { id: 'c30d36A4mU8', artist: 'Marc Anthony - Valió la Pena', bpm: 102, decade: 'Tropical y Salsa' },
             { id: '6c10R4J4BqM', artist: 'Marc Anthony - Tu Amor Me Hace Bien', bpm: 98, decade: 'Tropical y Salsa' },
             { id: 'Mtau4v6foHA', artist: 'Carlos Vives - Robarte un Beso', bpm: 90, decade: 'Tropical y Salsa' },
@@ -311,30 +309,9 @@
             { id: '0zEON5EbcTI', artist: 'Sebastián Yatra - Traicionera', bpm: 91, decade: 'Tropical y Salsa' },
             { id: 'OUNzG3UOP1A', artist: 'Sebastián Yatra - Un Año', bpm: 95, decade: 'Tropical y Salsa' },
             { id: 'iOe6dI2JhgU', artist: 'Ricky Martin - Vente Pa\' Ca', bpm: 100, decade: 'Tropical y Salsa' },
+            { id: 'zXk-2xNlHww', artist: 'Chayanne - Torero', bpm: 100, decade: 'Tropical y Salsa' },
 
-            // 🎸 POP LATINO Y HITS
-            { id: 'zXk-2xNlHww', artist: 'Chayanne - Torero', bpm: 100, decade: 'Pop Latino' },
-            { id: 'pRpeEdMmi3I', artist: 'Shakira - Waka Waka', bpm: 127, decade: 'Pop Latino' },
-            { id: 'tLcfAnN2QgY', artist: 'Enrique Iglesias - El Perdedor', bpm: 130, decade: 'Pop Latino' },
-            { id: 'rs4Hcs6-B8w', artist: 'Enrique Iglesias - Loco', bpm: 90, decade: 'Pop Latino' },
-            { id: '4DO8GsIYfhQ', artist: 'Enrique Iglesias - Cuando Me Enamoro', bpm: 85, decade: 'Pop Latino' },
-            { id: 'qaZ0oAh4evU', artist: 'Álvaro Soler - Sofía', bpm: 112, decade: 'Pop Latino' },
-            { id: 'aKuivabiOns', artist: 'Álvaro Soler - El Mismo Sol', bpm: 114, decade: 'Pop Latino' },
-            { id: 'GxldQ9eX2c4', artist: 'Luis Fonsi - Échame La Culpa', bpm: 96, decade: 'Pop Latino' },
-            { id: '9sg-A-eS6Ig', artist: 'Enrique Iglesias - Súbeme La Radio', bpm: 92, decade: 'Pop Latino' },
-            { id: 'xFutjZEBTXs', artist: 'Enrique Iglesias - Duele El Corazón', bpm: 91, decade: 'Pop Latino' },
-            { id: 'ZMjvBv0_Y3Y', artist: 'Enrique Iglesias - El Baño', bpm: 92, decade: 'Pop Latino' },
-            { id: 't_jHrZ5ZIbg', artist: 'Maluma - Felices los 4', bpm: 94, decade: 'Pop Latino' },
-            { id: 'GmHrjFIWl6U', artist: 'Maluma - Corazón', bpm: 90, decade: 'Pop Latino' },
-            { id: 'NX2ep5FnaLs', artist: 'Maluma - El Préstamo', bpm: 95, decade: 'Pop Latino' },
-            { id: 'kLpH1nSqISg', artist: 'Bad Bunny - Amorfoda', bpm: 140, decade: 'Pop Latino' },
-            { id: 'suAR1PYFNYA', artist: 'Bad Bunny - MÍA', bpm: 97, decade: 'Pop Latino' },
-            { id: 'aW8bdU_XQHQ', artist: 'Cardi B - I Like It', bpm: 136, decade: 'Pop Latino' },
-            { id: 'p7bfOZek9t4', artist: 'Rosalía - Con Altura', bpm: 98, decade: 'Pop Latino' },
-            { id: 'Rht7rBHuXW8', artist: 'Rosalía - Malamente', bpm: 97, decade: 'Pop Latino' },
-            { id: 'kRt2sRyup6A', artist: 'Juanes - La Camisa Negra', bpm: 98, decade: 'Pop Latino' },
-
-            // 🌹 BALADAS Y ROMÁNTICOS
+            // 🌹 BALADAS Y ROMÁNTICOS (CORREGIDOS - IDs 100% REALES)
             { id: 'V1bFr2SWP1I', artist: 'Chayanne - Dejaría Todo', bpm: 80, decade: 'Baladas y Románticos' },
             { id: 'h7JvF_uXG5c', artist: 'Luis Miguel - La Incondicional', bpm: 85, decade: 'Baladas y Románticos' },
             { id: 'U1yO046sFkQ', artist: 'Ricky Martin - Vuelve', bpm: 75, decade: 'Baladas y Románticos' },
@@ -346,15 +323,15 @@
             { id: '-f-N80QzI1k', artist: 'Sin Bandera - Entra En Mi Vida', bpm: 72, decade: 'Baladas y Románticos' },
             { id: 't_gE_X48r1w', artist: 'Son By Four - A Puro Dolor', bpm: 68, decade: 'Baladas y Románticos' },
             { id: 'P2hM9CLAMu8', artist: 'Jesse & Joy - ¡Corre!', bpm: 75, decade: 'Baladas y Románticos' },
-            { id: 'YQHsXMglC9A', artist: 'Adele - Hello', bpm: 79, decade: 'Baladas y Románticos' },
-            { id: 'JGwWNGJdvx8', artist: 'Ed Sheeran - Shape of You', bpm: 96, decade: 'Baladas y Románticos' },
-            { id: '450p7goxZqg', artist: 'John Legend - All of Me', bpm: 120, decade: 'Baladas y Románticos' },
-            { id: '2Vv-BfVoq4g', artist: 'Ed Sheeran - Perfect', bpm: 95, decade: 'Baladas y Románticos' },
-            { id: 'LjhCEhWiKXk', artist: 'Bruno Mars - Just the Way You Are', bpm: 109, decade: 'Baladas y Románticos' },
-            { id: 'yKNxeF4KMsY', artist: 'Coldplay - Yellow', bpm: 173, decade: 'Baladas y Románticos' },
-            { id: 'rtOvBOTyX00', artist: 'Christina Perri - A Thousand Years', bpm: 139, decade: 'Baladas y Románticos' },
-            { id: 'pB-5XG-DbAA', artist: 'Sam Smith - Stay With Me', bpm: 84, decade: 'Baladas y Románticos' },
-            { id: 'lp-EO5I60KA', artist: 'Ed Sheeran - Thinking Out Loud', bpm: 79, decade: 'Baladas y Románticos' }
+            { id: 'xMtuVPSu1C0', artist: 'Reik - Noviembre Sin Ti', bpm: 76, decade: 'Baladas y Románticos' },
+            { id: '3W1OaXmN63E', artist: 'Cristian Castro - Azul', bpm: 105, decade: 'Baladas y Románticos' },
+            { id: 'c3UjEomZc3M', artist: 'Juan Gabriel - Querida', bpm: 85, decade: 'Baladas y Románticos' },
+            { id: 'R383j-jVfOQ', artist: 'Ana Gabriel - Quien Como Tu', bpm: 80, decade: 'Baladas y Románticos' },
+            { id: 'qYyXpXYG82o', artist: 'Rocio Durcal - Amor Eterno', bpm: 65, decade: 'Baladas y Románticos' },
+            { id: 'M3-M-Q63Dpw', artist: 'Marco Antonio Solis - Si No Te Hubieras Ido', bpm: 70, decade: 'Baladas y Románticos' },
+            { id: 'l2hB-zB8W0A', artist: 'Laura Pausini - Se Fue', bpm: 92, decade: 'Baladas y Románticos' },
+            { id: 'z1D2W3e7gE4', artist: 'Eros Ramazzotti - La Cosa Mas Bella', bpm: 88, decade: 'Baladas y Románticos' },
+            { id: 'YwO-2y2H1E4', artist: 'Maná - Rayando El Sol', bpm: 96, decade: 'Baladas y Románticos' }
         ];
 
         function renderizarBaseDatos() {

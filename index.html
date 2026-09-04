@@ -11,57 +11,55 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
             margin: 0;
-            padding: 0 0 50px 0; /* Espacio extra al final */
+            padding: 0 0 50px 0; 
         }
         
-        .header-title {
-            padding: 20px;
-        }
-        .header-title h1 { margin-bottom: 5px; color: #00ffcc; text-shadow: 0 0 15px #00ffcc; margin-top:0; }
-        .header-title p.subtitle { color: #aaa; margin-bottom: 10px; font-size: 1.1em; }
+        .header-title { padding: 10px; }
+        .header-title h1 { margin-bottom: 0; color: #00ffcc; text-shadow: 0 0 15px #00ffcc; font-size: 1.6em; margin-top:0; }
+        .header-title p.subtitle { color: #aaa; margin-bottom: 5px; font-size: 0.9em; }
 
         /* ==========================================================
-           LA MAGIA: CABINA FIJA (STICKY) QUE NO DESAPARECE AL BAJAR
+           CABINA FIJA REDUCIDA (COMPACTA)
            ========================================================== */
         .cabina-sticky {
             position: sticky;
             top: 0;
-            background-color: #121212; /* Mismo fondo para camuflarse */
-            z-index: 1000; /* Asegura que flote sobre las listas */
-            padding: 15px 0;
+            background-color: #121212; 
+            z-index: 1000; 
+            padding: 10px 0;
             border-bottom: 2px solid #333;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.9); /* Sombra para resaltar que flota */
-            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.8); 
+            margin-bottom: 20px;
         }
         
         .dj-booth {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 40px;
+            gap: 15px; /* Menos espacio entre componentes */
             flex-wrap: wrap;
         }
 
         .deck-container {
             background: #1e1e1e;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            width: 320px;
+            padding: 10px 15px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            width: 220px; /* Más delgado */
         }
 
-        h2 { margin-top: 0; color: #fff; }
-        .title-pedidos { color: #ffcc00; text-shadow: 0 0 10px rgba(255, 204, 0, 0.5); }
+        h2 { margin: 0 0 10px 0; color: #fff; font-size: 1.1em; }
+        .title-pedidos { color: #ffcc00; text-shadow: 0 0 10px rgba(255, 204, 0, 0.5); font-size: 1.4em;}
 
-        /* Diseño del Vinilo */
+        /* Vinilos más pequeños */
         .deck {
             background: #000;
-            border: 12px solid #333;
+            border: 8px solid #333;
             border-radius: 50%;
-            width: 280px;
-            height: 280px;
+            width: 150px; /* Reducido */
+            height: 150px;
             position: relative;
-            box-shadow: 0 0 20px rgba(0,0,0,0.9), inset 0 0 20px rgba(255,255,255,0.1);
+            box-shadow: 0 0 15px rgba(0,0,0,0.9), inset 0 0 15px rgba(255,255,255,0.1);
             overflow: hidden;
             display: flex;
             justify-content: center;
@@ -74,121 +72,96 @@
         .spinning { animation: spin 3s linear infinite; }
 
         .video-container {
-            width: 180px;
-            height: 180px;
+            width: 100px; /* Reducido */
+            height: 100px;
             border-radius: 50%;
             overflow: hidden;
             pointer-events: none;
         }
 
-        .controls { margin-top: 20px; }
-        button {
-            background: #00ffcc;
-            color: #000;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
+        .controls { margin-top: 15px; }
+        .controls button {
+            background: #00ffcc; color: #000; border: none;
+            padding: 8px 15px; border-radius: 6px;
+            cursor: pointer; font-weight: bold; font-size: 12px;
             transition: 0.2s;
         }
-        button:hover { background: #00cca3; transform: scale(1.05); }
+        .controls button:hover { background: #00cca3; transform: scale(1.05); }
 
         .mixer-controls {
             display: flex;
             flex-direction: column;
             align-items: center;
             background: #2a2a2a;
-            padding: 30px 20px;
-            border-radius: 15px;
+            padding: 15px;
+            border-radius: 12px;
             border: 2px solid #444;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            width: 160px;
         }
         
-        input[type=range] { width: 250px; margin: 20px 0; cursor: pointer; accent-color: #00ffcc; }
+        input[type=range] { width: 130px; margin: 10px 0; cursor: pointer; accent-color: #00ffcc; }
 
-        /* Layout de las listas */
+        /* ==========================================================
+           LISTAS, ACORDEONES Y COLORES DE "TOCADA"
+           ========================================================== */
         .playlists-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            flex-wrap: wrap;
-            align-items: flex-start;
-            padding: 0 20px;
+            display: flex; justify-content: center; gap: 20px;
+            max-width: 1200px; margin: 0 auto; flex-wrap: wrap;
+            align-items: flex-start; padding: 0 20px;
         }
 
         .playlist {
-            flex: 1;
-            min-width: 350px;
-            background: #1e1e1e;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: left;
+            flex: 1; min-width: 350px; background: #1e1e1e;
+            padding: 20px; border-radius: 10px; text-align: left;
             border: 1px solid #333;
         }
-
         .playlist.pedidos-box { border-color: #554400; background: #1a170d; }
         
-        /* ==========================================================
-           ESTILOS PARA LOS BOTONES DESPLEGABLES (ACORDEÓN)
-           ========================================================== */
         .categoria-btn {
-            background-color: #00ffcc;
-            color: #000;
-            padding: 12px 15px;
-            margin: 10px 0 0 0;
-            font-weight: bold;
-            border-radius: 5px;
-            text-transform: uppercase;
-            width: 100%;
-            text-align: left;
-            border: none;
-            cursor: pointer;
-            font-size: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: 0.2s;
+            background-color: #00ffcc; color: #000; padding: 12px 15px; margin: 10px 0 0 0;
+            font-weight: bold; border-radius: 5px; text-transform: uppercase;
+            width: 100%; text-align: left; border: none; cursor: pointer;
+            font-size: 14px; display: flex; justify-content: space-between;
+            align-items: center; transition: 0.2s;
         }
         .categoria-btn:hover { background-color: #00cca3; }
         
         .categoria-content {
-            display: none; /* Oculto por defecto */
-            background: #151515;
-            border: 1px solid #333;
-            border-top: none;
-            border-radius: 0 0 5px 5px;
-            padding: 5px;
+            display: none; background: #151515; border: 1px solid #333;
+            border-top: none; border-radius: 0 0 5px 5px; padding: 5px;
         }
 
-        /* Estilo de la canción */
         .song-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid #222;
-            transition: 0.2s;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px; border-bottom: 1px solid #222; transition: 0.2s;
         }
         .song-item:hover { background: #2a2a2a; }
         
+        /* 🔥 ESTILO PARA CANCIONES YA TOCADAS 🔥 */
+        .song-item.played {
+            background-color: #3d0a0a !important; 
+            border-left: 5px solid #ff3333;
+        }
+        .song-item.played .song-title { color: #ff8888; }
+        .song-item.played .song-meta { color: #ff6666; text-decoration: line-through; }
+
         .song-info { display: flex; flex-direction: column; }
         .song-title { font-size: 14px; font-weight: bold; }
         .song-meta { font-size: 11px; color: #00ffcc; margin-top: 4px; }
         .pedidos-box .song-meta { color: #ffcc00; }
         
-        .load-buttons button { margin-left: 8px; font-size: 12px; padding: 6px 12px; background: #444; color: white; }
+        .load-buttons button { margin-left: 8px; font-size: 11px; padding: 6px 12px; background: #444; color: white; border: none; border-radius:4px; cursor:pointer;}
         .load-buttons button:hover { background: #666; }
         .load-buttons .btn-a:hover { background: #ff0055; }
         .load-buttons .btn-b:hover { background: #0088ff; }
 
         /* Buscador y Pedidos */
-        .input-pedido-container { display: flex; gap: 10px; margin-bottom: 10px; }
-        .input-pedido-container input { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #444; background: #111; color: #fff; }
-        .btn-pedido { background: #ffcc00; color: #000; padding: 10px 15px; }
+        .input-pedido-container { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+        .input-pedido-container input, .input-pedido-container select { 
+            flex: 1; padding: 8px; border-radius: 5px; border: 1px solid #444; 
+            background: #111; color: #fff; min-width: 120px;
+        }
+        .btn-pedido { background: #ffcc00; color: #000; padding: 8px 15px; border:none; border-radius:5px; font-weight:bold; cursor:pointer;}
         .btn-pedido:hover { background: #e6b800; }
         .divisor { height: 1px; background: #554400; margin: 15px 0; }
         .etiqueta-pequena { font-size: 12px; color: #aaa; margin-bottom: 5px; display: block; }
@@ -198,10 +171,10 @@
 
     <div class="header-title">
         <h1>📻 Radio Web: Cabina Profesional DJ</h1>
-        <p class="subtitle">Cabina Fija + Sistema de Bloques Acordeón</p>
+        <p class="subtitle">Cabina Compacta Fija + Marcador Rojo de Tocadas</p>
     </div>
 
-    <!-- CABINA STICKY (Se queda fija arriba) -->
+    <!-- CABINA STICKY (Se queda fija arriba, ahora es más pequeña) -->
     <div class="cabina-sticky">
         <div class="dj-booth">
             <!-- DECK A -->
@@ -220,7 +193,7 @@
             <!-- CROSSFADER -->
             <div class="mixer-controls">
                 <h3>Crossfader</h3>
-                <span style="font-size: 12px; color: #888;">A &lt;========&gt; B</span>
+                <span style="font-size: 11px; color: #888;">A &lt;=====&gt; B</span>
                 <input type="range" id="crossfader" min="0" max="100" value="50" oninput="updateVolumes()">
             </div>
 
@@ -242,36 +215,41 @@
     <!-- CONTENEDOR DE LAS DOS LISTAS -->
     <div class="playlists-container">
         
-        <!-- LISTA PRINCIPAL (Ahora con Acordeones) -->
+        <!-- LISTA PRINCIPAL -->
         <div class="playlist">
-            <h2>🎵 Setlist Principal (Clásicos)</h2>
+            <h2 style="font-size: 1.4em;">🎵 Setlist Principal</h2>
             <div id="tracklist">
                 <!-- Se inyecta con JS agrupado por botones -->
             </div>
         </div>
 
-        <!-- LISTA DE PEDIDOS -->
+        <!-- LISTA DE PEDIDOS Y BÚSQUEDA -->
         <div class="playlist pedidos-box">
-            <h2 class="title-pedidos">🎤 Pedidos del Público</h2>
+            <h2 class="title-pedidos">🎤 Buscador y Guardado</h2>
             
             <span class="etiqueta-pequena">Paso 1: Busca la canción en YouTube</span>
             <div class="input-pedido-container">
-                <input type="text" id="inputBuscar" placeholder="Ej: Dua Lipa Audio..." onkeypress="handleEnterSearch(event)">
-                <button class="btn-pedido" onclick="buscarEnYouTube()" style="background: #ff0000; color: white;">🔍 Buscar</button>
+                <input type="text" id="inputBuscar" placeholder="Ej: Daddy Yankee Gasolina..." onkeypress="handleEnterSearch(event)">
+                <button class="btn-pedido" onclick="buscarEnYouTube()" style="background: #ff0000; color: white;">🔍 Buscar en YT</button>
             </div>
 
             <div class="divisor"></div>
 
-            <span class="etiqueta-pequena">Paso 2: Pega el enlace aquí para añadirlo al Set</span>
+            <span class="etiqueta-pequena">Paso 2: Pega el enlace y guárdalo en una categoría</span>
             <div class="input-pedido-container">
-                <input type="text" id="inputUrl" placeholder="Pega el enlace de YT...">
-                <input type="text" id="inputNombre" placeholder="Nombre" style="flex: 0.5;">
+                <input type="text" id="inputUrl" placeholder="Pega el enlace de YT..." style="min-width: 100%;">
+                <input type="text" id="inputNombre" placeholder="Nombre (Ej: Gasolina)">
+                
+                <!-- ESTE ES EL NUEVO SELECTOR PARA GUARDAR ORDENADO -->
+                <select id="selectCategoriaPedido">
+                    <!-- Se llena automáticamente con JS -->
+                </select>
+
                 <button class="btn-pedido" onclick="agregarPedido()">➕ Añadir</button>
             </div>
 
-            <div id="tracklist-pedidos" style="margin-top: 15px;">
-                <!-- Los pedidos nuevos caerán aquí -->
-            </div>
+            <!-- Lista exclusiva para "Pedidos en vivo" que no quisiste guardar en categorías -->
+            <div id="tracklist-pedidos" style="margin-top: 15px;"></div>
         </div>
 
     </div>
@@ -281,111 +259,114 @@
         let playerA, playerB;
         let contadorPedidos = 1;
 
-        // Base de Datos de Canciones
+        // Base de Datos Ampliada con nuevos géneros Latinos
         const tracks = [
             // 🕺 70s DISCO
             { id: '3cQNkIrg-Tk', artist: 'Earth, Wind & Fire - September', bpm: 125, decade: '70s Disco' },
-            { id: '_Vj092UgKwQ', artist: 'Bee Gees - Stayin\' Alive', bpm: 104, decade: '70s Disco' },
             { id: 'QRoWiTcO7dI', artist: 'ABBA - Dancing Queen', bpm: 100, decade: '70s Disco' },
-            { id: 'F-vXJckqL78', artist: 'Gloria Gaynor - I Will Survive', bpm: 116, decade: '70s Disco' },
-            { id: 'pT68FS3YbQ4', artist: 'Queen - Don\'t Stop Me Now', bpm: 156, decade: '70s Disco' },
-            
             // 🎹 80s POP
             { id: 'djV11Xbc914', artist: 'A-ha - Take On Me', bpm: 169, decade: '80s Pop' },
             { id: 'Zi_XLOBDo_Y', artist: 'Michael Jackson - Billie Jean', bpm: 117, decade: '80s Pop' },
-            { id: 'eH3giaIzONA', artist: 'Whitney Houston - I Wanna Dance With Somebody', bpm: 119, decade: '80s Pop' },
-            { id: '79fzeNUqQbQ', artist: 'Madonna - Like A Prayer', bpm: 111, decade: '80s Pop' },
-            { id: 'PIb6AZdTr-A', artist: 'Cyndi Lauper - Girls Just Want To Have Fun', bpm: 120, decade: '80s Pop' },
-
             // 💿 90s EURODANCE
             { id: 'HEXWRTEbj1I', artist: 'Haddaway - What Is Love', bpm: 124, decade: '90s Eurodance' },
-            { id: 'gJLIiF15wjQ', artist: 'Spice Girls - Wannabe', bpm: 110, decade: '90s Eurodance' },
-            { id: '6M6samPEMpM', artist: 'Backstreet Boys - Everybody', bpm: 108, decade: '90s Eurodance' },
-            { id: 'C-u5WLJ9Yk4', artist: 'Britney Spears - ...Baby One More Time', bpm: 93, decade: '90s Eurodance' },
-            { id: 'p47fEXGabaY', artist: 'Ricky Martin - Livin\' La Vida Loca', bpm: 166, decade: '90s Eurodance' },
-
+            { id: 'zWaymcVmJ-A', artist: 'Los del Río - Macarena', bpm: 103, decade: '90s Eurodance' },
             // 🎛️ 2000s CLUB
             { id: 'PWgvGjAhvIw', artist: 'Outkast - Hey Ya!', bpm: 160, decade: '2000s Club' },
-            { id: 'gGdGFtwPNsQ', artist: 'The Killers - Mr. Brightside', bpm: 148, decade: '2000s Club' },
-            { id: 'DUT5rEU6pqM', artist: 'Shakira - Hips Don\'t Lie', bpm: 100, decade: '2000s Club' },
-            { id: 'ViwtNLUqkMY', artist: 'Beyoncé - Crazy In Love', bpm: 99, decade: '2000s Club' },
-            { id: '2Abk1jAIGvk', artist: 'Lady Gaga - Just Dance', bpm: 119, decade: '2000s Club' },
-
             // 🌟 ACTUALIDAD
-            { id: 'ZbZSe6N_BXs', artist: 'Pharrell Williams - Happy', bpm: 160, decade: 'Actualidad' },
-            { id: 'OPf0YbXqDm0', artist: 'Mark Ronson - Uptown Funk', bpm: 115, decade: 'Actualidad' },
             { id: 'oygrmJFKYZY', artist: 'Dua Lipa - Don\'t Start Now', bpm: 124, decade: 'Actualidad' },
-            { id: '4NRXx6U8ABQ', artist: 'The Weeknd - Blinding Lights', bpm: 171, decade: 'Actualidad' },
-            { id: 'orJSJGHjBLI', artist: 'Ed Sheeran - Bad Habits', bpm: 126, decade: 'Actualidad' }
+            
+            // 🔥 NUEVOS GÉNEROS 🔥
+            // REGGAETON
+            { id: 'qGKrc3A6HHM', artist: 'Daddy Yankee - Gasolina', bpm: 96, decade: 'Reggaeton' },
+            { id: '7zp1TbLFPp8', artist: 'Don Omar - Danza Kuduro', bpm: 130, decade: 'Reggaeton' },
+            // SALSA
+            { id: 'YXnjy5YlDwk', artist: 'Marc Anthony - Vivir Mi Vida', bpm: 105, decade: 'Salsa' },
+            { id: 'l-Kswx9L-m8', artist: 'Celia Cruz - La Vida Es Un Carnaval', bpm: 104, decade: 'Salsa' },
+            // MERENGUE
+            { id: 'WPiEbYSF9kE', artist: 'Elvis Crespo - Suavemente', bpm: 155, decade: 'Merengue' },
+            { id: '9BymE14_oAA', artist: 'Proyecto Uno - El Tiburon', bpm: 125, decade: 'Merengue' },
+            // ROMÁNTICOS EN ESPAÑOL
+            { id: 'V1bFr2SWP1I', artist: 'Chayanne - Dejaría Todo', bpm: 80, decade: 'Románticos' },
+            { id: 'h7JvF_uXG5c', artist: 'Luis Miguel - La Incondicional', bpm: 85, decade: 'Románticos' }
         ];
 
         // =========================================================
-        // CREACIÓN DE CATEGORÍAS TIPO ACORDEÓN (Con Botones)
+        // RENDERIZAR LISTAS Y SELECTOR
         // =========================================================
-        const tracklistDiv = document.getElementById('tracklist');
-        const estilos = [...new Set(tracks.map(t => t.decade))];
-        let htmlFinal = '';
-
-        estilos.forEach((estilo, index) => {
-            let catId = 'cat-' + index;
-            // El primer bloque lo dejamos abierto por defecto ('block'), el resto cerrados ('none')
-            let estadoInicial = index === 0 ? 'block' : 'none';
-            let flechaInicial = index === 0 ? '▲' : '▼';
+        function renderizarBaseDatos() {
+            const tracklistDiv = document.getElementById('tracklist');
+            const selectDiv = document.getElementById('selectCategoriaPedido');
             
-            // Ordenamos por BPM internamente
-            let cancionesEstilo = tracks.filter(t => t.decade === estilo).sort((a, b) => a.bpm - b.bpm);
+            const estilos = [...new Set(tracks.map(t => t.decade))];
+            let htmlFinal = '';
+            let htmlSelect = '';
 
-            // Botón que al clickear llama a toggleCategoria()
-            htmlFinal += `
-                <button class="categoria-btn" onclick="toggleCategoria('${catId}')">
-                    <span>📂 BLOQUE: ${estilo}</span>
-                    <span id="icon-${catId}">${flechaInicial}</span>
-                </button>
-                <div id="${catId}" class="categoria-content" style="display: ${estadoInicial};">
-            `;
+            estilos.forEach((estilo, index) => {
+                let catId = 'cat-' + index;
+                let estadoInicial = index === 0 ? 'block' : 'none';
+                let flechaInicial = index === 0 ? '▲' : '▼';
+                
+                // Llenamos el menú desplegable (Select)
+                htmlSelect += `<option value="${catId}">${estilo}</option>`;
 
-            cancionesEstilo.forEach(track => {
+                let cancionesEstilo = tracks.filter(t => t.decade === estilo).sort((a, b) => a.bpm - b.bpm);
+
                 htmlFinal += `
-                    <div class="song-item">
-                        <div class="song-info">
-                            <span class="song-title">${track.artist}</span>
-                            <span class="song-meta">⚡ ${track.bpm} BPM</span>
-                        </div>
-                        <div class="load-buttons">
-                            <button class="btn-a" onclick="loadVideo('A', '${track.id}')">Deck A</button>
-                            <button class="btn-b" onclick="loadVideo('B', '${track.id}')">Deck B</button>
-                        </div>
-                    </div>
+                    <button class="categoria-btn" onclick="toggleCategoria('${catId}')">
+                        <span>📂 ${estilo}</span>
+                        <span id="icon-${catId}">${flechaInicial}</span>
+                    </button>
+                    <div id="${catId}" class="categoria-content" style="display: ${estadoInicial};">
                 `;
+
+                cancionesEstilo.forEach(track => {
+                    htmlFinal += generarHtmlCancion(track);
+                });
+                
+                htmlFinal += `</div>`;
             });
-            
-            htmlFinal += `</div>`; // Cierra el bloque de canciones
-        });
 
-        tracklistDiv.innerHTML = htmlFinal;
+            tracklistDiv.innerHTML = htmlFinal;
+            // Agregamos opción extra para dejarlo suelto
+            selectDiv.innerHTML = htmlSelect + `<option value="cat-pedidos">⭐ Lista Temporal de Pedidos</option>`;
+        }
 
-        // Función para abrir y cerrar acordeones
+        // Función para generar la caja de la canción y vincular el ID
+        function generarHtmlCancion(track, esPedido = false) {
+            return `
+                <div class="song-item" data-id="${track.id}" ${esPedido ? 'style="background-color: #332b00; border-color: #554400;"' : ''}>
+                    <div class="song-info">
+                        <span class="song-title">${track.artist}</span>
+                        <span class="song-meta">⚡ ${track.bpm === '?' ? '?' : track.bpm} BPM</span>
+                    </div>
+                    <div class="load-buttons">
+                        <button class="btn-a" onclick="loadVideo('A', '${track.id}')">Deck A</button>
+                        <button class="btn-b" onclick="loadVideo('B', '${track.id}')">Deck B</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        renderizarBaseDatos();
+
         function toggleCategoria(catId) {
             let contenido = document.getElementById(catId);
             let icono = document.getElementById('icon-' + catId);
             
             if (contenido.style.display === 'none') {
-                contenido.style.display = 'block';
-                icono.innerText = '▲';
+                contenido.style.display = 'block'; icono.innerText = '▲';
             } else {
-                contenido.style.display = 'none';
-                icono.innerText = '▼';
+                contenido.style.display = 'none'; icono.innerText = '▼';
             }
         }
 
         // =========================================================
-        // BUSCADOR Y PEDIDOS
+        // BUSCADOR Y AÑADIDO INTELIGENTE
         // =========================================================
         function buscarEnYouTube() {
             const query = document.getElementById('inputBuscar').value.trim();
-            if (query) {
-                window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent(query), '_blank');
-            } else alert("Escribe el nombre de una canción para buscar.");
+            if (query) window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent(query), '_blank');
+            else alert("Escribe el nombre de una canción para buscar.");
         }
 
         function handleEnterSearch(event) { if (event.key === 'Enter') buscarEnYouTube(); }
@@ -396,28 +377,34 @@
             return (match && match[2].length === 11) ? match[2] : (url.length === 11 ? url : null);
         }
 
+        // Guarda la canción en el bloque seleccionado
         function agregarPedido() {
             const url = document.getElementById('inputUrl').value.trim();
             let nombre = document.getElementById('inputNombre').value.trim();
+            const catSeleccionada = document.getElementById('selectCategoriaPedido').value;
             
             if (!url) return alert("Pega un enlace de YouTube.");
             const videoId = extraerIDYouTube(url);
             if (!videoId) return alert("Enlace inválido.");
-            if (!nombre) nombre = "Pedido " + contadorPedidos;
+            if (!nombre) nombre = "Audio Nuevo " + contadorPedidos;
 
-            const listaPedidos = document.getElementById('tracklist-pedidos');
-            listaPedidos.innerHTML = `
-                <div class="song-item" style="background-color: #332b00; border-color: #554400;">
-                    <div class="song-info">
-                        <span class="song-title">${nombre}</span>
-                        <span class="song-meta">ID: ${videoId}</span>
-                    </div>
-                    <div class="load-buttons">
-                        <button class="btn-a" onclick="loadVideo('A', '${videoId}')">Deck A</button>
-                        <button class="btn-b" onclick="loadVideo('B', '${videoId}')">Deck B</button>
-                    </div>
-                </div>
-            ` + listaPedidos.innerHTML;
+            const nuevaCancion = { id: videoId, artist: nombre, bpm: '?' };
+            const htmlCancion = generarHtmlCancion(nuevaCancion, catSeleccionada === 'cat-pedidos');
+
+            if (catSeleccionada === 'cat-pedidos') {
+                // Va a la lista separada abajo
+                const listaPedidos = document.getElementById('tracklist-pedidos');
+                listaPedidos.innerHTML = htmlCancion + listaPedidos.innerHTML;
+            } else {
+                // Va a la carpeta correspondiente e inyecta la canción al principio del bloque
+                const contenedorCat = document.getElementById(catSeleccionada);
+                contenedorCat.innerHTML = htmlCancion + contenedorCat.innerHTML;
+                
+                // Si la carpeta estaba cerrada, ábrela para que veas que se agregó
+                if(contenedorCat.style.display === 'none') {
+                    toggleCategoria(catSeleccionada);
+                }
+            }
 
             document.getElementById('inputUrl').value = '';
             document.getElementById('inputNombre').value = '';
@@ -425,7 +412,7 @@
         }
 
         // =========================================================
-        // REPRODUCTORES Y CONTROLES (API DE YOUTUBE)
+        // REPRODUCTORES Y DETECTOR ROJO "YA TOCADO"
         // =========================================================
         function onYouTubeIframeAPIReady() {
             playerA = new YT.Player('playerA', {
@@ -451,8 +438,15 @@
         }
 
         function loadVideo(deck, videoId) {
+            // Cargar en el reproductor
             if (deck === 'A') playerA.cueVideoById(videoId);
             else playerB.cueVideoById(videoId);
+
+            // 🔥 MARCAR LA CANCIÓN DE COLOR ROJO PORQUE YA SE CARGÓ 🔥
+            const etiquetasCancion = document.querySelectorAll(`.song-item[data-id="${videoId}"]`);
+            etiquetasCancion.forEach(el => {
+                el.classList.add('played');
+            });
         }
 
         function togglePlay(deck) {

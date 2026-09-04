@@ -3,39 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Alegría - DJ Studio Pro</title>
+    <title>Radio Alegría - DJ Studio Hardware Pro</title>
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     
     <style>
-        body { background-color: #0d1117; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #07080a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
-        /* Cabina Sticky Profesional */
-        .cabina-sticky {
-            position: sticky; top: 0; z-index: 1020;
-            background: rgba(13, 17, 23, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid #30363d;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        /* Consola de Hardware DJ Estilo Club */
+        .dj-console {
+            background: linear-gradient(145deg, #14171f 0%, #0a0c10 100%);
+            border: 2px solid #262d3d;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9), inset 0 1px 2px rgba(255,255,255,0.1);
         }
 
-        /* Vinilos / Decks */
-        .deck-vinyl {
-            width: 120px; height: 120px; border-radius: 50%; background: #000;
-            border: 6px solid #21262d; position: relative; margin: 0 auto;
-            box-shadow: 0 0 15px rgba(0,0,0,0.9), inset 0 0 15px rgba(255,255,255,0.05);
+        .cabina-sticky {
+            position: sticky; top: 0; z-index: 1020;
+            background: rgba(7, 8, 10, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #1f242d;
+        }
+
+        /* Jog Wheels / Decks Estilo CDJ */
+        .cdj-deck {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 14px;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.8);
+            position: relative;
+        }
+
+        .jog-wheel {
+            width: 130px; height: 130px; border-radius: 50%;
+            background: radial-gradient(circle, #1a1f2c 0%, #090b10 70%, #000000 100%);
+            border: 5px solid #21262d;
+            position: relative; margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,255,204,0.15), inset 0 0 15px rgba(255,255,255,0.08);
             overflow: hidden; display: flex; align-items: center; justify-content: center;
             transition: transform 0.1s linear;
         }
-        .deck-vinyl.small { width: 75px; height: 75px; border-width: 4px; }
         
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        .spinning { animation: spin 3s linear infinite; }
+        .spinning { animation: spin 2.5s linear infinite; border-color: #00ffcc; box-shadow: 0 0 25px rgba(0,255,204,0.4); }
 
         .video-container { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; pointer-events: none; }
-        .video-container.small { width: 45px; height: 45px; }
+
+        /* Botones de Hardware Pro (Play/Cue estilo goma iluminada) */
+        .btn-hardware {
+            background: #161b22;
+            border: 1px solid #484f58;
+            color: #c9d1d9;
+            font-weight: bold;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.3);
+            transition: 0.1s;
+        }
+        .btn-hardware:active { transform: translateY(2px); box-shadow: inset 0 1px 2px rgba(0,0,0,0.8); }
+        
+        .btn-play-pro { background: linear-gradient(180deg, #238636 0%, #196127 100%); border-color: #2ea043; color: #fff; }
+        .btn-cue-pro { background: linear-gradient(180deg, #bb8009 0%, #9e6a03 100%); border-color: #d29922; color: #fff; }
+        .btn-sync-pro { background: linear-gradient(180deg, #1f6feb55 0%, #1f6feb22 100%); border-color: #388bfd; color: #58a6ff; }
+
+        /* Vúmetros simulados (LEDs) */
+        .vu-meter {
+            width: 6px; height: 80px; background: #0d1117; border: 1px solid #30363d; border-radius: 3px;
+            display: flex; flex-direction: column-reverse; padding: 1px; gap: 1px;
+        }
+        .vu-led { height: 4px; width: 100%; background: #21262d; border-radius: 1px; }
+        .vu-led.active-green { background: #238636; box-shadow: 0 0 4px #238636; }
+        .vu-led.active-yellow { background: #d29922; box-shadow: 0 0 4px #d29922; }
+        .vu-led.active-red { background: #f85149; box-shadow: 0 0 4px #f85149; }
 
         /* Estilo canciones tocadas */
         .song-item.played {
@@ -45,7 +86,6 @@
         .song-item.played .song-title { color: #ff7b72; text-decoration: line-through; }
         .song-item.played .song-meta { color: #ffa198; }
 
-        /* Scrollbars personalizados para listas */
         .playlist-scroll { max-height: 65vh; overflow-y: auto; }
     </style>
 
@@ -55,83 +95,100 @@
 </head>
 <body class="text-light">
 
-    <!-- NAVBAR / HEADER -->
+    <!-- NAVBAR / HEADER PRO -->
     <nav class="navbar navbar-dark bg-black border-bottom border-secondary px-3 py-2">
         <div class="container-fluid d-flex justify-content-between align-items-center">
-            <span class="navbar-brand mb-0 h1 text-info fw-bold">
-                <i class="bi bi-broadcast"></i> RADIO ALEGRÍA <span class="badge bg-info text-dark fs-6">DJ STUDIO PRO</span>
+            <span class="navbar-brand mb-0 h1 text-info fw-bold tracking-wider">
+                <i class="bi bi-disc-fill text-warning fa-spin"></i> RADIO ALEGRÍA <span class="badge bg-warning text-dark fs-6 ms-2">PRO HARDWARE DJ</span>
             </span>
-            <span class="text-muted small"><i class="bi bi-cloud-check-fill text-success"></i> Firebase Cloud Conectado</span>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-success bg-opacity-25 text-success border border-success px-3 py-2">
+                    <i class="bi bi-cloud-fill"></i> Firebase Sync Active
+                </span>
+            </div>
         </div>
     </nav>
 
-    <!-- CABINA DJ STICKY (MEZCLADOR PRINCIPAL) -->
+    <!-- CABINA DJ HARDWARE (CONSOLA CENTRAL) -->
     <div class="cabina-sticky py-3 mb-4">
         <div class="container">
-            <div class="row align-items-center justify-content-center g-3 text-center">
-                
-                <!-- DECK A -->
-                <div class="col-md-3 col-4">
-                    <div class="card bg-dark border-secondary p-2 shadow">
-                        <h6 class="text-danger fw-bold m-0 mb-2">DECK A</h6>
-                        <div class="deck-vinyl" id="deckA">
-                            <div class="video-container"><div id="playerA"></div></div>
-                        </div>
-                        <div class="mt-2 d-grid gap-1">
-                            <button class="btn btn-danger btn-sm fw-bold" onclick="togglePlay('A')"><i class="bi bi-play-fill"></i> Play / Pause</button>
-                            <div class="btn-group btn-group-sm">
-                                <button class="btn btn-outline-light" onclick="setCue('A')">SET CUE</button>
-                                <button class="btn btn-warning text-dark fw-bold" onclick="jumpCue('A')">CUE</button>
+            <div class="dj-console p-3">
+                <div class="row align-items-center justify-content-center g-3 text-center">
+                    
+                    <!-- DECK A (PIONEER STYLE) -->
+                    <div class="col-lg-4 col-md-5">
+                        <div class="cdj-deck p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-danger px-2 py-1 fw-bold">DECK A</span>
+                                <span class="font-monospace text-muted small" id="cueDisplayA">CUE: 0:00</span>
                             </div>
-                            <small id="cueDisplayA" class="text-muted" style="font-size: 10px;">Cue: 0:00</small>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PREVIEW DECK (PRE-ESCUCHA) -->
-                <div class="col-md-2 col-4">
-                    <div class="card bg-black border-warning p-2 shadow">
-                        <h6 class="text-warning fw-bold m-0 mb-2" style="font-size: 0.85rem;"><i class="bi bi-headphones"></i> PREVIEW</h6>
-                        <div class="deck-vinyl small" id="deckPreview">
-                            <div class="video-container small"><div id="playerPreview"></div></div>
-                        </div>
-                        <div class="mt-2 d-grid">
-                            <button class="btn btn-warning btn-sm text-dark fw-bold py-1" onclick="togglePlay('Preview')"><i class="bi bi-play-fill"></i> Test</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CROSSFADER & MIXER -->
-                <div class="col-md-2 col-4">
-                    <div class="card bg-secondary bg-opacity-10 border-secondary p-2 shadow">
-                        <h6 class="text-light fw-bold m-0 mb-1" style="font-size: 0.85rem;">CROSSFADER</h6>
-                        <span class="text-muted" style="font-size: 10px;">A &lt;=====&gt; B</span>
-                        <input type="range" class="form-range my-2" id="crossfader" min="0" max="100" value="50" oninput="updateVolumes()">
-                        <div class="d-flex justify-content-between text-muted" style="font-size: 9px;">
-                            <span>DECK A</span>
-                            <span>DECK B</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- DECK B -->
-                <div class="col-md-3 col-4">
-                    <div class="card bg-dark border-secondary p-2 shadow">
-                        <h6 class="text-primary fw-bold m-0 mb-2">DECK B</h6>
-                        <div class="deck-vinyl" id="deckB">
-                            <div class="video-container"><div id="playerB"></div></div>
-                        </div>
-                        <div class="mt-2 d-grid gap-1">
-                            <button class="btn btn-primary btn-sm fw-bold" onclick="togglePlay('B')"><i class="bi bi-play-fill"></i> Play / Pause</button>
-                            <div class="btn-group btn-group-sm">
-                                <button class="btn btn-outline-light" onclick="setCue('B')">SET CUE</button>
-                                <button class="btn btn-warning text-dark fw-bold" onclick="jumpCue('B')">CUE</button>
+                            
+                            <div class="row align-items-center">
+                                <div class="col-6">
+                                    <div class="jog-wheel" id="deckA">
+                                        <div class="video-container"><div id="playerA"></div></div>
+                                    </div>
+                                </div>
+                                <div class="col-6 d-flex flex-column gap-2">
+                                    <button class="btn btn-hardware btn-cue-pro py-2" onclick="jumpCue('A')"><i class="bi bi-skip-backward-fill"></i> CUE</button>
+                                    <button class="btn btn-hardware btn-play-pro py-2" onclick="togglePlay('A')"><i class="bi bi-play-fill"></i> PLAY</button>
+                                    <button class="btn btn-hardware py-1 text-light" onclick="setCue('A')"><i class="bi bi-flag-fill"></i> SET CUE</button>
+                                </div>
                             </div>
-                            <small id="cueDisplayB" class="text-muted" style="font-size: 10px;">Cue: 0:00</small>
                         </div>
                     </div>
-                </div>
 
+                    <!-- MIXER CENTRAL (CROSSFADER, VU METERS & PREVIEW) -->
+                    <div class="col-lg-4 col-md-2 d-flex flex-column align-items-center justify-content-center">
+                        <div class="w-100 bg-black border border-secondary rounded p-2 text-center shadow-inset">
+                            <div class="text-warning fw-bold small mb-1" style="font-size: 0.7rem;"><i class="bi bi-headphones"></i> MASTER / PREVIEW</div>
+                            
+                            <div class="d-flex justify-content-center align-items-center gap-3 mb-2">
+                                <div class="vu-meter">
+                                    <div class="vu-led active-green"></div><div class="vu-led active-green"></div><div class="vu-led active-green"></div><div class="vu-led active-yellow"></div><div class="vu-led"></div>
+                                </div>
+                                <div class="jog-wheel" style="width: 70px; height: 70px; border-width: 3px;" id="deckPreview">
+                                    <div class="video-container" style="width: 40px; height: 40px;"><div id="playerPreview"></div></div>
+                                </div>
+                                <div class="vu-meter">
+                                    <div class="vu-led active-green"></div><div class="vu-led active-green"></div><div class="vu-led active-green"></div><div class="vu-led active-yellow"></div><div class="vu-led"></div>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-warning btn-sm text-dark fw-bold w-100 py-1 mb-2" style="font-size: 0.7rem;" onclick="togglePlay('Preview')">
+                                <i class="bi bi-play-circle-fill"></i> Test Audio
+                            </button>
+
+                            <hr class="border-secondary my-1">
+                            <label class="text-muted small fw-bold mb-0" style="font-size: 9px;">CROSSFADER A &lt;=====&gt; B</label>
+                            <input type="range" class="form-range form-range-sm my-1" id="crossfader" min="0" max="100" value="50" oninput="updateVolumes()">
+                        </div>
+                    </div>
+
+                    <!-- DECK B (PIONEER STYLE) -->
+                    <div class="col-lg-4 col-md-5">
+                        <div class="cdj-deck p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-primary px-2 py-1 fw-bold">DECK B</span>
+                                <span class="font-monospace text-muted small" id="cueDisplayB">CUE: 0:00</span>
+                            </div>
+                            
+                            <div class="row align-items-center">
+                                <div class="col-6 d-flex flex-column gap-2">
+                                    <button class="btn btn-hardware btn-cue-pro py-2" onclick="jumpCue('B')"><i class="bi bi-skip-backward-fill"></i> CUE</button>
+                                    <button class="btn btn-hardware btn-play-pro py-2" onclick="togglePlay('B')"><i class="bi bi-play-fill"></i> PLAY</button>
+                                    <button class="btn btn-hardware py-1 text-light" onclick="setCue('B')"><i class="bi bi-flag-fill"></i> SET CUE</button>
+                                </div>
+                                <div class="col-6">
+                                    <div class="jog-wheel" id="deckB">
+                                        <div class="video-container"><div id="playerB"></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
@@ -140,50 +197,48 @@
     <div class="container mb-5">
         <div class="row g-4">
             
-            <!-- COLUMNA IZQUIERDA: SETLIST PRINCIPAL -->
+            <!-- SETLIST PRINCIPAL -->
             <div class="col-lg-7">
                 <div class="card bg-dark border-secondary shadow">
                     <div class="card-header bg-black border-secondary d-flex justify-content-between align-items-center py-3">
-                        <h5 class="mb-0 text-info"><i class="bi bi-music-note-list"></i> Setlist Principal (Cloud)</h5>
+                        <h5 class="mb-0 text-info font-monospace"><i class="bi bi-music-note-list"></i> PLAYLIST CLOUD</h5>
                         <button class="btn btn-danger btn-sm fw-bold" onclick="eliminarSeleccionados()">
                             <i class="bi bi-trash3-fill"></i> Borrar Selección
                         </button>
                     </div>
                     <div class="card-body p-2 playlist-scroll">
                         <div class="accordion accordion-flush" id="accordionSetlist">
-                            <div class="text-center text-muted py-4">Cargando música desde Firebase...</div>
+                            <div class="text-center text-muted py-4">Conectando con Firebase Realtime Database...</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- COLUMNA DERECHA: BUSCADOR Y GUARDADO INTELIGENTE -->
+            <!-- BUSCADOR & GESTOR DE PEDIDOS -->
             <div class="col-lg-5">
                 <div class="card bg-dark border-warning shadow">
-                    <div class="card-header bg-black border-warning text-warning fw-bold">
-                        <i class="bi bi-search"></i> Buscador y Guardado Rápido
+                    <div class="card-header bg-black border-warning text-warning fw-bold font-monospace">
+                        <i class="bi bi-search"></i> BUSCADOR & TRACKLOADER
                     </div>
                     <div class="card-body">
                         
-                        <!-- Paso 1 -->
-                        <label class="form-label text-muted small fw-bold">PASO 1: Buscar en YouTube</label>
+                        <label class="form-label text-muted small fw-bold">1. BUSCAR EN YOUTUBE</label>
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control bg-black text-light border-secondary" id="inputBuscar" placeholder="Ej: Chayanne Dejaría Todo..." onkeypress="handleEnterSearch(event)">
-                            <button class="btn btn-danger" type="button" onclick="buscarEnYouTube()"><i class="bi bi-youtube"></i> Buscar</button>
+                            <input type="text" class="form-control bg-black text-light border-secondary" id="inputBuscar" placeholder="Ej: Marc Anthony Vivir Mi Vida..." onkeypress="handleEnterSearch(event)">
+                            <button class="btn btn-danger" type="button" onclick="buscarEnYouTube()"><i class="bi bi-youtube"></i> Abrir YT</button>
                         </div>
 
                         <hr class="border-secondary my-3">
 
-                        <!-- Paso 2 -->
-                        <label class="form-label text-muted small fw-bold">PASO 2: Guardar en Categoría</label>
+                        <label class="form-label text-muted small fw-bold">2. AÑADIR A LA NUBE</label>
                         <div class="mb-2">
-                            <input type="text" class="form-control bg-black text-light border-secondary mb-2" id="inputUrl" placeholder="Pega el enlace de YouTube aquí...">
-                            <input type="text" class="form-control bg-black text-light border-secondary mb-2" id="inputNombre" placeholder="Nombre opcional (si está vacío, usa la búsqueda)">
+                            <input type="text" class="form-control bg-black text-light border-secondary mb-2" id="inputUrl" placeholder="Pega el enlace de YouTube...">
+                            <input type="text" class="form-control bg-black text-light border-secondary mb-2" id="inputNombre" placeholder="Nombre (o vacío para usar la búsqueda)">
                             <select class="form-select bg-black text-light border-secondary mb-3" id="selectCategoriaPedido">
-                                <!-- Se llena dinámicamente -->
+                                <!-- Dinámico -->
                             </select>
-                            <button class="btn btn-warning text-dark fw-bold w-100" onclick="agregarPedido()">
-                                <i class="bi bi-plus-circle-fill"></i> Añadir a la Base de Datos
+                            <button class="btn btn-warning text-dark fw-bold w-100 shadow-sm" onclick="agregarPedido()">
+                                <i class="bi bi-cloud-arrow-up-fill"></i> Guardar en Firebase
                             </button>
                         </div>
 
@@ -231,7 +286,6 @@
             { id: 'h9tXY5j3NY8', artist: 'Chayanne - Dejaría Todo', bpm: 80, decade: 'Baladas y Románticos' }
         ];
 
-        // Sincronización en tiempo real con Firebase
         db.ref('tracks').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -261,7 +315,7 @@
                     <div class="accordion-item bg-dark border-secondary mb-2 rounded overflow-hidden">
                         <h2 class="accordion-header" id="heading-${catId}">
                             <button class="accordion-button bg-black text-light fw-bold ${index !== 0 ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${catId}" aria-expanded="${isExpanded}" aria-controls="collapse-${catId}">
-                                <i class="bi bi-folder2-open text-info me-2"></i> ${estilo}
+                                <i class="bi bi-vinyl-fill text-warning me-2"></i> ${estilo}
                             </button>
                         </h2>
                         <div id="collapse-${catId}" class="accordion-collapse collapse ${showClass}" aria-labelledby="heading-${catId}" data-bs-parent="#accordionSetlist">
@@ -294,21 +348,21 @@
                         <input class="form-check-input track-checkbox mt-0" type="checkbox" value="${globalIndex}" style="cursor: pointer;">
                         <div class="song-info text-truncate">
                             <div class="song-title fw-semibold text-truncate" style="font-size: 0.9rem;">${track.artist}</div>
-                            <span class="song-meta badge bg-secondary bg-opacity-25 text-info border border-secondary" style="font-size: 10px;">⚡ ${track.bpm || '?'} BPM</span>
+                            <span class="song-meta badge bg-secondary bg-opacity-25 text-info border border-secondary font-monospace" style="font-size: 9px;">⚡ ${track.bpm || '?'} BPM</span>
                         </div>
                     </div>
                     <div class="btn-group btn-group-sm flex-shrink-0">
-                        <button class="btn btn-outline-warning text-warning" onclick="previewSong('${track.id}')" title="Test Pre-escucha"><i class="bi bi-headphones"></i></button>
-                        <button class="btn btn-outline-danger" onclick="loadVideo('A', '${track.id}')" title="Cargar Deck A">A</button>
-                        <button class="btn btn-outline-primary" onclick="loadVideo('B', '${track.id}')" title="Cargar Deck B">B</button>
-                        <button class="btn btn-dark text-danger border-secondary" onclick="eliminarCancion(${globalIndex})" title="Borrar"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-outline-warning text-warning px-2" onclick="previewSong('${track.id}')" title="Test Pre-escucha"><i class="bi bi-headphones"></i></button>
+                        <button class="btn btn-outline-danger px-2 fw-bold" onclick="loadVideo('A', '${track.id}')" title="Cargar Deck A">A</button>
+                        <button class="btn btn-outline-primary px-2 fw-bold" onclick="loadVideo('B', '${track.id}')" title="Cargar Deck B">B</button>
+                        <button class="btn btn-dark text-danger border-secondary px-2" onclick="eliminarCancion(${globalIndex})" title="Borrar"><i class="bi bi-trash"></i></button>
                     </div>
                 </li>
             `;
         }
 
         function eliminarCancion(index) {
-            if (confirm("¿Estás seguro de eliminar esta canción?")) {
+            if (confirm("¿Eliminar esta pista de Firebase?")) {
                 tracks.splice(index, 1);
                 db.ref('tracks').set(tracks);
             }
@@ -316,9 +370,9 @@
 
         function eliminarSeleccionados() {
             const checkboxes = document.querySelectorAll('.track-checkbox:checked');
-            if (checkboxes.length === 0) return alert("Selecciona al menos una canción.");
+            if (checkboxes.length === 0) return alert("Selecciona al menos una pista.");
 
-            if (confirm(`¿Eliminar ${checkboxes.length} canciones seleccionadas?`)) {
+            if (confirm(`¿Eliminar las ${checkboxes.length} pistas seleccionadas?`)) {
                 const indicesAEliminar = Array.from(checkboxes).map(cb => parseInt(cb.value));
                 tracks = tracks.filter((_, index) => !indicesAEliminar.includes(index));
                 db.ref('tracks').set(tracks);
@@ -328,7 +382,7 @@
         function buscarEnYouTube() {
             const query = document.getElementById('inputBuscar').value.trim();
             if (query) window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent(query), '_blank');
-            else alert("Escribe el nombre de una canción para buscar.");
+            else alert("Escribe el nombre de un artista o tema.");
         }
 
         function handleEnterSearch(event) { if (event.key === 'Enter') buscarEnYouTube(); }
@@ -347,7 +401,7 @@
             
             if (!url) return alert("Pega un enlace de YouTube.");
             const videoId = extraerIDYouTube(url);
-            if (!videoId) return alert("Enlace de YouTube inválido.");
+            if (!videoId) return alert("Enlace de YouTube no válido.");
 
             if (!nombre) {
                 nombre = busqueda ? busqueda : "Audio Nuevo";
@@ -374,7 +428,7 @@
             document.getElementById('inputNombre').value = '';
         }
 
-        // YouTube API & DJ Controls
+        // YouTube API & Hardware Controls
         function onYouTubeIframeAPIReady() {
             playerA = new YT.Player('playerA', {
                 height: '200', width: '200',
@@ -415,14 +469,13 @@
             if (deck === 'A') {
                 playerA.cueVideoById(videoId);
                 cuePointA = 0;
-                document.getElementById('cueDisplayA').innerText = `Cue: 0:00`;
+                document.getElementById('cueDisplayA').innerText = `CUE: 0:00`;
             } else {
                 playerB.cueVideoById(videoId);
                 cuePointB = 0;
-                document.getElementById('cueDisplayB').innerText = `Cue: 0:00`;
+                document.getElementById('cueDisplayB').innerText = `CUE: 0:00`;
             }
 
-            // Marcar en rojo las ya tocadas
             document.querySelectorAll(`.song-item[data-id="${videoId}"]`).forEach(el => el.classList.add('played'));
         }
 
@@ -438,10 +491,10 @@
                 let time = player.getCurrentTime();
                 if (deck === 'A') {
                     cuePointA = time;
-                    document.getElementById('cueDisplayA').innerText = `Cue: ${formatTime(time)}`;
+                    document.getElementById('cueDisplayA').innerText = `CUE: ${formatTime(time)}`;
                 } else {
                     cuePointB = time;
-                    document.getElementById('cueDisplayB').innerText = `Cue: ${formatTime(time)}`;
+                    document.getElementById('cueDisplayB').innerText = `CUE: ${formatTime(time)}`;
                 }
             }
         }

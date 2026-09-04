@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Alegria - Mezcladora Web</title>
+    <title>Radio Alegria - Mezcladora Web Profesional</title>
     <style>
         body {
             background-color: #121212;
@@ -13,7 +13,7 @@
             margin: 0;
             padding: 20px;
         }
-        h1 { margin-bottom: 10px; color: #00ffcc; text-shadow: 0 0 15px #00ffcc; }
+        h1 { margin-bottom: 5px; color: #00ffcc; text-shadow: 0 0 15px #00ffcc; }
         p.subtitle { color: #aaa; margin-bottom: 30px; font-size: 1.1em; }
         
         .dj-booth {
@@ -30,10 +30,12 @@
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 320px;
         }
 
         h2 { margin-top: 0; color: #fff; }
 
+        /* Diseño del Vinilo */
         .deck {
             background: #000;
             border: 12px solid #333;
@@ -47,7 +49,12 @@
             justify-content: center;
             align-items: center;
             margin: 0 auto;
+            transition: transform 0.1s linear;
         }
+
+        /* Animación para que el vinilo gire */
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .spinning { animation: spin 3s linear infinite; }
 
         .video-container {
             width: 180px;
@@ -99,14 +106,12 @@
             border: 1px solid #333;
         }
         
-        /* Contenedor con scroll para las 100 canciones */
         .tracklist-container {
             max-height: 500px;
             overflow-y: auto;
             padding-right: 10px;
         }
 
-        /* Estilo del scrollbar */
         .tracklist-container::-webkit-scrollbar { width: 8px; }
         .tracklist-container::-webkit-scrollbar-track { background: #111; border-radius: 4px; }
         .tracklist-container::-webkit-scrollbar-thumb { background: #00ffcc; border-radius: 4px; }
@@ -140,14 +145,14 @@
 </head>
 <body>
 
-    <h1>📻 Radio Web: 100 Hits Alegres y Conectados</h1>
-    <p class="subtitle">70s • 80s • 90s • 2000s • Actualidad</p>
+    <h1>📻 Radio Web: 100 Hits (Edición DJ)</h1>
+    <p class="subtitle">IDs filtrados para Embed | Auto-ordenado por BPM | Vinilos Giratorios</p>
 
     <div class="dj-booth">
         <!-- DECK A -->
         <div class="deck-container">
             <h2 style="color: #ff0055;">DECK A</h2>
-            <div class="deck">
+            <div class="deck" id="deckA">
                 <div class="video-container">
                     <div id="playerA"></div>
                 </div>
@@ -167,7 +172,7 @@
         <!-- DECK B -->
         <div class="deck-container">
             <h2 style="color: #0088ff;">DECK B</h2>
-            <div class="deck">
+            <div class="deck" id="deckB">
                 <div class="video-container">
                     <div id="playerB"></div>
                 </div>
@@ -180,7 +185,7 @@
 
     <!-- PLAYLIST -->
     <div class="playlist">
-        <h2>🎵 Setlist (Ordenado por BPM)</h2>
+        <h2>🎵 Setlist (100 Canciones Listas)</h2>
         <div class="tracklist-container" id="tracklist">
             <!-- Las 100 canciones se inyectan con JavaScript -->
         </div>
@@ -190,29 +195,29 @@
     <script>
         let playerA, playerB;
 
-        // Batería de 100 canciones (Alegres, Uplifting, Clásicos y Actuales)
+        // Base de datos curada de 100 canciones con IDs (Audios/Lyrics para evitar bloqueos)
         const tracks = [
             // --- 70s ---
-            { id: 'Gs069dndIYk', artist: 'Earth, Wind & Fire - September', bpm: 125, decade: '70s' },
-            { id: 'I_izvAbhExY', artist: 'Bee Gees - Stayin\' Alive', bpm: 104, decade: '70s' },
-            { id: 'xFrGuyw1V8s', artist: 'ABBA - Dancing Queen', bpm: 100, decade: '70s' },
-            { id: 'gYkSmxzeH2E', artist: 'Gloria Gaynor - I Will Survive', bpm: 116, decade: '70s' },
-            { id: 'HgzGwKwLmgM', artist: 'Queen - Don\'t Stop Me Now', bpm: 156, decade: '70s' },
-            { id: 'yURRmWtbTbo', artist: 'Michael Jackson - Don\'t Stop \'Til You Get Enough', bpm: 119, decade: '70s' },
-            { id: 'QtxlCsVKkvY', artist: 'Boney M. - Daddy Cool', bpm: 124, decade: '70s' },
-            { id: 'CS9OO0S5w2k', artist: 'Village People - Y.M.C.A.', bpm: 126, decade: '70s' },
-            { id: '3GwjfUFyY6M', artist: 'Kool & The Gang - Celebration', bpm: 121, decade: '70s' },
-            { id: 'eBpYgpF1nZA', artist: 'Sister Sledge - We Are Family', bpm: 114, decade: '70s' },
-            { id: 'h1qQ1SKNlgY', artist: 'CHIC - Le Freak', bpm: 119, decade: '70s' },
-            { id: 'A_sY2rjxq6M', artist: 'The Trammps - Disco Inferno', bpm: 129, decade: '70s' },
-            { id: 'URAqnM1PP5E', artist: 'Anita Ward - Ring My Bell', bpm: 128, decade: '70s' },
-            { id: 's36eQwgPNSE', artist: 'Lipps Inc. - Funkytown', bpm: 122, decade: '70s' },
-            { id: 'z0qW9P-SyHQ', artist: 'Elton John - Don\'t Go Breaking My Heart', bpm: 131, decade: '70s' },
-            { id: '0CFuCYNx-1g', artist: 'Stevie Wonder - Superstition', bpm: 101, decade: '70s' },
-            { id: 'WGU_4-5RaxU', artist: 'Blondie - Heart Of Glass', bpm: 114, decade: '70s' },
-            { id: '1IdEhvuNxV8', artist: 'Donna Summer - Hot Stuff', bpm: 120, decade: '70s' },
-            { id: 'mkBS4zUjJZo', artist: 'The Jacksons - Blame It On the Boogie', bpm: 113, decade: '70s' },
-            { id: 'q3svW8PM_jc', artist: 'KC & The Sunshine Band - That\'s The Way (I Like It)', bpm: 109, decade: '70s' },
+            { id: '3cQNkIrg-Tk', artist: 'Earth, Wind & Fire - September (Audio)', bpm: 125, decade: '70s' },
+            { id: '_Vj092UgKwQ', artist: 'Bee Gees - Stayin\' Alive (Lyric)', bpm: 104, decade: '70s' },
+            { id: 'QRoWiTcO7dI', artist: 'ABBA - Dancing Queen (Lyric)', bpm: 100, decade: '70s' },
+            { id: 'F-vXJckqL78', artist: 'Gloria Gaynor - I Will Survive (Audio)', bpm: 116, decade: '70s' },
+            { id: 'pT68FS3YbQ4', artist: 'Queen - Don\'t Stop Me Now (Lyric)', bpm: 156, decade: '70s' },
+            { id: 'ZorRGrz7LWE', artist: 'Michael Jackson - Don\'t Stop \'Til You Get Enough', bpm: 119, decade: '70s' },
+            { id: 'otna9Pe3jWg', artist: 'Boney M. - Daddy Cool', bpm: 124, decade: '70s' },
+            { id: 'Vc0gYbTNZLQ', artist: 'Village People - Y.M.C.A.', bpm: 126, decade: '70s' },
+            { id: 'aeXjEqkR0os', artist: 'Kool & The Gang - Celebration', bpm: 121, decade: '70s' },
+            { id: 'uyGY2NfYpeE', artist: 'Sister Sledge - We Are Family', bpm: 114, decade: '70s' },
+            { id: 'aXgSHL7efKg', artist: 'CHIC - Le Freak', bpm: 119, decade: '70s' },
+            { id: 'OwwX-y_x-tY', artist: 'The Trammps - Disco Inferno', bpm: 129, decade: '70s' },
+            { id: 'kHjOACJ-R_c', artist: 'Anita Ward - Ring My Bell', bpm: 128, decade: '70s' },
+            { id: 'xF77Y1JLScc', artist: 'Lipps Inc. - Funkytown', bpm: 122, decade: '70s' },
+            { id: 'EQmSqGEvIsU', artist: 'Elton John - Don\'t Go Breaking My Heart', bpm: 131, decade: '70s' },
+            { id: 'ftdZ363R9kQ', artist: 'Stevie Wonder - Superstition', bpm: 101, decade: '70s' },
+            { id: 'SKXWqP3MhRM', artist: 'Blondie - Heart Of Glass', bpm: 114, decade: '70s' },
+            { id: 'aqO8LpEktvM', artist: 'Donna Summer - Hot Stuff', bpm: 120, decade: '70s' },
+            { id: 'Cq7XkC-1tK4', artist: 'The Jacksons - Blame It On the Boogie', bpm: 113, decade: '70s' },
+            { id: 'o41A91X5pjc', artist: 'KC & The Sunshine Band - That\'s The Way', bpm: 109, decade: '70s' },
             
             // --- 80s ---
             { id: 'djV11Xbc914', artist: 'A-ha - Take On Me', bpm: 169, decade: '80s' },
@@ -223,7 +228,7 @@
             { id: 'dQw4w9WgXcQ', artist: 'Rick Astley - Never Gonna Give You Up', bpm: 113, decade: '80s' },
             { id: '1k8craCGpgs', artist: 'Journey - Don\'t Stop Believin\'', bpm: 119, decade: '80s' },
             { id: 'lDK9QqIzhwk', artist: 'Bon Jovi - Livin\' On A Prayer', bpm: 123, decade: '80s' },
-            { id: 'qeMFqkcPYcg', artist: 'Eurythmics - Sweet Dreams', bpm: 125, decade: '80s' },
+            { id: 'm-c07a3lBhk', artist: 'Eurythmics - Sweet Dreams (Audio)', bpm: 125, decade: '80s' },
             { id: 'uPudE8nDog0', artist: 'The Human League - Don\'t You Want Me', bpm: 118, decade: '80s' },
             { id: 'aGCdLKXNF3w', artist: 'Tears For Fears - Everybody Wants To Rule The World', bpm: 112, decade: '80s' },
             { id: 'bC7-zSnb6zQ', artist: 'Dexys Midnight Runners - Come On Eileen', bpm: 107, decade: '80s' },
@@ -233,7 +238,7 @@
             { id: 'VbD_lNWAqbI', artist: 'David Bowie - Let\'s Dance', bpm: 114, decade: '80s' },
             { id: 'H9tEvfIsDyo', artist: 'Prince - Kiss', bpm: 111, decade: '80s' },
             { id: 'nqAvVuIQIGc', artist: 'Lionel Richie - All Night Long', bpm: 109, decade: '80s' },
-            { id: 'tkOr12AQpnU', artist: 'New Order - Bizarre Love Triangle', bpm: 119, decade: '80s' },
+            { id: 'c1GxjzHm5us', artist: 'New Order - Blue Monday (Audio)', bpm: 119, decade: '80s' },
             { id: 'eqyU9vRSvls', artist: 'Queen - Another One Bites The Dust', bpm: 110, decade: '80s' },
 
             // --- 90s ---
@@ -282,7 +287,7 @@
 
             // --- Actualidad (2010s - Hoy) ---
             { id: 'ZbZSe6N_BXs', artist: 'Pharrell Williams - Happy', bpm: 160, decade: 'Actual' },
-            { id: 'OPf0YbXqDm0', artist: 'Mark Ronson ft. Bruno Mars - Uptown Funk', bpm: 115, decade: 'Actual' },
+            { id: 'OPf0YbXqDm0', artist: 'Mark Ronson - Uptown Funk', bpm: 115, decade: 'Actual' },
             { id: 'oygrmJFKYZY', artist: 'Dua Lipa - Don\'t Start Now', bpm: 124, decade: 'Actual' },
             { id: '4NRXx6U8ABQ', artist: 'The Weeknd - Blinding Lights', bpm: 171, decade: 'Actual' },
             { id: 'orJSJGHjBLI', artist: 'Ed Sheeran - Bad Habits', bpm: 126, decade: 'Actual' },
@@ -303,10 +308,10 @@
             { id: 'eVli-tstM5E', artist: 'Sabrina Carpenter - Espresso', bpm: 104, decade: 'Actual' }
         ];
 
-        // ORDENAR AUTOMÁTICAMENTE POR BPM PARA FACILITAR LA MEZCLA AL DJ
+        // 1. ORDENAMOS LA LISTA POR BPM (Velocidad)
         tracks.sort((a, b) => a.bpm - b.bpm);
 
-        // Rellenar la lista visual
+        // 2. RELLENAMOS EL HTML
         const tracklistDiv = document.getElementById('tracklist');
         tracks.forEach(track => {
             tracklistDiv.innerHTML += `
@@ -323,24 +328,49 @@
             `;
         });
 
-        // Inicializar reproductores usando la canción 1 y 2 de la lista (Evita Error 153)
+        // 3. INICIALIZAMOS LA API DE YOUTUBE
         function onYouTubeIframeAPIReady() {
             playerA = new YT.Player('playerA', {
                 height: '300', width: '300',
                 videoId: tracks[0].id, 
                 playerVars: { 'controls': 0, 'disablekb': 1, 'rel': 0 },
-                events: { 'onReady': onPlayerReady }
+                events: { 
+                    'onReady': onPlayerReady,
+                    'onStateChange': (e) => onStateChange(e, 'A'),
+                    'onError': (e) => onPlayerError(e, 'A')
+                }
             });
             playerB = new YT.Player('playerB', {
                 height: '300', width: '300',
                 videoId: tracks[1].id,
                 playerVars: { 'controls': 0, 'disablekb': 1, 'rel': 0 },
-                events: { 'onReady': onPlayerReady }
+                events: { 
+                    'onReady': onPlayerReady,
+                    'onStateChange': (e) => onStateChange(e, 'B'),
+                    'onError': (e) => onPlayerError(e, 'B')
+                }
             });
         }
 
         function onPlayerReady(event) {
             updateVolumes();
+        }
+
+        // 4. ANIMACIÓN DEL VINILO GIRANDO
+        function onStateChange(event, deck) {
+            let deckElement = document.getElementById(deck === 'A' ? 'deckA' : 'deckB');
+            if (event.data === YT.PlayerState.PLAYING) {
+                deckElement.classList.add('spinning');
+            } else {
+                deckElement.classList.remove('spinning');
+            }
+        }
+
+        // 5. DETECTOR DE BLOQUEOS DE DISQUERAS (ERROR 150/101)
+        function onPlayerError(event, deck) {
+            if (event.data === 150 || event.data === 101) {
+                alert(`⚠️ ALERTA DJ: El video cargado en el DECK ${deck} está bloqueado por su discográfica para reproducirse fuera de YouTube. \n\n¡Carga la siguiente canción de tu lista rápido!`);
+            }
         }
 
         function loadVideo(deck, videoId) {

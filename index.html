@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Alegría - DJ Master Console Pro (Optimized)</title>
+    <title>Radio Alegría - DJ Master Console Pro</title>
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -27,7 +27,7 @@
             border-bottom: 1px solid #1a202c;
         }
 
-        /* Jog Wheels / Decks Estilo CDJ Optimizados (Sin lag de rotación) */
+        /* Jog Wheels / Decks Estilo CDJ */
         .cdj-deck {
             background: #0a0e14;
             border: 1px solid #21262d;
@@ -42,13 +42,18 @@
             position: relative; margin: 0 auto;
             box-shadow: 0 0 15px rgba(0,0,0,0.8);
             overflow: hidden; display: flex; align-items: center; justify-content: center;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            transition: border-color 0.4s, box-shadow 0.4s;
         }
         
-        /* Efecto LED Pro en lugar de giro pesado para evitar tirones de recursos */
+        /* EFECTO LED RGB QUE CAMBIA PAULATINAMENTE DE COLOR */
+        @keyframes rgbGlow {
+            0% { border-color: #00ffcc; box-shadow: 0 0 22px rgba(0,255,204,0.7); }
+            33% { border-color: #ff007f; box-shadow: 0 0 22px rgba(255,0,127,0.7); }
+            66% { border-color: #ffcc00; box-shadow: 0 0 22px rgba(255,204,0,0.7); }
+            100% { border-color: #00ffcc; box-shadow: 0 0 22px rgba(0,255,204,0.7); }
+        }
         .jog-wheel.playing-glow {
-            border-color: #00ffcc;
-            box-shadow: 0 0 20px rgba(0,255,204,0.5);
+            animation: rgbGlow 5s infinite ease-in-out;
         }
 
         .video-container { width: 70px; height: 70px; border-radius: 50%; overflow: hidden; pointer-events: none; }
@@ -62,21 +67,6 @@
         .btn-hardware:active { transform: translateY(2px); }
         .btn-play-pro { background: linear-gradient(180deg, #238636 0%, #196127 100%); border-color: #2ea043; color: #fff; }
         .btn-cue-pro { background: linear-gradient(180deg, #bb8009 0%, #9e6a03 100%); border-color: #d29922; color: #fff; }
-
-        /* Vúmetros LED */
-        .vu-meter {
-            width: 5px; height: 70px; background: #0a0e14; border: 1px solid #21262d; border-radius: 3px;
-            display: flex; flex-direction: column-reverse; padding: 1px; gap: 1px;
-        }
-        .vu-led { height: 3px; width: 100%; background: #161b22; border-radius: 1px; }
-        .vu-led.active-green { background: #238636; box-shadow: 0 0 3px #238636; }
-        .vu-led.active-yellow { background: #d29922; box-shadow: 0 0 3px #d29922; }
-        .vu-led.active-red { background: #f85149; box-shadow: 0 0 3px #f85149; }
-
-        /* Faders Verticales */
-        .fader-vertical {
-            writing-mode: vertical-lr; direction: rtl; width: 25px; height: 90px; accent-color: #00ffcc; cursor: pointer;
-        }
 
         /* Estilo canciones tocadas */
         .song-item.played {
@@ -107,104 +97,75 @@
         </div>
     </nav>
 
-    <!-- CABINA DE MEZCLAS TIPO MESA DJ -->
+    <!-- CABINA DE MEZCLAS TIPO MESA DJ (LIMPIA Y OPTIMIZADA) -->
     <div class="cabina-sticky py-3 mb-4">
         <div class="container">
             <div class="dj-mixing-console p-3">
                 <div class="row align-items-center justify-content-between g-3 text-center">
                     
                     <!-- DECK A -->
-                    <div class="col-lg-3 col-md-4">
-                        <div class="cdj-deck p-2 shadow">
-                            <div class="d-flex justify-content-between align-items-center mb-1 px-1">
-                                <span class="badge bg-danger fw-bold" style="font-size: 0.65rem;">DECK A</span>
-                                <span class="font-monospace text-muted" style="font-size: 9px;" id="cueDisplayA">CUE: 0:00</span>
+                    <div class="col-lg-4 col-md-4">
+                        <div class="cdj-deck p-3 shadow">
+                            <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                                <span class="badge bg-danger fw-bold" style="font-size: 0.75rem;">DECK A</span>
+                                <span class="font-monospace text-muted" style="font-size: 10px;" id="cueDisplayA">CUE: 0:00</span>
                             </div>
-                            <div class="jog-wheel mb-2" id="deckA">
+                            <div class="jog-wheel mb-3" id="deckA">
                                 <div class="video-container"><div id="playerA"></div></div>
                             </div>
-                            <div class="d-grid gap-1">
-                                <button class="btn btn-hardware btn-cue-pro py-1" onclick="jumpCue('A')"><i class="bi bi-skip-backward-fill"></i> CUE</button>
-                                <button class="btn btn-hardware btn-play-pro py-1" onclick="togglePlay('A')"><i class="bi bi-play-fill"></i> PLAY / PAUSE</button>
-                                <button class="btn btn-hardware py-1 text-light" style="font-size: 9px;" onclick="setCue('A')"><i class="bi bi-flag-fill"></i> SET CUE</button>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-hardware btn-cue-pro py-2" onclick="jumpCue('A')"><i class="bi bi-skip-backward-fill"></i> CUE</button>
+                                <button class="btn btn-hardware btn-play-pro py-2" onclick="togglePlay('A')"><i class="bi bi-play-fill"></i> PLAY / PAUSE</button>
+                                <button class="btn btn-hardware py-1 text-light" style="font-size: 10px;" onclick="setCue('A')"><i class="bi bi-flag-fill"></i> SET CUE</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- MESA DE MEZCLAS CENTRAL -->
-                    <div class="col-lg-6 col-md-4">
-                        <div class="bg-black border border-secondary rounded p-2 shadow-inset">
+                    <!-- MESA DE MEZCLAS CENTRAL (SOLO CROSSFADER Y PREVIEW) -->
+                    <div class="col-lg-4 col-md-4">
+                        <div class="bg-black border border-secondary rounded p-3 shadow-inset text-center">
                             
-                            <div class="row g-2 align-items-center">
-                                <!-- Canal A -->
-                                <div class="col-4 border-end border-secondary">
-                                    <span class="text-danger fw-bold" style="font-size: 9px;">CH A</span>
-                                    <div class="d-flex justify-content-center gap-1 my-1">
-                                        <div class="text-center"><small style="font-size:7px">HI</small><input type="range" class="form-range" style="width:30px" min="0" max="100" value="50"></div>
-                                        <div class="text-center"><small style="font-size:7px">MID</small><input type="range" class="form-range" style="width:30px" min="0" max="100" value="50"></div>
-                                        <div class="text-center"><small style="font-size:7px">LOW</small><input type="range" class="form-range" style="width:30px" min="0" max="100" value="50"></div>
-                                    </div>
-                                    <div class="d-flex justify-content-center align-items-center gap-2">
-                                        <div class="vu-meter"><div class="vu-led active-green"></div><div class="vu-led active-green"></div><div class="vu-led active-yellow"></div><div class="vu-led"></div></div>
-                                        <input type="range" class="fader-vertical" id="faderA" min="0" max="100" value="100" oninput="updateVolumes()">
-                                    </div>
+                            <div class="text-warning fw-bold mb-2 small" style="font-size: 0.8rem;"><i class="bi bi-headphones"></i> MASTER PREVIEW</div>
+                            
+                            <!-- Preview mini deck -->
+                            <div class="d-flex align-items-center justify-content-center gap-3 bg-secondary bg-opacity-10 p-2 rounded border border-secondary mb-3">
+                                <div class="jog-wheel" style="width: 55px; height: 55px; border-width: 2px;" id="deckPreview">
+                                    <div class="video-container" style="width: 35px; height: 35px;"><div id="playerPreview"></div></div>
                                 </div>
-
-                                <!-- Sección FX Pads & Preview -->
-                                <div class="col-4 text-center px-1">
-                                    <div class="text-warning fw-bold mb-1" style="font-size: 0.65rem;"><i class="bi bi-soundwave"></i> FX & PREVIEW</div>
-                                    <div class="d-flex justify-content-center gap-1 mb-2">
-                                        <button class="btn btn-outline-warning btn-sm p-1" style="font-size: 9px;" onclick="playSfx('airhorn')">📢 Horn</button>
-                                        <button class="btn btn-outline-danger btn-sm p-1" style="font-size: 9px;" onclick="playSfx('laser')">⚡ Laser</button>
-                                        <button class="btn btn-outline-info btn-sm p-1" style="font-size: 9px;" onclick="playSfx('siren')">🚨 Siren</button>
-                                    </div>
-                                    
-                                    <div class="d-flex align-items-center justify-content-center gap-2 bg-secondary bg-opacity-10 p-1 rounded border border-secondary">
-                                        <div class="jog-wheel" style="width: 45px; height: 45px; border-width: 2px;" id="deckPreview">
-                                            <div class="video-container" style="width: 25px; height: 25px;"><div id="playerPreview"></div></div>
-                                        </div>
-                                        <button class="btn btn-warning btn-sm text-dark fw-bold py-0 px-2" style="font-size: 9px;" onclick="togglePlay('Preview')">Test</button>
-                                    </div>
-                                </div>
-
-                                <!-- Canal B -->
-                                <div class="col-4 border-start border-secondary">
-                                    <span class="text-primary fw-bold" style="font-size: 9px;">CH B</span>
-                                    <div class="d-flex justify-content-center gap-1 my-1">
-                                        <div class="text-center"><small style="font-size:7px">HI</small><input type="range" class="form-range" style="width:30px" min="0" max="100" value="50"></div>
-                                        <div class="text-center"><small style="font-size:7px">MID</small><input type="range" class="form-range" style="width:30px" min="0" max="100" value="50"></div>
-                                        <div class="text-center"><small style="font-size:7px">LOW</small><input type="range" class="form-range" style="width:30px" min="0" max="100" value="50"></div>
-                                    </div>
-                                    <div class="d-flex justify-content-center align-items-center gap-2">
-                                        <input type="range" class="fader-vertical" id="faderB" min="0" max="100" value="100" oninput="updateVolumes()">
-                                        <div class="vu-meter"><div class="vu-led active-green"></div><div class="vu-led active-green"></div><div class="vu-led active-yellow"></div><div class="vu-led"></div></div>
-                                    </div>
-                                </div>
+                                <button class="btn btn-warning btn-sm text-dark fw-bold py-1 px-3" onclick="togglePlay('Preview')">
+                                    <i class="bi bi-play-fill"></i> Test
+                                </button>
                             </div>
 
-                            <!-- Crossfader Inferior -->
-                            <div class="mt-2 pt-1 border-top border-secondary text-center">
-                                <span class="text-muted" style="font-size: 8px;">CROSSFADER A &lt;===================&gt; B</span>
-                                <input type="range" class="form-range form-range-sm mt-0 mb-1" id="crossfader" min="0" max="100" value="50" oninput="updateVolumes()">
+                            <hr class="border-secondary my-3">
+
+                            <!-- Crossfader General -->
+                            <div>
+                                <label class="text-muted small fw-bold mb-1" style="font-size: 9px;">CROSSFADER (DECK A &lt;===================&gt; DECK B)</label>
+                                <input type="range" class="form-range" id="crossfader" min="0" max="100" value="50" oninput="updateVolumes()">
+                                <div class="d-flex justify-content-between text-muted mt-1" style="font-size: 10px;">
+                                    <span>DECK A</span>
+                                    <span>DECK B</span>
+                                </div>
                             </div>
 
                         </div>
                     </div>
 
                     <!-- DECK B -->
-                    <div class="col-lg-3 col-md-4">
-                        <div class="cdj-deck p-2 shadow">
-                            <div class="d-flex justify-content-between align-items-center mb-1 px-1">
-                                <span class="badge bg-primary fw-bold" style="font-size: 0.65rem;">DECK B</span>
-                                <span class="font-monospace text-muted" style="font-size: 9px;" id="cueDisplayB">CUE: 0:00</span>
+                    <div class="col-lg-4 col-md-4">
+                        <div class="cdj-deck p-3 shadow">
+                            <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                                <span class="badge bg-primary fw-bold" style="font-size: 0.75rem;">DECK B</span>
+                                <span class="font-monospace text-muted" style="font-size: 10px;" id="cueDisplayB">CUE: 0:00</span>
                             </div>
-                            <div class="jog-wheel mb-2" id="deckB">
+                            <div class="jog-wheel mb-3" id="deckB">
                                 <div class="video-container"><div id="playerB"></div></div>
                             </div>
-                            <div class="d-grid gap-1">
-                                <button class="btn btn-hardware btn-cue-pro py-1" onclick="jumpCue('B')"><i class="bi bi-skip-backward-fill"></i> CUE</button>
-                                <button class="btn btn-hardware btn-play-pro py-1" onclick="togglePlay('B')"><i class="bi bi-play-fill"></i> PLAY / PAUSE</button>
-                                <button class="btn btn-hardware py-1 text-light" style="font-size: 9px;" onclick="setCue('B')"><i class="bi bi-flag-fill"></i> SET CUE</button>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-hardware btn-cue-pro py-2" onclick="jumpCue('B')"><i class="bi bi-skip-backward-fill"></i> CUE</button>
+                                <button class="btn btn-hardware btn-play-pro py-2" onclick="togglePlay('B')"><i class="bi bi-play-fill"></i> PLAY / PAUSE</button>
+                                <button class="btn btn-hardware py-1 text-light" style="font-size: 10px;" onclick="setCue('B')"><i class="bi bi-flag-fill"></i> SET CUE</button>
                             </div>
                         </div>
                     </div>
@@ -277,47 +238,6 @@
     <script src="https://www.youtube.com/iframe_api"></script>
 
     <script>
-        // WEB AUDIO API PARA EFECTOS DE SONIDO (SFX) EN VIVO
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playSfx(type) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            
-            if (type === 'airhorn') {
-                let osc1 = audioCtx.createOscillator();
-                let osc2 = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
-                osc1.type = 'sawtooth'; osc2.type = 'square';
-                osc1.frequency.setValueAtTime(370, audioCtx.currentTime);
-                osc2.frequency.setValueAtTime(466, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
-                osc1.connect(gain); osc2.connect(gain); gain.connect(audioCtx.destination);
-                osc1.start(); osc2.start();
-                osc1.stop(audioCtx.currentTime + 0.4); osc2.stop(audioCtx.currentTime + 0.4);
-            } else if (type === 'laser') {
-                let osc = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.3);
-                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-            } else if (type === 'siren') {
-                let osc = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-                osc.frequency.linearRampToValueAtTime(900, audioCtx.currentTime + 0.2);
-                osc.frequency.linearRampToValueAtTime(400, audioCtx.currentTime + 0.4);
-                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.4);
-            }
-        }
-
         // CONFIGURACIÓN DE FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyDgJM6TtDDpGYRrQRKmxKH3S6XBy8TettY",
@@ -584,11 +504,9 @@
         function updateVolumes() {
             if (!playerA || !playerB || !playerA.setVolume || !playerB.setVolume) return;
             let cf = document.getElementById('crossfader').value;
-            let faderA = document.getElementById('faderA').value;
-            let faderB = document.getElementById('faderB').value;
 
-            let volA = (faderA / 100) * (cf <= 50 ? 100 : 100 - ((cf - 50) * 2));
-            let volB = (faderB / 100) * (cf >= 50 ? 100 : cf * 2);
+            let volA = cf <= 50 ? 100 : 100 - ((cf - 50) * 2);
+            let volB = cf >= 50 ? 100 : cf * 2;
 
             playerA.setVolume(volA);
             playerB.setVolume(volB);

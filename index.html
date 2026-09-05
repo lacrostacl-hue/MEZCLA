@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Radio Alegría - DJ Master Console Pro</title>
-    <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     
     <style>
@@ -42,18 +40,30 @@
             position: relative; margin: 0 auto;
             box-shadow: 0 0 15px rgba(0,0,0,0.8);
             overflow: hidden; display: flex; align-items: center; justify-content: center;
-            transition: border-color 0.4s, box-shadow 0.4s;
+            z-index: 1;
         }
         
-        /* EFECTO LED RGB PAULATINO */
-        @keyframes rgbGlow {
-            0% { border-color: #00ffcc; box-shadow: 0 0 22px rgba(0,255,204,0.7); }
-            33% { border-color: #ff007f; box-shadow: 0 0 22px rgba(255,0,127,0.7); }
-            66% { border-color: #ffcc00; box-shadow: 0 0 22px rgba(255,204,0,0.7); }
-            100% { border-color: #00ffcc; box-shadow: 0 0 22px rgba(0,255,204,0.7); }
+        /* ANILLO LED RGB DINÁMICO (EFECTO PROFESIONAL) */
+        .jog-wheel::after {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 50%;
+            background: conic-gradient(#00ffcc, #ff007f, #ffcc00, #00ffcc);
+            z-index: -1;
+            opacity: 0;
+            filter: blur(5px);
+            transition: opacity 0.4s ease;
         }
-        .jog-wheel.playing-glow {
-            animation: rgbGlow 5s infinite ease-in-out;
+
+        @keyframes spinRing {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .jog-wheel.playing-glow::after {
+            opacity: 1;
+            animation: spinRing 3s linear infinite;
         }
 
         .video-container { width: 70px; height: 70px; border-radius: 50%; overflow: hidden; pointer-events: none; }
@@ -78,25 +88,18 @@
 
         .playlist-scroll { max-height: 60vh; overflow-y: auto; }
         
-        /* Contenedor de botones de categoría horizontal con scroll */
         .category-bar {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 8px;
-            white-space: nowrap;
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; white-space: nowrap;
         }
         .category-bar::-webkit-scrollbar { height: 4px; }
         .category-bar::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
     </style>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body class="text-light">
 
-    <!-- NAVBAR -->
     <nav class="navbar navbar-dark bg-black border-bottom border-secondary px-3 py-2">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <span class="navbar-brand mb-0 h1 text-info fw-bold font-monospace">
@@ -108,13 +111,11 @@
         </div>
     </nav>
 
-    <!-- CABINA DE MEZCLAS TIPO MESA DJ -->
     <div class="cabina-sticky py-3 mb-4">
         <div class="container">
             <div class="dj-mixing-console p-3">
                 <div class="row align-items-center justify-content-between g-3 text-center">
                     
-                    <!-- DECK A -->
                     <div class="col-lg-4 col-md-4">
                         <div class="cdj-deck p-3 shadow">
                             <div class="d-flex justify-content-between align-items-center mb-2 px-1">
@@ -132,13 +133,11 @@
                         </div>
                     </div>
 
-                    <!-- MESA DE MEZCLAS CENTRAL -->
                     <div class="col-lg-4 col-md-4">
                         <div class="bg-black border border-secondary rounded p-3 shadow-inset text-center">
                             
                             <div class="text-warning fw-bold mb-2 small" style="font-size: 0.8rem;"><i class="bi bi-headphones"></i> MASTER PREVIEW</div>
                             
-                            <!-- Preview mini deck -->
                             <div class="d-flex align-items-center justify-content-center gap-3 bg-secondary bg-opacity-10 p-2 rounded border border-secondary mb-3">
                                 <div class="jog-wheel" style="width: 55px; height: 55px; border-width: 2px;" id="deckPreview">
                                     <div class="video-container" style="width: 35px; height: 35px;"><div id="playerPreview"></div></div>
@@ -150,7 +149,6 @@
 
                             <hr class="border-secondary my-3">
 
-                            <!-- Crossfader General -->
                             <div>
                                 <label class="text-muted small fw-bold mb-1" style="font-size: 9px;">CROSSFADER (DECK A &lt;===================&gt; DECK B)</label>
                                 <input type="range" class="form-range" id="crossfader" min="0" max="100" value="50" oninput="updateVolumes()">
@@ -163,7 +161,6 @@
                         </div>
                     </div>
 
-                    <!-- DECK B -->
                     <div class="col-lg-4 col-md-4">
                         <div class="cdj-deck p-3 shadow">
                             <div class="d-flex justify-content-between align-items-center mb-2 px-1">
@@ -186,11 +183,9 @@
         </div>
     </div>
 
-    <!-- CONTENEDOR PRINCIPAL -->
     <div class="container mb-5">
         <div class="row g-4">
             
-            <!-- SETLIST PRINCIPAL CON BOTONES DE CATEGORÍA -->
             <div class="col-lg-7">
                 <div class="card bg-dark border-secondary shadow">
                     <div class="card-header bg-black border-secondary d-flex justify-content-between align-items-center py-3">
@@ -201,12 +196,7 @@
                     </div>
                     
                     <div class="card-body p-3">
-                        <!-- BARRA DE BOTONES DE CATEGORÍA -->
-                        <div class="category-bar mb-3" id="categoryButtonsContainer">
-                            <!-- Se generan dinámicamente -->
-                        </div>
-
-                        <!-- LISTA DE CANCIONES DE LA CATEGORÍA ACTIVA -->
+                        <div class="category-bar mb-3" id="categoryButtonsContainer"></div>
                         <div class="playlist-scroll border border-secondary rounded bg-black p-2">
                             <ul class="list-group list-group-flush bg-transparent" id="activeSongList">
                                 <div class="text-center text-muted py-4">Cargando pistas...</div>
@@ -216,7 +206,6 @@
                 </div>
             </div>
 
-            <!-- BUSCADOR & GESTOR -->
             <div class="col-lg-5">
                 <div class="card bg-dark border-warning shadow">
                     <div class="card-header bg-black border-warning text-warning fw-bold font-monospace">
@@ -237,8 +226,7 @@
                             <input type="text" class="form-control bg-black text-light border-secondary mb-2" id="inputUrl" placeholder="Pega el enlace de YouTube...">
                             <input type="text" class="form-control bg-black text-light border-secondary mb-2" id="inputNombre" placeholder="Nombre (o vacío para usar la búsqueda)">
                             <select class="form-select bg-black text-light border-secondary mb-3" id="selectCategoriaPedido">
-                                <!-- Dinámico -->
-                            </select>
+                                </select>
                             <button class="btn btn-warning text-dark fw-bold w-100 shadow-sm" onclick="agregarPedido()">
                                 <i class="bi bi-cloud-arrow-up-fill"></i> Guardar en Firebase
                             </button>
@@ -253,7 +241,6 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
 
@@ -274,7 +261,7 @@
         let playerA, playerB, playerPreview;
         let tracks = [];
         let cuePointA = 0, cuePointB = 0;
-        let activeCategory = null; // Almacena la categoría seleccionada en los botones
+        let activeCategory = null;
 
         const tracksIniciales = [
             { id: 'Gs069dndIYk', artist: 'Earth, Wind & Fire - September', bpm: 125, decade: '70s Disco' },
@@ -307,7 +294,6 @@
             
             const estilos = [...new Set(tracks.map(t => t.decade))];
             
-            // Si no hay categoría activa o la activa ya no existe, seleccionamos la primera
             if (!activeCategory || !estilos.includes(activeCategory)) {
                 activeCategory = estilos[0] || '';
             }
@@ -318,7 +304,6 @@
             estilos.forEach((estilo) => {
                 htmlSelect += `<option value="${estilo}">${estilo}</option>`;
                 
-                // Estilo del botón activo vs inactivo
                 let isActive = estilo === activeCategory 
                     ? 'btn-warning text-dark shadow' 
                     : 'btn-dark text-light border-secondary';
@@ -335,7 +320,6 @@
             catContainer.innerHTML = htmlButtons;
             selectDiv.innerHTML = htmlSelect + `<option value="Pedidos Temporales">⭐ Lista Temporal de Pedidos</option>`;
 
-            // Renderizar las canciones de la categoría activa
             let htmlSongs = '';
             tracks.forEach((track, globalIndex) => {
                 if (track.decade === activeCategory) {
@@ -442,7 +426,6 @@
             document.getElementById('inputNombre').value = '';
         }
 
-        // YouTube API & Hardware Controls
         function onYouTubeIframeAPIReady() {
             playerA = new YT.Player('playerA', {
                 height: '200', width: '200',

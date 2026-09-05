@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Alegría - DJ Master Console Pro</title>
+    <title>Radio Alegría - DJ Master Console Pro (Optimized)</title>
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -27,7 +27,7 @@
             border-bottom: 1px solid #1a202c;
         }
 
-        /* Jog Wheels / Decks Estilo CDJ */
+        /* Jog Wheels / Decks Estilo CDJ Optimizados (Sin lag de rotación) */
         .cdj-deck {
             background: #0a0e14;
             border: 1px solid #21262d;
@@ -40,13 +40,16 @@
             background: radial-gradient(circle, #161b22 0%, #0d1117 75%, #000000 100%);
             border: 4px solid #30363d;
             position: relative; margin: 0 auto;
-            box-shadow: 0 0 15px rgba(0,255,204,0.1), inset 0 0 10px rgba(255,255,255,0.05);
+            box-shadow: 0 0 15px rgba(0,0,0,0.8);
             overflow: hidden; display: flex; align-items: center; justify-content: center;
-            transition: transform 0.1s linear;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
         
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        .spinning { animation: spin 2.5s linear infinite; border-color: #00ffcc; box-shadow: 0 0 20px rgba(0,255,204,0.4); }
+        /* Efecto LED Pro en lugar de giro pesado para evitar tirones de recursos */
+        .jog-wheel.playing-glow {
+            border-color: #00ffcc;
+            box-shadow: 0 0 20px rgba(0,255,204,0.5);
+        }
 
         .video-container { width: 70px; height: 70px; border-radius: 50%; overflow: hidden; pointer-events: none; }
 
@@ -128,12 +131,12 @@
                         </div>
                     </div>
 
-                    <!-- MESA DE MEZCLAS CENTRAL (EQ + FADERS + FX PADS) -->
+                    <!-- MESA DE MEZCLAS CENTRAL -->
                     <div class="col-lg-6 col-md-4">
                         <div class="bg-black border border-secondary rounded p-2 shadow-inset">
                             
                             <div class="row g-2 align-items-center">
-                                <!-- Canal A (EQ & Fader) -->
+                                <!-- Canal A -->
                                 <div class="col-4 border-end border-secondary">
                                     <span class="text-danger fw-bold" style="font-size: 9px;">CH A</span>
                                     <div class="d-flex justify-content-center gap-1 my-1">
@@ -147,16 +150,15 @@
                                     </div>
                                 </div>
 
-                                <!-- Sección Central: FX Pads & Preview -->
+                                <!-- Sección FX Pads & Preview -->
                                 <div class="col-4 text-center px-1">
                                     <div class="text-warning fw-bold mb-1" style="font-size: 0.65rem;"><i class="bi bi-soundwave"></i> FX & PREVIEW</div>
                                     <div class="d-flex justify-content-center gap-1 mb-2">
-                                        <button class="btn btn-outline-warning btn-sm p-1" style="font-size: 9px;" onclick="playSfx('airhorn')" title="Airhorn">📢 Horn</button>
-                                        <button class="btn btn-outline-danger btn-sm p-1" style="font-size: 9px;" onclick="playSfx('laser')" title="Laser">⚡ Laser</button>
-                                        <button class="btn btn-outline-info btn-sm p-1" style="font-size: 9px;" onclick="playSfx('siren')" title="Siren">🚨 Siren</button>
+                                        <button class="btn btn-outline-warning btn-sm p-1" style="font-size: 9px;" onclick="playSfx('airhorn')">📢 Horn</button>
+                                        <button class="btn btn-outline-danger btn-sm p-1" style="font-size: 9px;" onclick="playSfx('laser')">⚡ Laser</button>
+                                        <button class="btn btn-outline-info btn-sm p-1" style="font-size: 9px;" onclick="playSfx('siren')">🚨 Siren</button>
                                     </div>
                                     
-                                    <!-- Preview mini deck -->
                                     <div class="d-flex align-items-center justify-content-center gap-2 bg-secondary bg-opacity-10 p-1 rounded border border-secondary">
                                         <div class="jog-wheel" style="width: 45px; height: 45px; border-width: 2px;" id="deckPreview">
                                             <div class="video-container" style="width: 25px; height: 25px;"><div id="playerPreview"></div></div>
@@ -165,7 +167,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Canal B (EQ & Fader) -->
+                                <!-- Canal B -->
                                 <div class="col-4 border-start border-secondary">
                                     <span class="text-primary fw-bold" style="font-size: 9px;">CH B</span>
                                     <div class="d-flex justify-content-center gap-1 my-1">
@@ -212,7 +214,7 @@
         </div>
     </div>
 
-    <!-- CONTENEDOR PRINCIPAL (SETLISTS Y BUSCADOR) -->
+    <!-- CONTENEDOR PRINCIPAL -->
     <div class="container mb-5">
         <div class="row g-4">
             
@@ -233,7 +235,7 @@
                 </div>
             </div>
 
-            <!-- BUSCADOR & GESTOR DE PEDIDOS -->
+            <!-- BUSCADOR & GESTOR -->
             <div class="col-lg-5">
                 <div class="card bg-dark border-warning shadow">
                     <div class="card-header bg-black border-warning text-warning fw-bold font-monospace">
@@ -514,8 +516,13 @@
 
         function onStateChange(event, deck) {
             let deckElement = document.getElementById(deck === 'Preview' ? 'deckPreview' : 'deck' + deck);
-            if (deckElement && event.data === YT.PlayerState.PLAYING) deckElement.classList.add('spinning');
-            else if (deckElement) deckElement.classList.remove('spinning');
+            if (deckElement) {
+                if (event.data === YT.PlayerState.PLAYING) {
+                    deckElement.classList.add('playing-glow');
+                } else {
+                    deckElement.classList.remove('playing-glow');
+                }
+            }
         }
 
         function previewSong(videoId) {
@@ -580,7 +587,6 @@
             let faderA = document.getElementById('faderA').value;
             let faderB = document.getElementById('faderB').value;
 
-            // Combinamos fader vertical de canal + crossfader general
             let volA = (faderA / 100) * (cf <= 50 ? 100 : 100 - ((cf - 50) * 2));
             let volB = (faderB / 100) * (cf >= 50 ? 100 : cf * 2);
 

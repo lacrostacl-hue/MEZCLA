@@ -154,6 +154,8 @@
                                 <span class="badge bg-danger fw-bold shadow-sm" style="font-size: 0.75rem;">DECK A</span>
                                 <span class="font-monospace text-muted" style="font-size: 9px;" id="cueDisplayA">CUE: 0:00</span>
                             </div>
+                            <!-- Visor del Nombre del Tema -->
+                            <div class="text-truncate fw-bold text-warning font-monospace mb-1 px-1" id="trackTitleA" style="font-size: 11px;" title="Sin pista cargada">[ DECK A VACÍO ]</div>
                             <!-- Visor de tiempo transcurrido / restante -->
                             <div class="text-info font-monospace mb-2 fw-bold" style="font-size: 11px;" id="timeDisplayA">0:00 / -0:00</div>
                             
@@ -220,6 +222,8 @@
                                 <span class="badge bg-primary fw-bold shadow-sm" style="font-size: 0.75rem;">DECK B</span>
                                 <span class="font-monospace text-muted" style="font-size: 9px;" id="cueDisplayB">CUE: 0:00</span>
                             </div>
+                            <!-- Visor del Nombre del Tema -->
+                            <div class="text-truncate fw-bold text-warning font-monospace mb-1 px-1" id="trackTitleB" style="font-size: 11px;" title="Sin pista cargada">[ DECK B VACÍO ]</div>
                             <!-- Visor de tiempo transcurrido / restante -->
                             <div class="text-primary font-monospace mb-2 fw-bold" style="font-size: 11px;" id="timeDisplayB">0:00 / -0:00</div>
 
@@ -534,7 +538,6 @@
             return (match && match[2].length === 11) ? match[2] : (url.length === 11 ? url : null);
         }
 
-        // Autodetección del título de la pista usando oEmbed de YouTube
         async function autoDetectTitle() {
             const urlInput = document.getElementById('inputUrl').value.trim();
             const nombreInput = document.getElementById('inputNombre');
@@ -567,7 +570,6 @@
             if (!videoId) return alert("Enlace de YouTube no válido.");
 
             if (!nombre) {
-                // Intento final de autodetectarse si está vacío antes de guardar
                 try {
                     const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
                     if (res.ok) {
@@ -600,7 +602,6 @@
             updateVolumes();
         }
 
-        // Hot Cues Optimizados
         function handleHotCue(deck, padNum) {
             let player = deck === 'A' ? playerA : playerB;
             let cues = deck === 'A' ? hotCuesA : hotCuesB;
@@ -667,17 +668,25 @@
             }
         }
 
+        // CARGAR PISTA EN EL DECK Y MOSTRAR SU NOMBRE AUTOMÁTICAMENTE
         function loadVideo(deck, videoId) {
+            let foundTrack = tracks.find(t => t.id === videoId);
+            let trackName = foundTrack ? foundTrack.artist : `Video ID: ${videoId}`;
+
             if (deck === 'A') {
                 playerA.cueVideoById(videoId);
                 cuePointA = 0;
                 resetHotCues('A');
                 document.getElementById('cueDisplayA').innerText = `CUE: 0:00`;
+                document.getElementById('trackTitleA').innerText = trackName;
+                document.getElementById('trackTitleA').title = trackName;
             } else {
                 playerB.cueVideoById(videoId);
                 cuePointB = 0;
                 resetHotCues('B');
                 document.getElementById('cueDisplayB').innerText = `CUE: 0:00`;
+                document.getElementById('trackTitleB').innerText = trackName;
+                document.getElementById('trackTitleB').title = trackName;
             }
 
             document.querySelectorAll(`.song-item[data-id="${videoId}"]`).forEach(el => el.classList.add('played'));

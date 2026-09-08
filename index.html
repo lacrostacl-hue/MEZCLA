@@ -92,6 +92,7 @@
             background: #1f6feb; border-color: #58a6ff; color: #fff;
             box-shadow: 0 0 10px rgba(31, 111, 235, 0.7);
         }
+        .hot-cue-pad:active { transform: scale(0.95); }
 
         /* Waveform Canvas Style */
         .waveform-canvas {
@@ -113,7 +114,6 @@
         .category-bar::-webkit-scrollbar { height: 4px; }
         .category-bar::-webkit-scrollbar-thumb { background: #00ffcc; border-radius: 2px; }
 
-        /* Tarjetas Neón */
         .card {
             background: rgba(13, 17, 23, 0.85) !important;
             backdrop-filter: blur(10px);
@@ -141,7 +141,7 @@
         </div>
     </nav>
 
-    <!-- CABINA DE MEZCLAS ALUCINANTE -->
+    <!-- CABINA DE MEZCLAS -->
     <div class="cabina-sticky py-3 mb-4">
         <div class="container">
             <div class="dj-mixing-console p-3">
@@ -534,6 +534,7 @@
             updateVolumes();
         }
 
+        // HOT CUES OPTIMIZADOS (Salto instantáneo y reproducción inmediata)
         function handleHotCue(deck, padNum) {
             let player = deck === 'A' ? playerA : playerB;
             let cues = deck === 'A' ? hotCuesA : hotCuesB;
@@ -542,10 +543,13 @@
             if (!player || !player.getCurrentTime) return;
 
             if (cues[padNum] === null) {
+                // Guardar punto Hot Cue en el tiempo actual
                 cues[padNum] = player.getCurrentTime();
                 padEl.classList.add('active');
             } else {
+                // Saltar al punto y reproducir al instante (Comportamiento Pro de Hardware)
                 player.seekTo(cues[padNum], true);
+                player.playVideo();
             }
         }
 

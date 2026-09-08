@@ -150,10 +150,13 @@
                     <!-- DECK A -->
                     <div class="col-lg-4 col-md-4">
                         <div class="cdj-deck p-3 shadow">
-                            <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                            <div class="d-flex justify-content-between align-items-center mb-1 px-1">
                                 <span class="badge bg-danger fw-bold shadow-sm" style="font-size: 0.75rem;">DECK A</span>
-                                <span class="font-monospace text-muted" style="font-size: 10px;" id="cueDisplayA">CUE: 0:00</span>
+                                <span class="font-monospace text-muted" style="font-size: 9px;" id="cueDisplayA">CUE: 0:00</span>
                             </div>
+                            <!-- Visor de tiempo transcurrido / restante -->
+                            <div class="text-info font-monospace mb-2 fw-bold" style="font-size: 11px;" id="timeDisplayA">0:00 / -0:00</div>
+                            
                             <div class="jog-wheel mb-2" id="deckA">
                                 <div class="video-container"><div id="playerA"></div></div>
                             </div>
@@ -213,10 +216,13 @@
                     <!-- DECK B -->
                     <div class="col-lg-4 col-md-4">
                         <div class="cdj-deck p-3 shadow">
-                            <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                            <div class="d-flex justify-content-between align-items-center mb-1 px-1">
                                 <span class="badge bg-primary fw-bold shadow-sm" style="font-size: 0.75rem;">DECK B</span>
-                                <span class="font-monospace text-muted" style="font-size: 10px;" id="cueDisplayB">CUE: 0:00</span>
+                                <span class="font-monospace text-muted" style="font-size: 9px;" id="cueDisplayB">CUE: 0:00</span>
                             </div>
+                            <!-- Visor de tiempo transcurrido / restante -->
+                            <div class="text-primary font-monospace mb-2 fw-bold" style="font-size: 11px;" id="timeDisplayB">0:00 / -0:00</div>
+
                             <div class="jog-wheel mb-2" id="deckB">
                                 <div class="video-container"><div id="playerB"></div></div>
                             </div>
@@ -288,10 +294,10 @@
 
                         <hr class="border-secondary my-3">
 
-                        <label class="form-label text-muted small fw-bold font-monospace">2. AÑADIR A LA NUBE (CATEGORÍAS & PEDIDOS)</label>
+                        <label class="form-label text-muted small fw-bold font-monospace">2. AÑADIR A LA NUBE (AUTODETECTA TÍTULO)</label>
                         <div class="mb-2">
-                            <input type="text" class="form-control bg-black text-light border-secondary mb-2 shadow-sm" id="inputUrl" placeholder="Pega el enlace de YouTube...">
-                            <input type="text" class="form-control bg-black text-light border-secondary mb-2 shadow-sm" id="inputNombre" placeholder="Nombre (o vacío para usar la búsqueda)">
+                            <input type="text" class="form-control bg-black text-light border-secondary mb-2 shadow-sm" id="inputUrl" placeholder="Pega el enlace de YouTube..." onblur="autoDetectTitle()">
+                            <input type="text" class="form-control bg-black text-light border-secondary mb-2 shadow-sm" id="inputNombre" placeholder="Nombre de la pista (o déjalo vacío)">
                             <select class="form-select bg-black text-light border-secondary mb-3 shadow-sm" id="selectCategoriaPedido">
                                 <!-- Dinámico -->
                             </select>
@@ -358,6 +364,31 @@
             }
             renderizarBaseDatos();
         });
+
+        // Actualizar tiempos transcurridos y restantes en los Decks
+        function updateDeckTimes() {
+            if (playerA && playerA.getCurrentTime && playerA.getDuration) {
+                let curA = playerA.getCurrentTime() || 0;
+                let durA = playerA.getDuration() || 0;
+                let remA = Math.max(0, durA - curA);
+                let elA = document.getElementById('timeDisplayA');
+                if (elA) elA.innerText = `${formatTime(curA)} / -${formatTime(remA)}`;
+            }
+            if (playerB && playerB.getCurrentTime && playerB.getDuration) {
+                let curB = playerB.getCurrentTime() || 0;
+                let durB = playerB.getDuration() || 0;
+                let remB = Math.max(0, durB - curB);
+                let elB = document.getElementById('timeDisplayB');
+                if (elB) elB.innerText = `${formatTime(curB)} / -${formatTime(remB)}`;
+            }
+        }
+        setInterval(updateDeckTimes, 400);
+
+        function formatTime(seconds) {
+            let mins = Math.floor(seconds / 60);
+            let secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
 
         function drawWaveform(canvasId, isPlaying) {
             const canvas = document.getElementById(canvasId);
@@ -503,7 +534,29 @@
             return (match && match[2].length === 11) ? match[2] : (url.length === 11 ? url : null);
         }
 
-        function agregarPedido() {
+        // Autodetección del título de la pista usando oEmbed de YouTube
+        async function autoDetectTitle() {
+            const urlInput = document.getElementById('inputUrl').value.trim();
+            const nombreInput = document.getElementById('inputNombre');
+            if (!urlInput || nombreInput.value.trim() !== '') return;
+            
+            const videoId = extraerIDYouTube(urlInput);
+            if (!videoId) return;
+
+            try {
+                const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.title) {
+                        nombreInput.value = data.title;
+                    }
+                }
+            } catch (err) {
+                console.log("No se pudo autodetectar el título automáticamente.");
+            }
+        }
+
+        async function agregarPedido() {
             const url = document.getElementById('inputUrl').value.trim();
             let nombre = document.getElementById('inputNombre').value.trim();
             const busqueda = document.getElementById('inputBuscar').value.trim();
@@ -514,7 +567,18 @@
             if (!videoId) return alert("Enlace de YouTube no válido.");
 
             if (!nombre) {
-                nombre = busqueda ? busqueda : "Audio Nuevo";
+                // Intento final de autodetectarse si está vacío antes de guardar
+                try {
+                    const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data && data.title) nombre = data.title;
+                    }
+                } catch (e) {}
+                
+                if (!nombre) {
+                    nombre = busqueda ? busqueda : "Audio Nuevo";
+                }
             }
 
             tracks.push({ id: videoId, artist: nombre, bpm: '?', decade: catSeleccionada });
@@ -522,7 +586,7 @@
 
             document.getElementById('inputUrl').value = '';
             document.getElementById('inputNombre').value = '';
-            alert("¡Canción guardada en Firebase correctamente dentro de la categoría seleccionada!");
+            alert("¡Canción guardada en Firebase correctamente!");
         }
 
         function toggleSoloPreview() {

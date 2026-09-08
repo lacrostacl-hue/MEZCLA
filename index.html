@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Alegría - DJ Master Console Pro + Quick Search & Cloud Categories</title>
+    <title>Radio Alegría - DJ Master Console Pro + Global Search</title>
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -214,9 +214,9 @@
                         <!-- Botones de Categoría -->
                         <div class="category-bar mb-2" id="categoryButtonsContainer"></div>
                         
-                        <!-- Buscador Rápido por Categoría -->
+                        <!-- Buscador Global en Tiempo Real -->
                         <div class="mb-3">
-                            <input type="text" class="form-control form-control-sm bg-black text-light border-secondary" id="quickSearchInput" placeholder="🔍 Buscador rápido en esta categoría..." oninput="renderizarBaseDatos()">
+                            <input type="text" class="form-control form-control-sm bg-black text-light border-secondary" id="quickSearchInput" placeholder="🔍 Buscar por artista o título en toda la base de datos..." oninput="renderizarBaseDatos()">
                         </div>
 
                         <div class="playlist-scroll border border-secondary rounded bg-black p-2">
@@ -340,7 +340,7 @@
             const catContainer = document.getElementById('categoryButtonsContainer');
             const songListContainer = document.getElementById('activeSongList');
             const selectDiv = document.getElementById('selectCategoriaPedido');
-            const searchTerm = document.getElementById('quickSearchInput') ? document.getElementById('quickSearchInput').value.toLowerCase() : '';
+            const searchTerm = document.getElementById('quickSearchInput') ? document.getElementById('quickSearchInput').value.toLowerCase().trim() : '';
             
             const estilos = [...new Set(tracks.map(t => t.decade))];
             
@@ -368,23 +368,31 @@
             });
 
             catContainer.innerHTML = htmlButtons;
-            // Aseguramos que "⭐ Pedidos y Solicitudes" esté siempre disponible en el selector de guardado
             if (!estilos.includes('⭐ Pedidos y Solicitudes')) {
                 htmlSelect += `<option value="⭐ Pedidos y Solicitudes">⭐ Pedidos y Solicitudes</option>`;
             }
             selectDiv.innerHTML = htmlSelect;
 
             let htmlSongs = '';
-            tracks.forEach((track, globalIndex) => {
-                if (track.decade === activeCategory) {
+            
+            // Si hay texto en el buscador rápido, buscamos en TODA la base de datos por artista o título
+            if (searchTerm !== '') {
+                tracks.forEach((track, globalIndex) => {
                     if (track.artist.toLowerCase().includes(searchTerm)) {
-                        htmlSongs += generarHtmlCancion(track, globalIndex);
+                        htmlSongs += generarHtmlCancion(track, globalIndex, true); // Muestra la categoría si es búsqueda global
                     }
-                }
-            });
+                });
+            } else {
+                // Si no hay búsqueda, muestra solo la categoría activa
+                tracks.forEach((track, globalIndex) => {
+                    if (track.decade === activeCategory) {
+                        htmlSongs += generarHtmlCancion(track, globalIndex, false);
+                    }
+                });
+            }
 
             if (htmlSongs === '') {
-                htmlSongs = `<li class="list-group-item bg-transparent text-center text-muted py-4 border-0">No se encontraron pistas que coincidan.</li>`;
+                htmlSongs = `<li class="list-group-item bg-transparent text-center text-muted py-4 border-0">No se encontraron pistas que coincidan con la búsqueda.</li>`;
             }
 
             songListContainer.innerHTML = htmlSongs;
@@ -398,14 +406,17 @@
             renderizarBaseDatos();
         }
 
-        function generarHtmlCancion(track, globalIndex) {
+        function generarHtmlCancion(track, globalIndex, showCategory = false) {
             return `
                 <li class="list-group-item bg-dark text-light border-secondary d-flex justify-content-between align-items-center py-2 px-3 song-item mb-1 rounded" data-id="${track.id}">
                     <div class="d-flex align-items-center gap-2 overflow-hidden me-2">
                         <input class="form-check-input track-checkbox mt-0" type="checkbox" value="${globalIndex}" style="cursor: pointer;">
                         <div class="song-info text-truncate">
                             <div class="song-title fw-semibold text-truncate" style="font-size: 0.9rem;">${track.artist}</div>
-                            <span class="song-meta badge bg-secondary bg-opacity-25 text-info border border-secondary font-monospace" style="font-size: 9px;">⚡ ${track.bpm || '?'} BPM</span>
+                            <div class="d-flex gap-1 align-items-center mt-1">
+                                <span class="song-meta badge bg-secondary bg-opacity-25 text-info border border-secondary font-monospace" style="font-size: 9px;">⚡ ${track.bpm || '?'} BPM</span>
+                                ${showCategory ? `<span class="badge bg-warning text-dark font-monospace" style="font-size: 8px;">📂 ${track.decade}</span>` : ''}
+                            </div>
                         </div>
                     </div>
                     <div class="btn-group btn-group-sm flex-shrink-0">
@@ -464,13 +475,12 @@
                 nombre = busqueda ? busqueda : "Audio Nuevo";
             }
 
-            // Todo se guarda directamente en Firebase dentro de la categoría seleccionada (incluyendo Pedidos)
             tracks.push({ id: videoId, artist: nombre, bpm: '?', decade: catSeleccionada });
             db.ref('tracks').set(tracks);
 
             document.getElementById('inputUrl').value = '';
             document.getElementById('inputNombre').value = '';
-            alert("¡Canción guardada en Firebase correctamente!");
+            alert("¡Canción guardada en Firebase correctamente dentro de la categoría seleccionada!");
         }
 
         // Hot Cues & Transporte

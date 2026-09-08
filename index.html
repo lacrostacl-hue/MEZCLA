@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DJ Radio Latido Musical - Master Console Pro</title>
+    <title>DJ Radio Latido Musical - Master Console Pro + Loops</title>
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -40,7 +40,7 @@
         }
 
         .jog-wheel {
-            width: 95px; height: 95px; border-radius: 50%;
+            width: 85px; height: 85px; border-radius: 50%;
             background: radial-gradient(circle, #1a2233 0%, #0d1117 75%, #000000 100%);
             border: 4px solid #21262d;
             position: relative; margin: 0 auto;
@@ -57,7 +57,7 @@
         @keyframes spinRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .jog-wheel.playing-glow::after { opacity: 1; animation: spinRing 3s linear infinite; }
 
-        .video-container { width: 55px; height: 55px; border-radius: 50%; overflow: hidden; pointer-events: none; }
+        .video-container { width: 50px; height: 50px; border-radius: 50%; overflow: hidden; pointer-events: none; }
 
         /* Botones de Hardware Pro */
         .btn-hardware {
@@ -85,7 +85,7 @@
         /* Performance Pads (Hot Cues) */
         .hot-cue-pad {
             background: #161b22; border: 1px solid #30363d; color: #8b949e;
-            font-size: 0.7rem; font-weight: bold; border-radius: 6px; padding: 4px 0;
+            font-size: 0.7rem; font-weight: bold; border-radius: 6px; padding: 3px 0;
             transition: 0.15s;
         }
         .hot-cue-pad.active {
@@ -94,9 +94,20 @@
         }
         .hot-cue-pad:active { transform: scale(0.95); }
 
+        /* Loop Pads Style */
+        .loop-pad {
+            background: #161b22; border: 1px solid #30363d; color: #8b949e;
+            font-size: 0.65rem; font-weight: bold; border-radius: 4px; padding: 2px 0;
+            transition: 0.15s;
+        }
+        .loop-pad.active {
+            background: #f0883e; border-color: #ffa657; color: #000;
+            box-shadow: 0 0 10px rgba(240, 136, 62, 0.8);
+        }
+
         /* Waveform Canvas Style */
         .waveform-canvas {
-            width: 100%; height: 35px; background: #020305; border-radius: 6px; border: 1px solid rgba(0, 255, 204, 0.15);
+            width: 100%; height: 30px; background: #020305; border-radius: 6px; border: 1px solid rgba(0, 255, 204, 0.15);
             box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
         }
 
@@ -164,11 +175,25 @@
                                 <button class="btn btn-hardware btn-cue-pro flex-fill py-1 shadow-sm" onclick="jumpCue('A')">CUE</button>
                                 <button class="btn btn-hardware btn-play-pro flex-fill py-1 shadow-sm" onclick="togglePlay('A')">PLAY</button>
                             </div>
-                            <div class="row g-1 text-center">
+                            <!-- Hot Cues (1-4) -->
+                            <div class="row g-1 text-center mb-2">
                                 <div class="col-3"><button class="btn hot-cue-pad w-100" id="padA1" onclick="handleHotCue('A', 1)">1</button></div>
                                 <div class="col-3"><button class="btn hot-cue-pad w-100" id="padA2" onclick="handleHotCue('A', 2)">2</button></div>
                                 <div class="col-3"><button class="btn hot-cue-pad w-100" id="padA3" onclick="handleHotCue('A', 3)">3</button></div>
                                 <div class="col-3"><button class="btn hot-cue-pad w-100" id="padA4" onclick="handleHotCue('A', 4)">4</button></div>
+                            </div>
+                            <!-- Loop Section A -->
+                            <div class="row g-1 text-center">
+                                <div class="col-2"><span class="text-muted font-monospace" style="font-size: 8px; line-height: 20px;">LOOP</span></div>
+                                <div class="col-2"><button class="btn loop-pad w-100" id="loopA_0.5" onclick="setLoop('A', 0.5)">1/2</button></div>
+                                <div class="col-2"><button class="btn loop-pad w-100" id="loopA_1" onclick="setLoop('A', 1)">1</button></div>
+                                <div class="col-2"><button class="btn loop-pad w-100" id="loopA_2" onclick="setLoop('A', 2)">2</button></div>
+                                <div class="col-2"><button class="btn loop-pad w-100" id="loopA_4" onclick="setLoop('A', 4)">4</button></div>
+                                <div class="col-2"><button class="btn btn-outline-danger w-100 py-0" style="font-size: 0.6rem;" onclick="exitLoop('A')">X</button></div>
+                            </div>
+                            <div class="row g-1 text-center mt-1">
+                                <div class="col-6"><button class="btn loop-pad w-100" id="loopA_8" onclick="setLoop('A', 8)">8 BEATS</button></div>
+                                <div class="col-6"><button class="btn loop-pad w-100" id="loopA_16" onclick="setLoop('A', 16)">16 BEATS</button></div>
                             </div>
                         </div>
                     </div>
@@ -226,11 +251,25 @@
                                 <button class="btn btn-hardware btn-cue-pro flex-fill py-1 shadow-sm" onclick="jumpCue('B')">CUE</button>
                                 <button class="btn btn-hardware btn-play-pro flex-fill py-1 shadow-sm" onclick="togglePlay('B')">PLAY</button>
                             </div>
-                            <div class="row g-1 text-center">
+                            <!-- Hot Cues (1-4) -->
+                            <div class="row g-1 text-center mb-2">
                                 <div class="col-3"><button class="btn hot-cue-pad w-100" id="padB1" onclick="handleHotCue('B', 1)">1</button></div>
                                 <div class="col-3"><button class="btn hot-cue-pad w-100" id="padB2" onclick="handleHotCue('B', 2)">2</button></div>
                                 <div class="col-3"><button class="btn hot-cue-pad w-100" id="padB3" onclick="handleHotCue('B', 3)">3</button></div>
                                 <div class="col-3"><button class="btn hot-cue-pad w-100" id="padB4" onclick="handleHotCue('B', 4)">4</button></div>
+                            </div>
+                            <!-- Loop Section B -->
+                            <div class="row g-1 text-center">
+                                <div class="col-2"><span class="text-muted font-monospace" style="font-size: 8px; line-height: 20px;">LOOP</span></div>
+                                <div class="col-2"><button class="btn loop-pad w-100" id="loopB_0.5" onclick="setLoop('B', 0.5)">1/2</button></div>
+                                <div class="col-2"><button class="btn loop-pad w-100" id="loopB_1" onclick="setLoop('B', 1)">1</button></div>
+                                <div class="col-2"><button class="btn loop-pad w-100" id="loopB_2" onclick="setLoop('B', 2)">2</button></div>
+                                <div class="col-2"><button class="btn loop-pad w-100" id="loopB_4" onclick="setLoop('B', 4)">4</button></div>
+                                <div class="col-2"><button class="btn btn-outline-danger w-100 py-0" style="font-size: 0.6rem;" onclick="exitLoop('B')">X</button></div>
+                            </div>
+                            <div class="row g-1 text-center mt-1">
+                                <div class="col-6"><button class="btn loop-pad w-100" id="loopB_8" onclick="setLoop('B', 8)">8 BEATS</button></div>
+                                <div class="col-6"><button class="btn loop-pad w-100" id="loopB_16" onclick="setLoop('B', 16)">16 BEATS</button></div>
                             </div>
                         </div>
                     </div>
@@ -329,8 +368,15 @@
         let activeCategory = null;
         let isSoloPreviewActive = false;
 
+        let currentTrackIdA = null;
+        let currentTrackIdB = null;
+
         let hotCuesA = {1: null, 2: null, 3: null, 4: null};
         let hotCuesB = {1: null, 2: null, 3: null, 4: null};
+
+        // Estado de Loops
+        let isLoopingA = false, loopStartA = 0, loopEndA = 0, activeLoopMultiplierA = null;
+        let isLoopingB = false, loopStartB = 0, loopEndB = 0, activeLoopMultiplierB = null;
 
         const tracksIniciales = [
             { id: 'Gs069dndIYk', artist: 'Earth, Wind & Fire - September', bpm: 125, decade: '70s Disco' },
@@ -356,6 +402,22 @@
             }
             renderizarBaseDatos();
         });
+
+        // Bucle de monitoreo para mantener los Loops activos de forma precisa
+        setInterval(() => {
+            if (isLoopingA && playerA && playerA.getCurrentTime) {
+                let ct = playerA.getCurrentTime();
+                if (ct >= loopEndA || ct < loopStartA) {
+                    playerA.seekTo(loopStartA, true);
+                }
+            }
+            if (isLoopingB && playerB && playerB.getCurrentTime) {
+                let ct = playerB.getCurrentTime();
+                if (ct >= loopEndB || ct < loopStartB) {
+                    playerB.seekTo(loopStartB, true);
+                }
+            }
+        }, 40);
 
         function drawWaveform(canvasId, isPlaying) {
             const canvas = document.getElementById(canvasId);
@@ -534,7 +596,64 @@
             updateVolumes();
         }
 
-        // HOT CUES OPTIMIZADOS (Salto instantáneo y reproducción inmediata)
+        // Obtener BPM del Deck activo
+        function getDeckBpm(deck) {
+            let vid = deck === 'A' ? currentTrackIdA : currentTrackIdB;
+            let found = tracks.find(t => t.id === vid);
+            return (found && found.bpm && !isNaN(found.bpm)) ? parseFloat(found.bpm) : 120;
+        }
+
+        // Funciones de Loop
+        function setLoop(deck, multiplier) {
+            let player = deck === 'A' ? playerA : playerB;
+            if (!player || !player.getCurrentTime || player.getPlayerState() !== YT.PlayerState.PLAYING) return;
+
+            let start = player.getCurrentTime();
+            let bpm = getDeckBpm(deck);
+            let beatDuration = 60 / bpm;
+            let loopDuration = beatDuration * multiplier;
+
+            if (deck === 'A') {
+                isLoopingA = true;
+                loopStartA = start;
+                loopEndA = start + loopDuration;
+                activeLoopMultiplierA = multiplier;
+                updateLoopUi('A');
+            } else {
+                isLoopingB = true;
+                loopStartB = start;
+                loopEndB = start + loopDuration;
+                activeLoopMultiplierB = multiplier;
+                updateLoopUi('B');
+            }
+        }
+
+        function exitLoop(deck) {
+            if (deck === 'A') {
+                isLoopingA = false;
+                activeLoopMultiplierA = null;
+                updateLoopUi('A');
+            } else {
+                isLoopingB = false;
+                activeLoopMultiplierB = null;
+                updateLoopUi('B');
+            }
+        }
+
+        function updateLoopUi(deck) {
+            let multipliers = [0.5, 1, 2, 4, 8, 16];
+            let activeM = deck === 'A' ? activeLoopMultiplierA : activeLoopMultiplierB;
+            multipliers.forEach(m => {
+                let id = m === 0.5 ? '0.5' : m;
+                let btn = document.getElementById(`loop${deck}_${id}`);
+                if (btn) {
+                    if (activeM === m) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                }
+            });
+        }
+
+        // Hot Cues Optimizados
         function handleHotCue(deck, padNum) {
             let player = deck === 'A' ? playerA : playerB;
             let cues = deck === 'A' ? hotCuesA : hotCuesB;
@@ -543,11 +662,9 @@
             if (!player || !player.getCurrentTime) return;
 
             if (cues[padNum] === null) {
-                // Guardar punto Hot Cue en el tiempo actual
                 cues[padNum] = player.getCurrentTime();
                 padEl.classList.add('active');
             } else {
-                // Saltar al punto y reproducir al instante (Comportamiento Pro de Hardware)
                 player.seekTo(cues[padNum], true);
                 player.playVideo();
             }
@@ -605,14 +722,18 @@
 
         function loadVideo(deck, videoId) {
             if (deck === 'A') {
+                currentTrackIdA = videoId;
                 playerA.cueVideoById(videoId);
                 cuePointA = 0;
                 resetHotCues('A');
+                exitLoop('A');
                 document.getElementById('cueDisplayA').innerText = `CUE: 0:00`;
             } else {
+                currentTrackIdB = videoId;
                 playerB.cueVideoById(videoId);
                 cuePointB = 0;
                 resetHotCues('B');
+                exitLoop('B');
                 document.getElementById('cueDisplayB').innerText = `CUE: 0:00`;
             }
 

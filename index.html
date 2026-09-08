@@ -11,98 +11,87 @@
     
     <style>
         body { 
-            background: radial-gradient(circle at 50% 0%, #121826 0%, #050608 75%);
+            background: #040507;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             min-height: 100vh;
         }
         
-        /* Consola de Mezclas Estilo Club Pro / Cyberpunk */
+        /* Consola Estilo Hardware Pro / Aluminio Oscuro & Neón Fijo */
         .dj-mixing-console {
-            background: linear-gradient(135deg, rgba(20, 26, 38, 0.95) 0%, rgba(7, 9, 14, 0.98) 100%);
-            border: 1px solid rgba(0, 255, 204, 0.25);
-            border-radius: 24px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.95), inset 0 1px 4px rgba(255,255,255,0.1), 0 0 25px rgba(0, 255, 204, 0.05);
+            background: linear-gradient(145deg, #0d1117 0%, #030406 100%);
+            border: 2px solid #21262d;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.05);
         }
 
         .cabina-sticky {
             position: sticky; top: 0; z-index: 1020;
-            background: rgba(5, 6, 8, 0.88);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255,255,255,0.08);
+            background: rgba(4, 5, 7, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #161b22;
         }
 
-        /* Jog Wheels / Decks Estilo CDJ */
+        /* Jog Wheels / Decks Estilo CDJ Pro */
         .cdj-deck {
-            background: rgba(10, 14, 20, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            box-shadow: inset 0 4px 15px rgba(0,0,0,0.8);
+            background: #090d13;
+            border: 1px solid #30363d;
+            border-radius: 14px;
+            box-shadow: inset 0 3px 10px rgba(0,0,0,0.8);
         }
 
         .jog-wheel {
-            width: 95px; height: 95px; border-radius: 50%;
-            background: radial-gradient(circle, #1a2233 0%, #0d1117 75%, #000000 100%);
+            width: 90px; height: 90px; border-radius: 50%;
+            background: radial-gradient(circle, #161b22 0%, #0d1117 75%, #020305 100%);
             border: 4px solid #21262d;
             position: relative; margin: 0 auto;
             overflow: hidden; display: flex; align-items: center; justify-content: center;
-            z-index: 1;
+        }
+        
+        /* Indicador estático liviano (Sin animaciones pesadas de CPU/GPU) */
+        .jog-wheel.playing-active {
+            border-color: #00ffcc;
+            box-shadow: 0 0 10px rgba(0,255,204,0.3);
         }
 
-        /* Anillo LED RGB Dinámico Alucinante */
-        .jog-wheel::after {
-            content: ''; position: absolute; inset: -5px; border-radius: 50%;
-            background: conic-gradient(#00ffcc, #ff007f, #ffcc00, #00ffcc);
-            z-index: -1; opacity: 0; filter: blur(6px); transition: opacity 0.4s ease;
-        }
-        @keyframes spinRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .jog-wheel.playing-glow::after { opacity: 1; animation: spinRing 3s linear infinite; }
-
-        .video-container { width: 55px; height: 55px; border-radius: 50%; overflow: hidden; pointer-events: none; }
+        .video-container { width: 50px; height: 50px; border-radius: 50%; overflow: hidden; pointer-events: none; }
 
         /* Botones de Hardware Pro */
         .btn-hardware {
-            background: linear-gradient(180deg, #1f242d 0%, #161b22 100%);
-            border: 1px solid #30363d; color: #c9d1d9;
-            font-weight: bold; font-size: 0.7rem; text-transform: uppercase;
-            box-shadow: inset 0 1px 2px rgba(255,255,255,0.1);
-            transition: 0.1s;
+            background: #161b22; border: 1px solid #30363d; color: #c9d1d9;
+            font-weight: bold; font-size: 0.65rem; text-transform: uppercase;
         }
         .btn-hardware:active { transform: translateY(1px); }
-        .btn-play-pro { background: linear-gradient(180deg, #2ea043 0%, #238636 100%); border-color: #3fb950; color: #fff; }
-        .btn-cue-pro { background: linear-gradient(180deg, #d29922 0%, #bb8009 100%); border-color: #e3b341; color: #fff; }
+        .btn-play-pro { background: #238636; border-color: #2ea043; color: #fff; }
+        .btn-cue-pro { background: #bb8009; border-color: #d29922; color: #fff; }
+        .btn-eject-pro { background: #da3633; border-color: #f85149; color: #fff; }
 
-        /* Botón Solo Preview Estilizado */
+        /* Botón Solo Preview */
         .btn-solo-preview {
-            background: rgba(33, 38, 45, 0.8); border: 1px solid #30363d; color: #c9d1d9; font-weight: bold; font-size: 0.75rem;
-            transition: 0.2s;
+            background: #161b22; border: 1px solid #30363d; color: #c9d1d9; font-weight: bold; font-size: 0.75rem;
         }
         .btn-solo-preview.active-solo {
-            background: linear-gradient(180deg, #1f6feb 0%, #1158c7) !important; 
-            border-color: #58a6ff !important; color: #fff !important;
-            box-shadow: 0 0 15px rgba(31, 111, 235, 0.7);
+            background: #1f6feb !important; border-color: #58a6ff !important; color: #fff !important;
+            box-shadow: 0 0 8px rgba(31, 111, 235, 0.5);
         }
 
         /* Performance Pads (Hot Cues) */
         .hot-cue-pad {
-            background: #161b22; border: 1px solid #30363d; color: #8b949e;
-            font-size: 0.7rem; font-weight: bold; border-radius: 6px; padding: 5px 0;
-            transition: 0.15s;
+            background: #11161d; border: 1px solid #30363d; color: #8b949e;
+            font-size: 0.7rem; font-weight: bold; border-radius: 4px; padding: 4px 0;
         }
         .hot-cue-pad.active {
             background: #1f6feb; border-color: #58a6ff; color: #fff;
-            box-shadow: 0 0 10px rgba(31, 111, 235, 0.7);
+            box-shadow: 0 0 6px rgba(31, 111, 235, 0.5);
         }
-        .hot-cue-pad:active { transform: scale(0.95); }
 
-        /* Waveform Canvas Style */
+        /* Waveform Canvas Ligero */
         .waveform-canvas {
-            width: 100%; height: 35px; background: #020305; border-radius: 6px; border: 1px solid rgba(0, 255, 204, 0.15);
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+            width: 100%; height: 30px; background: #010203; border-radius: 4px; border: 1px solid #21262d;
         }
 
         /* Estilo canciones tocadas */
         .song-item.played {
-            background-color: rgba(59, 17, 17, 0.6) !important;
+            background-color: #3b1111 !important;
             border-left: 4px solid #f85149 !important;
         }
         .song-item.played .song-title { color: #ff7b72; text-decoration: line-through; }
@@ -112,13 +101,12 @@
         
         .category-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; white-space: nowrap; }
         .category-bar::-webkit-scrollbar { height: 4px; }
-        .category-bar::-webkit-scrollbar-thumb { background: #00ffcc; border-radius: 2px; }
+        .category-bar::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
 
         .card {
-            background: rgba(13, 17, 23, 0.85) !important;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.08) !important;
-            border-radius: 16px !important;
+            background: #0b0f15 !important;
+            border: 1px solid #21262d !important;
+            border-radius: 14px !important;
         }
     </style>
 
@@ -129,11 +117,11 @@
 <body class="text-light">
 
     <!-- NAVBAR -->
-    <nav class="navbar navbar-dark bg-black border-bottom border-secondary px-3 py-3 shadow-lg">
+    <nav class="navbar navbar-dark bg-black border-bottom border-secondary px-3 py-3">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <span class="navbar-brand mb-0 h1 fw-bold tracking-wider font-monospace" style="letter-spacing: 1px;">
                 <i class="bi bi-soundwave text-info"></i> DJ RADIO <span class="text-warning">LATIDO MUSICAL</span> 
-                <span class="badge bg-info text-dark fs-6 ms-2 shadow-sm">STUDIO PRO</span>
+                <span class="badge bg-secondary text-light fs-6 ms-2">PRO LITE</span>
             </span>
             <span class="badge bg-success bg-opacity-25 text-success border border-success px-3 py-2 font-monospace">
                 <i class="bi bi-cloud-fill text-success"></i> Firebase Cloud Conectado
@@ -151,12 +139,10 @@
                     <div class="col-lg-4 col-md-4">
                         <div class="cdj-deck p-3 shadow">
                             <div class="d-flex justify-content-between align-items-center mb-1 px-1">
-                                <span class="badge bg-danger fw-bold shadow-sm" style="font-size: 0.75rem;">DECK A</span>
+                                <span class="badge bg-danger fw-bold" style="font-size: 0.75rem;">DECK A</span>
                                 <span class="font-monospace text-muted" style="font-size: 9px;" id="cueDisplayA">CUE: 0:00</span>
                             </div>
-                            <!-- Visor del Nombre del Tema -->
                             <div class="text-truncate fw-bold text-warning font-monospace mb-1 px-1" id="trackTitleA" style="font-size: 11px;" title="Sin pista cargada">[ DECK A VACÍO ]</div>
-                            <!-- Visor de tiempo transcurrido / restante -->
                             <div class="text-info font-monospace mb-2 fw-bold" style="font-size: 11px;" id="timeDisplayA">0:00 / -0:00</div>
                             
                             <div class="jog-wheel mb-2" id="deckA">
@@ -166,8 +152,9 @@
                                 <canvas id="waveformA" class="waveform-canvas"></canvas>
                             </div>
                             <div class="d-flex gap-1 mb-2">
-                                <button class="btn btn-hardware btn-cue-pro flex-fill py-1 shadow-sm" onclick="jumpCue('A')">CUE</button>
-                                <button class="btn btn-hardware btn-play-pro flex-fill py-1 shadow-sm" onclick="togglePlay('A')">PLAY</button>
+                                <button class="btn btn-hardware btn-eject-pro px-2 py-1" onclick="ejectDeck('A')" title="Expulsar Tema"><i class="bi bi-eject-fill"></i></button>
+                                <button class="btn btn-hardware btn-cue-pro flex-fill py-1" onclick="jumpCue('A')">CUE</button>
+                                <button class="btn btn-hardware btn-play-pro flex-fill py-1" onclick="togglePlay('A')">PLAY</button>
                             </div>
                             <!-- Hot Cues (1-4) -->
                             <div class="row g-1 text-center">
@@ -191,14 +178,14 @@
                                     </div>
                                     <span class="small text-warning fw-bold font-monospace" style="font-size: 0.75rem;">PREVIEW</span>
                                 </div>
-                                <button class="btn btn-warning btn-sm text-dark fw-bold py-1 px-3 shadow-sm" onclick="togglePlay('Preview')">
+                                <button class="btn btn-warning btn-sm text-dark fw-bold py-1 px-3" onclick="togglePlay('Preview')">
                                     Test
                                 </button>
                             </div>
 
                             <!-- Botón Solo Preview -->
                             <div class="mb-3">
-                                <button class="btn btn-solo-preview w-100 py-2 shadow-sm" id="soloPreviewBtn" onclick="toggleSoloPreview()">
+                                <button class="btn btn-solo-preview w-100 py-2" id="soloPreviewBtn" onclick="toggleSoloPreview()">
                                     <i class="bi bi-headphones"></i> SOLO CUE (PREVIEW)
                                 </button>
                             </div>
@@ -219,12 +206,10 @@
                     <div class="col-lg-4 col-md-4">
                         <div class="cdj-deck p-3 shadow">
                             <div class="d-flex justify-content-between align-items-center mb-1 px-1">
-                                <span class="badge bg-primary fw-bold shadow-sm" style="font-size: 0.75rem;">DECK B</span>
+                                <span class="badge bg-primary fw-bold" style="font-size: 0.75rem;">DECK B</span>
                                 <span class="font-monospace text-muted" style="font-size: 9px;" id="cueDisplayB">CUE: 0:00</span>
                             </div>
-                            <!-- Visor del Nombre del Tema -->
                             <div class="text-truncate fw-bold text-warning font-monospace mb-1 px-1" id="trackTitleB" style="font-size: 11px;" title="Sin pista cargada">[ DECK B VACÍO ]</div>
-                            <!-- Visor de tiempo transcurrido / restante -->
                             <div class="text-primary font-monospace mb-2 fw-bold" style="font-size: 11px;" id="timeDisplayB">0:00 / -0:00</div>
 
                             <div class="jog-wheel mb-2" id="deckB">
@@ -234,8 +219,9 @@
                                 <canvas id="waveformB" class="waveform-canvas"></canvas>
                             </div>
                             <div class="d-flex gap-1 mb-2">
-                                <button class="btn btn-hardware btn-cue-pro flex-fill py-1 shadow-sm" onclick="jumpCue('B')">CUE</button>
-                                <button class="btn btn-hardware btn-play-pro flex-fill py-1 shadow-sm" onclick="togglePlay('B')">PLAY</button>
+                                <button class="btn btn-hardware btn-eject-pro px-2 py-1" onclick="ejectDeck('B')" title="Expulsar Tema"><i class="bi bi-eject-fill"></i></button>
+                                <button class="btn btn-hardware btn-cue-pro flex-fill py-1" onclick="jumpCue('B')">CUE</button>
+                                <button class="btn btn-hardware btn-play-pro flex-fill py-1" onclick="togglePlay('B')">PLAY</button>
                             </div>
                             <!-- Hot Cues (1-4) -->
                             <div class="row g-1 text-center">
@@ -258,10 +244,10 @@
             
             <!-- SETLIST PRINCIPAL -->
             <div class="col-lg-7">
-                <div class="card shadow-lg">
-                    <div class="card-header bg-black bg-opacity-70 border-secondary d-flex justify-content-between align-items-center py-3">
+                <div class="card shadow">
+                    <div class="card-header bg-black border-secondary d-flex justify-content-between align-items-center py-3">
                         <h5 class="mb-0 text-info font-monospace"><i class="bi bi-music-note-list"></i> PLAYLIST CLOUD</h5>
-                        <button class="btn btn-danger btn-sm fw-bold shadow-sm" onclick="eliminarSeleccionados()">
+                        <button class="btn btn-danger btn-sm fw-bold" onclick="eliminarSeleccionados()">
                             <i class="bi bi-trash3-fill"></i> Borrar Selección
                         </button>
                     </div>
@@ -270,10 +256,10 @@
                         <div class="category-bar mb-2" id="categoryButtonsContainer"></div>
                         
                         <div class="mb-3">
-                            <input type="text" class="form-control form-control-sm bg-black text-light border-secondary shadow-sm" id="quickSearchInput" placeholder="🔍 Buscar por artista o título en toda la base de datos..." oninput="renderizarBaseDatos()">
+                            <input type="text" class="form-control form-control-sm bg-black text-light border-secondary" id="quickSearchInput" placeholder="🔍 Buscar por artista o título en toda la base de datos..." oninput="renderizarBaseDatos()">
                         </div>
 
-                        <div class="playlist-scroll border border-secondary rounded bg-black bg-opacity-75 p-2 shadow-inner">
+                        <div class="playlist-scroll border border-secondary rounded bg-black p-2">
                             <ul class="list-group list-group-flush bg-transparent" id="activeSongList">
                                 <div class="text-center text-muted py-4">Cargando pistas...</div>
                             </ul>
@@ -284,25 +270,25 @@
 
             <!-- BUSCADOR & GESTOR -->
             <div class="col-lg-5">
-                <div class="card shadow-lg border-warning">
-                    <div class="card-header bg-black bg-opacity-70 border-warning text-warning fw-bold font-monospace">
+                <div class="card shadow border-warning">
+                    <div class="card-header bg-black border-warning text-warning fw-bold font-monospace">
                         <i class="bi bi-search"></i> BUSCADOR & TRACKLOADER
                     </div>
                     <div class="card-body">
                         
                         <label class="form-label text-muted small fw-bold font-monospace">1. BUSCAR EN YOUTUBE</label>
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control bg-black text-light border-secondary shadow-sm" id="inputBuscar" placeholder="Ej: Latido Musical Mix..." onkeypress="handleEnterSearch(event)">
-                            <button class="btn btn-danger shadow-sm" type="button" onclick="buscarEnYouTube()"><i class="bi bi-youtube"></i> Abrir YT</button>
+                            <input type="text" class="form-control bg-black text-light border-secondary" id="inputBuscar" placeholder="Ej: Latido Musical Mix..." onkeypress="handleEnterSearch(event)">
+                            <button class="btn btn-danger" type="button" onclick="buscarEnYouTube()"><i class="bi bi-youtube"></i> Abrir YT</button>
                         </div>
 
                         <hr class="border-secondary my-3">
 
                         <label class="form-label text-muted small fw-bold font-monospace">2. AÑADIR A LA NUBE (AUTODETECTA TÍTULO)</label>
                         <div class="mb-2">
-                            <input type="text" class="form-control bg-black text-light border-secondary mb-2 shadow-sm" id="inputUrl" placeholder="Pega el enlace de YouTube..." onblur="autoDetectTitle()">
-                            <input type="text" class="form-control bg-black text-light border-secondary mb-2 shadow-sm" id="inputNombre" placeholder="Nombre de la pista (o déjalo vacío)">
-                            <select class="form-select bg-black text-light border-secondary mb-3 shadow-sm" id="selectCategoriaPedido">
+                            <input type="text" class="form-control bg-black text-light border-secondary mb-2" id="inputUrl" placeholder="Pega el enlace de YouTube..." onblur="autoDetectTitle()">
+                            <input type="text" class="form-control bg-black text-light border-secondary mb-2" id="inputNombre" placeholder="Nombre de la pista (o déjalo vacío)">
+                            <select class="form-select bg-black text-light border-secondary mb-3" id="selectCategoriaPedido">
                                 <!-- Dinámico -->
                             </select>
                             <button class="btn btn-warning text-dark fw-bold w-100 shadow-sm" onclick="agregarPedido()">
@@ -369,7 +355,6 @@
             renderizarBaseDatos();
         });
 
-        // Actualizar tiempos transcurridos y restantes en los Decks
         function updateDeckTimes() {
             if (playerA && playerA.getCurrentTime && playerA.getDuration) {
                 let curA = playerA.getCurrentTime() || 0;
@@ -394,18 +379,19 @@
             return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
 
+        // Dibujo estático liviano para las formas de onda
         function drawWaveform(canvasId, isPlaying) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            const bars = 30;
+            const bars = 24;
             const barWidth = canvas.width / bars;
             
             for (let i = 0; i < bars; i++) {
-                const height = isPlaying ? Math.random() * (canvas.height - 5) + 5 : 4;
-                ctx.fillStyle = isPlaying ? (i % 2 === 0 ? '#00ffcc' : '#388bfd') : '#30363d';
+                let height = isPlaying ? (Math.sin(Date.now() / 150 + i) * 6 + 12) : 3;
+                ctx.fillStyle = isPlaying ? '#00ffcc' : '#30363d';
                 ctx.fillRect(i * barWidth + 1, canvas.height - height, barWidth - 2, height);
             }
         }
@@ -440,7 +426,7 @@
                 let count = tracks.filter(t => t.decade === estilo).length;
 
                 htmlButtons += `
-                    <button class="btn btn-sm fw-bold px-3 py-2 ${isActive} d-flex align-items-center gap-2 flex-shrink-0 shadow-sm" onclick="setActiveCategory('${estilo}')">
+                    <button class="btn btn-sm fw-bold px-3 py-2 ${isActive} d-flex align-items-center gap-2 flex-shrink-0" onclick="setActiveCategory('${estilo}')">
                         <i class="bi bi-vinyl"></i> ${estilo} <span class="badge bg-black text-light opacity-75">${count}</span>
                     </button>
                 `;
@@ -485,7 +471,7 @@
 
         function generarHtmlCancion(track, globalIndex, showCategory = false) {
             return `
-                <li class="list-group-item bg-dark text-light border-secondary d-flex justify-content-between align-items-center py-2 px-3 song-item mb-1 rounded shadow-sm" data-id="${track.id}">
+                <li class="list-group-item bg-dark text-light border-secondary d-flex justify-content-between align-items-center py-2 px-3 song-item mb-1 rounded" data-id="${track.id}">
                     <div class="d-flex align-items-center gap-2 overflow-hidden me-2">
                         <input class="form-check-input track-checkbox mt-0" type="checkbox" value="${globalIndex}" style="cursor: pointer;">
                         <div class="song-info text-truncate">
@@ -654,9 +640,9 @@
             let deckElement = document.getElementById(deck === 'Preview' ? 'deckPreview' : 'deck' + deck);
             if (deckElement) {
                 if (event.data === YT.PlayerState.PLAYING) {
-                    deckElement.classList.add('playing-glow');
+                    deckElement.classList.add('playing-active');
                 } else {
-                    deckElement.classList.remove('playing-glow');
+                    deckElement.classList.remove('playing-active');
                 }
             }
         }
@@ -668,7 +654,6 @@
             }
         }
 
-        // CARGAR PISTA EN EL DECK Y MOSTRAR SU NOMBRE AUTOMÁTICAMENTE
         function loadVideo(deck, videoId) {
             let foundTrack = tracks.find(t => t.id === videoId);
             let trackName = foundTrack ? foundTrack.artist : `Video ID: ${videoId}`;
@@ -680,6 +665,7 @@
                 document.getElementById('cueDisplayA').innerText = `CUE: 0:00`;
                 document.getElementById('trackTitleA').innerText = trackName;
                 document.getElementById('trackTitleA').title = trackName;
+                document.getElementById('timeDisplayA').innerText = '0:00 / -0:00';
             } else {
                 playerB.cueVideoById(videoId);
                 cuePointB = 0;
@@ -687,9 +673,29 @@
                 document.getElementById('cueDisplayB').innerText = `CUE: 0:00`;
                 document.getElementById('trackTitleB').innerText = trackName;
                 document.getElementById('trackTitleB').title = trackName;
+                document.getElementById('timeDisplayB').innerText = '0:00 / -0:00';
             }
 
             document.querySelectorAll(`.song-item[data-id="${videoId}"]`).forEach(el => el.classList.add('played'));
+        }
+
+        // FUNCIÓN EXPULSAR (EJECT) PARA LIMPIAR EL DECK
+        function ejectDeck(deck) {
+            if (deck === 'A') {
+                if (playerA && playerA.stopVideo) playerA.stopVideo();
+                resetHotCues('A');
+                document.getElementById('trackTitleA').innerText = '[ DECK A VACÍO ]';
+                document.getElementById('trackTitleA').title = 'Sin pista cargada';
+                document.getElementById('cueDisplayA').innerText = 'CUE: 0:00';
+                document.getElementById('timeDisplayA').innerText = '0:00 / -0:00';
+            } else {
+                if (playerB && playerB.stopVideo) playerB.stopVideo();
+                resetHotCues('B');
+                document.getElementById('trackTitleB').innerText = '[ DECK B VACÍO ]';
+                document.getElementById('trackTitleB').title = 'Sin pista cargada';
+                document.getElementById('cueDisplayB').innerText = 'CUE: 0:00';
+                document.getElementById('timeDisplayB').innerText = '0:00 / -0:00';
+            }
         }
 
         function togglePlay(deck) {

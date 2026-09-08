@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Alegría - DJ Master Console Pro + Global Search</title>
+    <title>Radio Alegría - DJ Master Console Pro + Talkover</title>
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -58,6 +58,21 @@
         .btn-play-pro { background: #238636; border-color: #2ea043; color: #fff; }
         .btn-cue-pro { background: #bb8009; border-color: #d29922; color: #fff; }
 
+        /* Botón Talkover Activo */
+        .btn-talkover {
+            background: #21262d; border: 1px solid #30363d; color: #c9d1d9; font-weight: bold; font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-talkover.active-talkover {
+            background: #da3633 !important; border-color: #f85149 !important; color: #fff !important;
+            box-shadow: 0 0 12px rgba(218, 54, 51, 0.8);
+            animation: pulseTalkover 1s infinite alternate;
+        }
+        @keyframes pulseTalkover {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.03); }
+        }
+
         /* Performance Pads (Hot Cues) */
         .hot-cue-pad {
             background: #1f242d; border: 1px solid #30363d; color: #8b949e;
@@ -97,7 +112,7 @@
     <nav class="navbar navbar-dark bg-black border-bottom border-secondary px-3 py-2">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <span class="navbar-brand mb-0 h1 text-info fw-bold font-monospace">
-                <i class="bi bi-soundwave text-warning"></i> RADIO ALEGRÍA <span class="badge bg-warning text-dark fs-6 ms-2">PRO CLOUD</span>
+                <i class="bi bi-soundwave text-warning"></i> RADIO ALEGRÍA <span class="badge bg-warning text-dark fs-6 ms-2">PRO CLOUD + TALKOVER</span>
             </span>
             <span class="badge bg-success bg-opacity-25 text-success border border-success px-3 py-2">
                 <i class="bi bi-cloud-fill"></i> Firebase Cloud Conectado
@@ -137,19 +152,27 @@
                         </div>
                     </div>
 
-                    <!-- MESA CENTRAL -->
+                    <!-- MESA CENTRAL (CON TALKOVER Y CROSSFADER) -->
                     <div class="col-lg-4 col-md-4">
                         <div class="bg-black border border-secondary rounded p-3 shadow-inset text-center">
                             
-                            <div class="d-flex align-items-center justify-content-between bg-secondary bg-opacity-10 p-2 rounded border border-secondary mb-3">
+                            <!-- Preview mini deck -->
+                            <div class="d-flex align-items-center justify-content-between bg-secondary bg-opacity-10 p-2 rounded border border-secondary mb-2">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="jog-wheel" style="width: 35px; height: 35px; border-width: 2px;" id="deckPreview">
                                         <div class="video-container" style="width: 20px; height: 20px;"><div id="playerPreview"></div></div>
                                     </div>
-                                    <span class="small text-warning fw-bold" style="font-size: 0.75rem;">PREVIEW DECK</span>
+                                    <span class="small text-warning fw-bold" style="font-size: 0.75rem;">PREVIEW</span>
                                 </div>
                                 <button class="btn btn-warning btn-sm text-dark fw-bold py-1 px-3" onclick="togglePlay('Preview')">
                                     Test
+                                </button>
+                            </div>
+
+                            <!-- Botón Talkover (Baja la música automáticamente para hablar) -->
+                            <div class="mb-3">
+                                <button class="btn btn-talkover w-100 py-2" id="talkoverBtn" onclick="toggleTalkover()">
+                                    <i class="bi bi-mic-fill"></i> TALKOVER (MIC DUCK)
                                 </button>
                             </div>
 
@@ -211,10 +234,8 @@
                     </div>
                     
                     <div class="card-body p-3">
-                        <!-- Botones de Categoría -->
                         <div class="category-bar mb-2" id="categoryButtonsContainer"></div>
                         
-                        <!-- Buscador Global en Tiempo Real -->
                         <div class="mb-3">
                             <input type="text" class="form-control form-control-sm bg-black text-light border-secondary" id="quickSearchInput" placeholder="🔍 Buscar por artista o título en toda la base de datos..." oninput="renderizarBaseDatos()">
                         </div>
@@ -285,6 +306,7 @@
         let tracks = [];
         let cuePointA = 0, cuePointB = 0;
         let activeCategory = null;
+        let isTalkoverActive = false; // Estado del Talkover
 
         let hotCuesA = {1: null, 2: null, 3: null, 4: null};
         let hotCuesB = {1: null, 2: null, 3: null, 4: null};
@@ -375,15 +397,13 @@
 
             let htmlSongs = '';
             
-            // Si hay texto en el buscador rápido, buscamos en TODA la base de datos por artista o título
             if (searchTerm !== '') {
                 tracks.forEach((track, globalIndex) => {
                     if (track.artist.toLowerCase().includes(searchTerm)) {
-                        htmlSongs += generarHtmlCancion(track, globalIndex, true); // Muestra la categoría si es búsqueda global
+                        htmlSongs += generarHtmlCancion(track, globalIndex, true);
                     }
                 });
             } else {
-                // Si no hay búsqueda, muestra solo la categoría activa
                 tracks.forEach((track, globalIndex) => {
                     if (track.decade === activeCategory) {
                         htmlSongs += generarHtmlCancion(track, globalIndex, false);
@@ -481,6 +501,20 @@
             document.getElementById('inputUrl').value = '';
             document.getElementById('inputNombre').value = '';
             alert("¡Canción guardada en Firebase correctamente dentro de la categoría seleccionada!");
+        }
+
+        // =========================================================
+        // FUNCIÓN TALKOVER (BAJA EL VOLUMEN DE LA MÚSICA)
+        // =========================================================
+        function toggleTalkover() {
+            isTalkoverActive = !isTalkoverActive;
+            const btn = document.getElementById('talkoverBtn');
+            if (isTalkoverActive) {
+                btn.classList.add('active-talkover');
+            } else {
+                btn.classList.remove('active-talkover');
+            }
+            updateVolumes();
         }
 
         // Hot Cues & Transporte
@@ -591,10 +625,16 @@
             let volA = cf <= 50 ? 100 : 100 - ((cf - 50) * 2);
             let volB = cf >= 50 ? 100 : cf * 2;
 
+            // Si Talkover está activo, reducimos el volumen de la música al 20%
+            if (isTalkoverActive) {
+                volA *= 0.2;
+                volB *= 0.2;
+            }
+
             playerA.setVolume(volA);
             playerB.setVolume(volB);
 
-            if (playerPreview && playerPreview.setVolume) playerPreview.setVolume(80);
+            if (playerPreview && playerPreview.setVolume) playerPreview.setVolume(isTalkoverActive ? 15 : 80);
         }
     </script>
 </body>

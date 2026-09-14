@@ -92,11 +92,11 @@
 
         /* Fader Vertical Estilo Mesa Real */
         .fader-vertical-container {
-            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 90px;
         }
         .fader-vertical {
             -webkit-appearance: slider-vertical;
-            width: 8px; height: 75px;
+            width: 8px; height: 65px;
             background: #161b22; cursor: pointer;
         }
 
@@ -114,7 +114,7 @@
         .song-item.played .song-title { color: #ff7b72; text-decoration: line-through; }
         .song-item.played .song-meta { color: #ffa198; }
 
-        .playlist-scroll { max-height: 55vh; overflow-y: auto; }
+        .playlist-scroll { max-height: 52vh; overflow-y: auto; }
         
         .category-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; white-space: nowrap; }
         .category-bar::-webkit-scrollbar { height: 4px; }
@@ -174,26 +174,33 @@
                         </div>
                     </div>
 
-                    <!-- MESA CENTRAL (MIXER CON AUTO-TRANSICIÓN) -->
+                    <!-- MESA CENTRAL (MIXER CON SAMPLER Y AUTO-TRANSICIÓN) -->
                     <div class="col-lg-4 col-md-4">
                         <div class="bg-black border border-secondary rounded p-2 shadow-inset text-center bg-opacity-75">
                             
+                            <!-- Reproductor Oculto para los Sampler FX -->
+                            <div style="display:none;"><div id="playerSampler"></div></div>
+
                             <div class="d-flex align-items-center justify-content-between bg-secondary bg-opacity-10 px-2 py-1 rounded border border-secondary mb-2">
                                 <div class="d-flex align-items-center gap-2">
-                                    <div class="jog-wheel" style="width: 30px; height: 30px; border-width: 2px;" id="deckPreview">
-                                        <div class="video-container" style="width: 18px; height: 18px;"><div id="playerPreview"></div></div>
+                                    <div class="jog-wheel" style="width: 25px; height: 25px; border-width: 2px;" id="deckPreview">
+                                        <div class="video-container" style="width: 15px; height: 15px;"><div id="playerPreview"></div></div>
                                     </div>
-                                    <span class="small text-warning fw-bold font-monospace" style="font-size: 0.7rem;">PREVIEW <small class="text-muted">[Space]</small></span>
+                                    <span class="small text-warning fw-bold font-monospace" style="font-size: 0.65rem;">PREVIEW <small class="text-muted">[Space]</small></span>
                                 </div>
-                                <button class="btn btn-warning btn-sm text-dark fw-bold py-0 px-2" style="font-size: 0.75rem;" onclick="togglePlay('Preview')">
+                                <button class="btn btn-warning btn-sm text-dark fw-bold py-0 px-2" style="font-size: 0.7rem;" onclick="togglePlay('Preview')">
                                     Test
                                 </button>
                             </div>
 
-                            <div class="mb-2">
-                                <button class="btn btn-solo-preview w-100 py-1" id="soloPreviewBtn" onclick="toggleSoloPreview()" style="font-size: 0.7rem;">
-                                    <i class="bi bi-headphones"></i> SOLO CUE (PREVIEW)
-                                </button>
+                            <!-- SAMPLER PADS FX (Bocina, Bomba, Sirena) -->
+                            <div class="bg-secondary bg-opacity-10 p-1 rounded border border-secondary mb-2">
+                                <label class="text-warning fw-bold font-monospace d-block mb-1" style="font-size: 7px;"><i class="bi bi-soundwave"></i> SAMPLER FX <span class="text-muted">[Z / X / C]</span></label>
+                                <div class="row g-1">
+                                    <div class="col-4"><button class="btn btn-outline-warning w-100 py-0 fw-bold" style="font-size: 0.6rem;" onclick="playSampler('BOCINA')">📯 BOCINA</button></div>
+                                    <div class="col-4"><button class="btn btn-outline-danger w-100 py-0 fw-bold" style="font-size: 0.6rem;" onclick="playSampler('BOMBA')">💣 BOMBA</button></div>
+                                    <div class="col-4"><button class="btn btn-outline-info w-100 py-0 fw-bold" style="font-size: 0.6rem;" onclick="playSampler('SIRENA')">🚨 SIRENA</button></div>
+                                </div>
                             </div>
 
                             <!-- FADERS DE VOLUMEN VERTICALES Y CROSSFADER -->
@@ -210,16 +217,16 @@
                                     <div class="fader-vertical-container">
                                         <input type="range" class="fader-vertical" id="volumeDeckB" min="0" max="100" value="100" oninput="updateVolumes()">
                                     </div>
-                                    <span id="volValB" class="text-light font-monospace fw-bold" style="font-size: 9px;">9px;">100%</span>
+                                    <span id="volValB" class="text-light font-monospace fw-bold" style="font-size: 9px;">100%</span>
                                 </div>
                             </div>
 
                             <!-- BOTONES DE AUTO-TRANSICIÓN (FADE A ⇄ B) -->
-                            <div class="d-flex gap-1 mb-2">
-                                <button class="btn btn-outline-info btn-sm flex-fill py-1" style="font-size: 9px;" onclick="smoothTransition('A')" title="Baja B y Sube A">
+                            <div class="d-flex gap-1 mb-1">
+                                <button class="btn btn-outline-info btn-sm flex-fill py-0" style="font-size: 8px;" onclick="smoothTransition('A')" title="Baja B y Sube A">
                                     <i class="bi bi-chevron-left"></i> FADE A <small class="text-muted">[B]</small>
                                 </button>
-                                <button class="btn btn-outline-info btn-sm flex-fill py-1" style="font-size: 9px;" onclick="smoothTransition('B')" title="Baja A y Sube B">
+                                <button class="btn btn-outline-info btn-sm flex-fill py-0" style="font-size: 8px;" onclick="smoothTransition('B')" title="Baja A y Sube B">
                                     FADE B <small class="text-muted">[N]</small> <i class="bi bi-chevron-right"></i>
                                 </button>
                             </div>
@@ -358,7 +365,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let playerA, playerB, playerPreview;
+        let playerA, playerB, playerPreview, playerSampler;
         let tracks = [];
         let cuePointA = 0, cuePointB = 0;
         let activeCategory = null;
@@ -441,6 +448,11 @@
             if (code === 'Digit9') { handleHotCue('B', 3); e.preventDefault(); }
             if (code === 'Digit0') { handleHotCue('B', 4); e.preventDefault(); }
 
+            // Sampler FX Pads: Z (Bocina), X (Bomba), C (Sirena)
+            if (code === 'KeyZ') { playSampler('BOCINA'); e.preventDefault(); }
+            if (code === 'KeyX') { playSampler('BOMBA'); e.preventDefault(); }
+            if (code === 'KeyC') { playSampler('SIRENA'); e.preventDefault(); }
+
             // Auto Transiciones: [B] Fade A, [N] Fade B
             if (code === 'KeyB') { smoothTransition('A'); e.preventDefault(); }
             if (code === 'KeyN') { smoothTransition('B'); e.preventDefault(); }
@@ -464,7 +476,18 @@
             }
         }, true);
 
-        // FUNCIÓN DE AUTO-TRANSICIÓN SUAVE
+        // FUNCIÓN SAMPLER FX (Dispara sonidos guardados en la base de datos)
+        function playSampler(keyword) {
+            let found = tracks.find(t => t.artist.toUpperCase().includes(keyword.toUpperCase()));
+            if (found && playerSampler && playerSampler.loadVideoById) {
+                playerSampler.loadVideoById(found.id);
+                playerSampler.setVolume(100);
+                playerSampler.playVideo();
+            } else {
+                alert(`No se encontró ningún tema que contenga "${keyword}" en la base de datos.`);
+            }
+        }
+
         function smoothTransition(targetDeck) {
             if (transitionInterval) clearInterval(transitionInterval);
             let cf = document.getElementById('crossfader');
@@ -787,6 +810,11 @@
                 videoId: tracks.length > 2 ? tracks[2].id : 'xFrGuyw1V8s',
                 playerVars: { 'controls': 0, 'disablekb': 1, 'rel': 0 },
                 events: { 'onReady': onPlayerReady, 'onStateChange': (e) => onStateChange(e, 'Preview') }
+            });
+            playerSampler = new YT.Player('playerSampler', {
+                height: '50', width: '50',
+                videoId: tracks.length > 3 ? tracks[3].id : 'Gs069dndIYk',
+                playerVars: { 'controls': 0, 'disablekb': 1, 'rel': 0 }
             });
         }
 

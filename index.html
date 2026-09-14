@@ -144,7 +144,10 @@
                     <div class="col-lg-4 col-md-4">
                         <div class="cdj-deck p-2 shadow">
                             <div class="d-flex justify-content-between align-items-center mb-1 px-1">
-                                <span class="badge bg-danger fw-bold" style="font-size: 0.7rem;">DECK A <small class="text-muted font-monospace">[Q/A]</small></span>
+                                <div>
+                                    <span class="badge bg-danger fw-bold" style="font-size: 0.7rem;">DECK A <small class="text-muted font-monospace">[Q/A]</small></span>
+                                    <span class="badge bg-secondary font-monospace ms-1" style="font-size: 8px;" id="trackNumA">#--</span>
+                                </div>
                                 <span class="font-monospace text-muted" style="font-size: 9px;" id="cueDisplayA">CUE: 0:00</span>
                             </div>
                             <div class="text-truncate fw-bold text-warning font-monospace mb-1 px-1" id="trackTitleA" style="font-size: 10px;" title="Sin pista cargada">[ DECK A VACÍO ]</div>
@@ -223,7 +226,10 @@
                     <div class="col-lg-4 col-md-4">
                         <div class="cdj-deck p-2 shadow">
                             <div class="d-flex justify-content-between align-items-center mb-1 px-1">
-                                <span class="badge bg-primary fw-bold" style="font-size: 0.7rem;">DECK B <small class="text-muted font-monospace">[P/O]</small></span>
+                                <div>
+                                    <span class="badge bg-primary fw-bold" style="font-size: 0.7rem;">DECK B <small class="text-muted font-monospace">[P/O]</small></span>
+                                    <span class="badge bg-secondary font-monospace ms-1" style="font-size: 8px;" id="trackNumB">#--</span>
+                                </div>
                                 <span class="font-monospace text-muted" style="font-size: 9px;" id="cueDisplayB">CUE: 0:00</span>
                             </div>
                             <div class="text-truncate fw-bold text-warning font-monospace mb-1 px-1" id="trackTitleB" style="font-size: 10px;" title="Sin pista cargada">[ DECK B VACÍO ]</div>
@@ -561,7 +567,7 @@
                     <div class="d-flex align-items-center gap-2 overflow-hidden me-2">
                         <input class="form-check-input track-checkbox mt-0" type="checkbox" value="${globalIndex}" style="cursor: pointer;">
                         <div class="song-info text-truncate">
-                            <div class="song-title fw-semibold text-truncate" style="font-size: 0.9rem;">${track.artist}</div>
+                            <div class="song-title fw-semibold text-truncate" style="font-size: 0.9rem;">${globalIndex + 1}. ${track.artist}</div>
                             <div class="d-flex gap-1 align-items-center mt-1">
                                 <span class="song-meta badge bg-secondary bg-opacity-25 text-info border border-secondary font-monospace" style="font-size: 9px;">⚡ ${track.bpm || '?'} BPM</span>
                                 ${showCategory ? `<span class="badge bg-warning text-dark font-monospace" style="font-size: 8px;">📂 ${track.decade}</span>` : ''}
@@ -741,14 +747,17 @@
         }
 
         function loadVideo(deck, videoId) {
-            let foundTrack = tracks.find(t => t.id === videoId);
+            let foundIndex = tracks.findIndex(t => t.id === videoId);
+            let foundTrack = foundIndex !== -1 ? tracks[foundIndex] : null;
             let trackName = foundTrack ? foundTrack.artist : `Video ID: ${videoId}`;
+            let trackNumText = foundIndex !== -1 ? `#${foundIndex + 1}` : '#--';
 
             if (deck === 'A') {
                 playerA.cueVideoById(videoId);
                 cuePointA = 0;
                 resetHotCues('A');
                 document.getElementById('cueDisplayA').innerText = `CUE: 0:00`;
+                document.getElementById('trackNumA').innerText = trackNumText;
                 document.getElementById('trackTitleA').innerText = trackName;
                 document.getElementById('trackTitleA').title = trackName;
                 document.getElementById('timeDisplayA').innerText = '0:00 / -0:00';
@@ -757,6 +766,7 @@
                 cuePointB = 0;
                 resetHotCues('B');
                 document.getElementById('cueDisplayB').innerText = `CUE: 0:00`;
+                document.getElementById('trackNumB').innerText = trackNumText;
                 document.getElementById('trackTitleB').innerText = trackName;
                 document.getElementById('trackTitleB').title = trackName;
                 document.getElementById('timeDisplayB').innerText = '0:00 / -0:00';
@@ -769,6 +779,7 @@
             if (deck === 'A') {
                 if (playerA && playerA.stopVideo) playerA.stopVideo();
                 resetHotCues('A');
+                document.getElementById('trackNumA').innerText = '#--';
                 document.getElementById('trackTitleA').innerText = '[ DECK A VACÍO ]';
                 document.getElementById('trackTitleA').title = 'Sin pista cargada';
                 document.getElementById('cueDisplayA').innerText = 'CUE: 0:00';
@@ -776,6 +787,7 @@
             } else {
                 if (playerB && playerB.stopVideo) playerB.stopVideo();
                 resetHotCues('B');
+                document.getElementById('trackNumB').innerText = '#--';
                 document.getElementById('trackTitleB').innerText = '[ DECK B VACÍO ]';
                 document.getElementById('trackTitleB').title = 'Sin pista cargada';
                 document.getElementById('cueDisplayB').innerText = 'CUE: 0:00';

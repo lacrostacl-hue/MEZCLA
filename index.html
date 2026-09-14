@@ -174,7 +174,7 @@
                         </div>
                     </div>
 
-                    <!-- MESA CENTRAL (MIXER) -->
+                    <!-- MESA CENTRAL (MIXER CON AUTO-TRANSICIÓN) -->
                     <div class="col-lg-4 col-md-4">
                         <div class="bg-black border border-secondary rounded p-2 shadow-inset text-center bg-opacity-75">
                             
@@ -210,8 +210,18 @@
                                     <div class="fader-vertical-container">
                                         <input type="range" class="fader-vertical" id="volumeDeckB" min="0" max="100" value="100" oninput="updateVolumes()">
                                     </div>
-                                    <span id="volValB" class="text-light font-monospace fw-bold" style="font-size: 9px;">100%</span>
+                                    <span id="volValB" class="text-light font-monospace fw-bold" style="font-size: 9px;">9px;">100%</span>
                                 </div>
+                            </div>
+
+                            <!-- BOTONES DE AUTO-TRANSICIÓN (FADE A ⇄ B) -->
+                            <div class="d-flex gap-1 mb-2">
+                                <button class="btn btn-outline-info btn-sm flex-fill py-1" style="font-size: 9px;" onclick="smoothTransition('A')" title="Baja B y Sube A">
+                                    <i class="bi bi-chevron-left"></i> FADE A <small class="text-muted">[B]</small>
+                                </button>
+                                <button class="btn btn-outline-info btn-sm flex-fill py-1" style="font-size: 9px;" onclick="smoothTransition('B')" title="Baja A y Sube B">
+                                    FADE B <small class="text-muted">[N]</small> <i class="bi bi-chevron-right"></i>
+                                </button>
                             </div>
 
                             <div class="pt-1 border-top border-secondary">
@@ -353,6 +363,7 @@
         let cuePointA = 0, cuePointB = 0;
         let activeCategory = null;
         let isSoloPreviewActive = false;
+        let transitionInterval = null;
 
         let hotCuesA = {1: null, 2: null, 3: null, 4: null};
         let hotCuesB = {1: null, 2: null, 3: null, 4: null};
@@ -430,6 +441,10 @@
             if (code === 'Digit9') { handleHotCue('B', 3); e.preventDefault(); }
             if (code === 'Digit0') { handleHotCue('B', 4); e.preventDefault(); }
 
+            // Auto Transiciones: [B] Fade A, [N] Fade B
+            if (code === 'KeyB') { smoothTransition('A'); e.preventDefault(); }
+            if (code === 'KeyN') { smoothTransition('B'); e.preventDefault(); }
+
             // Preview Test: Barra Espaciadora
             if (code === 'Space') { togglePlay('Preview'); e.preventDefault(); }
 
@@ -448,6 +463,29 @@
                 }
             }
         }, true);
+
+        // FUNCIÓN DE AUTO-TRANSICIÓN SUAVE
+        function smoothTransition(targetDeck) {
+            if (transitionInterval) clearInterval(transitionInterval);
+            let cf = document.getElementById('crossfader');
+            let startVal = parseInt(cf.value);
+            let targetVal = targetDeck === 'B' ? 100 : 0;
+            let steps = 20;
+            let currentStep = 0;
+
+            transitionInterval = setInterval(() => {
+                currentStep++;
+                let progress = currentStep / steps;
+                let newVal = startVal + (targetVal - startVal) * progress;
+                cf.value = Math.round(newVal);
+                updateVolumes();
+
+                if (currentStep >= steps) {
+                    clearInterval(transitionInterval);
+                    transitionInterval = null;
+                }
+            }, 25);
+        }
 
         function updateDeckTimes() {
             if (playerA && playerA.getCurrentTime && playerA.getDuration) {
@@ -603,7 +641,6 @@
             }
         }
 
-        // FUNCIÓN CREAR NUEVA CATEGORÍA
         function crearNuevaCategoria() {
             let nuevaCat = prompt("Ingresa el nombre de la nueva categoría (Ej: Electro 2026, Cumbia Mix):");
             if (!nuevaCat || !nuevaCat.trim()) return;
@@ -617,7 +654,6 @@
                 return;
             }
 
-            // Añadir pista de referencia para registrar la categoría en Firebase
             tracks.push({
                 id: 'Gs069dndIYk',
                 artist: `[Inicio de ${nuevaCat}] - Edítalo o bórralo`,

@@ -567,7 +567,7 @@
                     <div class="d-flex align-items-center gap-2 overflow-hidden me-2">
                         <input class="form-check-input track-checkbox mt-0" type="checkbox" value="${globalIndex}" style="cursor: pointer;">
                         <div class="song-info text-truncate">
-                            <div class="song-title fw-semibold text-truncate" style="font-size: 0.9rem;">${globalIndex + 1}. ${track.artist}</div>
+                            <div class="song-title fw-semibold text-truncate" style="font-size: 0.9rem;">${globalIndex}. ${track.artist}</div>
                             <div class="d-flex gap-1 align-items-center mt-1">
                                 <span class="song-meta badge bg-secondary bg-opacity-25 text-info border border-secondary font-monospace" style="font-size: 9px;">⚡ ${track.bpm || '?'} BPM</span>
                                 ${showCategory ? `<span class="badge bg-warning text-dark font-monospace" style="font-size: 8px;">📂 ${track.decade}</span>` : ''}
@@ -750,7 +750,7 @@
             let foundIndex = tracks.findIndex(t => t.id === videoId);
             let foundTrack = foundIndex !== -1 ? tracks[foundIndex] : null;
             let trackName = foundTrack ? foundTrack.artist : `Video ID: ${videoId}`;
-            let trackNumText = foundIndex !== -1 ? `#${foundIndex + 1}` : '#--';
+            let trackNumText = foundIndex !== -1 ? `#${foundIndex}` : '#--';
 
             if (deck === 'A') {
                 playerA.cueVideoById(videoId);

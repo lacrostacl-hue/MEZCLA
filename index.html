@@ -16,7 +16,7 @@
             min-height: 100vh;
         }
         
-        /* Consola Estilo Hardware Pro / Aluminio Oscuro & Neón Fijo */
+        /* Consola Estilo Hardware Pro */
         .dj-mixing-console {
             background: linear-gradient(145deg, #0d1117 0%, #030406 100%);
             border: 2px solid #21262d;
@@ -47,7 +47,6 @@
             overflow: hidden; display: flex; align-items: center; justify-content: center;
         }
         
-        /* Indicador estático liviano (Sin animaciones pesadas de CPU/GPU) */
         .jog-wheel.playing-active {
             border-color: #00ffcc;
             box-shadow: 0 0 10px rgba(0,255,204,0.3);
@@ -121,7 +120,7 @@
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <span class="navbar-brand mb-0 h1 fw-bold tracking-wider font-monospace" style="letter-spacing: 1px;">
                 <i class="bi bi-soundwave text-info"></i> DJ RADIO <span class="text-warning">LATIDO MUSICAL</span> 
-                <span class="badge bg-secondary text-light fs-6 ms-2">PRO LITE</span>
+                <span class="badge bg-secondary text-light fs-6 ms-2">PRO KEYBOARD</span>
             </span>
             <span class="badge bg-success bg-opacity-25 text-success border border-success px-3 py-2 font-monospace">
                 <i class="bi bi-cloud-fill text-success"></i> Firebase Cloud Conectado
@@ -139,7 +138,7 @@
                     <div class="col-lg-4 col-md-4">
                         <div class="cdj-deck p-3 shadow">
                             <div class="d-flex justify-content-between align-items-center mb-1 px-1">
-                                <span class="badge bg-danger fw-bold" style="font-size: 0.75rem;">DECK A</span>
+                                <span class="badge bg-danger fw-bold" style="font-size: 0.75rem;">DECK A <small class="text-muted font-monospace">[Q/A]</small></span>
                                 <span class="font-monospace text-muted" style="font-size: 9px;" id="cueDisplayA">CUE: 0:00</span>
                             </div>
                             <div class="text-truncate fw-bold text-warning font-monospace mb-1 px-1" id="trackTitleA" style="font-size: 11px;" title="Sin pista cargada">[ DECK A VACÍO ]</div>
@@ -153,15 +152,15 @@
                             </div>
                             <div class="d-flex gap-1 mb-2">
                                 <button class="btn btn-hardware btn-eject-pro px-2 py-1" onclick="ejectDeck('A')" title="Expulsar Tema"><i class="bi bi-eject-fill"></i></button>
-                                <button class="btn btn-hardware btn-cue-pro flex-fill py-1" onclick="jumpCue('A')">CUE</button>
-                                <button class="btn btn-hardware btn-play-pro flex-fill py-1" onclick="togglePlay('A')">PLAY</button>
+                                <button class="btn btn-hardware btn-cue-pro flex-fill py-1" onclick="jumpCue('A')">CUE <small class="opacity-75">[A]</small></button>
+                                <button class="btn btn-hardware btn-play-pro flex-fill py-1" onclick="togglePlay('A')">PLAY <small class="opacity-75">[Q]</small></button>
                             </div>
                             <!-- Hot Cues (1-4) -->
                             <div class="row g-1 text-center">
-                                <div class="col-3"><button class="btn hot-cue-pad w-100" id="padA1" onclick="handleHotCue('A', 1)">1</button></div>
-                                <div class="col-3"><button class="btn hot-cue-pad w-100" id="padA2" onclick="handleHotCue('A', 2)">2</button></div>
-                                <div class="col-3"><button class="btn hot-cue-pad w-100" id="padA3" onclick="handleHotCue('A', 3)">3</button></div>
-                                <div class="col-3"><button class="btn hot-cue-pad w-100" id="padA4" onclick="handleHotCue('A', 4)">4</button></div>
+                                <div class="col-3"><button class="btn hot-cue-pad w-100" id="padA1" onclick="handleHotCue('A', 1)">1 <small>[1]</small></button></div>
+                                <div class="col-3"><button class="btn hot-cue-pad w-100" id="padA2" onclick="handleHotCue('A', 2)">2 <small>[2]</small></button></div>
+                                <div class="col-3"><button class="btn hot-cue-pad w-100" id="padA3" onclick="handleHotCue('A', 3)">3 <small>[3]</small></button></div>
+                                <div class="col-3"><button class="btn hot-cue-pad w-100" id="padA4" onclick="handleHotCue('A', 4)">4 <small>[4]</small></button></div>
                             </div>
                         </div>
                     </div>
@@ -176,7 +175,7 @@
                                     <div class="jog-wheel" style="width: 35px; height: 35px; border-width: 2px;" id="deckPreview">
                                         <div class="video-container" style="width: 20px; height: 20px;"><div id="playerPreview"></div></div>
                                     </div>
-                                    <span class="small text-warning fw-bold font-monospace" style="font-size: 0.75rem;">PREVIEW</span>
+                                    <span class="small text-warning fw-bold font-monospace" style="font-size: 0.75rem;">PREVIEW <small class="text-muted">[Space]</small></span>
                                 </div>
                                 <button class="btn btn-warning btn-sm text-dark fw-bold py-1 px-3" onclick="togglePlay('Preview')">
                                     Test
@@ -191,7 +190,7 @@
                             </div>
 
                             <div class="pt-2 border-top border-secondary">
-                                <label class="text-muted fw-bold mb-1 font-monospace" style="font-size: 9px;">CROSSFADER (DECK A &lt;=========&gt; DECK B)</label>
+                                <label class="text-muted fw-bold mb-1 font-monospace" style="font-size: 9px;">CROSSFADER <small class="text-info">[← / →]</small></label>
                                 <input type="range" class="form-range" id="crossfader" min="0" max="100" value="50" oninput="updateVolumes()">
                                 <div class="d-flex justify-content-between text-muted mt-1 font-monospace" style="font-size: 10px;">
                                     <span>DECK A</span>
@@ -206,7 +205,7 @@
                     <div class="col-lg-4 col-md-4">
                         <div class="cdj-deck p-3 shadow">
                             <div class="d-flex justify-content-between align-items-center mb-1 px-1">
-                                <span class="badge bg-primary fw-bold" style="font-size: 0.75rem;">DECK B</span>
+                                <span class="badge bg-primary fw-bold" style="font-size: 0.75rem;">DECK B <small class="text-muted font-monospace">[P/O]</small></span>
                                 <span class="font-monospace text-muted" style="font-size: 9px;" id="cueDisplayB">CUE: 0:00</span>
                             </div>
                             <div class="text-truncate fw-bold text-warning font-monospace mb-1 px-1" id="trackTitleB" style="font-size: 11px;" title="Sin pista cargada">[ DECK B VACÍO ]</div>
@@ -220,15 +219,15 @@
                             </div>
                             <div class="d-flex gap-1 mb-2">
                                 <button class="btn btn-hardware btn-eject-pro px-2 py-1" onclick="ejectDeck('B')" title="Expulsar Tema"><i class="bi bi-eject-fill"></i></button>
-                                <button class="btn btn-hardware btn-cue-pro flex-fill py-1" onclick="jumpCue('B')">CUE</button>
-                                <button class="btn btn-hardware btn-play-pro flex-fill py-1" onclick="togglePlay('B')">PLAY</button>
+                                <button class="btn btn-hardware btn-cue-pro flex-fill py-1" onclick="jumpCue('B')">CUE <small class="opacity-75">[O]</small></button>
+                                <button class="btn btn-hardware btn-play-pro flex-fill py-1" onclick="togglePlay('B')">PLAY <small class="opacity-75">[P]</small></button>
                             </div>
                             <!-- Hot Cues (1-4) -->
                             <div class="row g-1 text-center">
-                                <div class="col-3"><button class="btn hot-cue-pad w-100" id="padB1" onclick="handleHotCue('B', 1)">1</button></div>
-                                <div class="col-3"><button class="btn hot-cue-pad w-100" id="padB2" onclick="handleHotCue('B', 2)">2</button></div>
-                                <div class="col-3"><button class="btn hot-cue-pad w-100" id="padB3" onclick="handleHotCue('B', 3)">3</button></div>
-                                <div class="col-3"><button class="btn hot-cue-pad w-100" id="padB4" onclick="handleHotCue('B', 4)">4</button></div>
+                                <div class="col-3"><button class="btn hot-cue-pad w-100" id="padB1" onclick="handleHotCue('B', 1)">1 <small>[7]</small></button></div>
+                                <div class="col-3"><button class="btn hot-cue-pad w-100" id="padB2" onclick="handleHotCue('B', 2)">2 <small>[8]</small></button></div>
+                                <div class="col-3"><button class="btn hot-cue-pad w-100" id="padB3" onclick="handleHotCue('B', 3)">3 <small>[9]</small></button></div>
+                                <div class="col-3"><button class="btn hot-cue-pad w-100" id="padB4" onclick="handleHotCue('B', 4)">4 <small>[0]</small></button></div>
                             </div>
                         </div>
                     </div>
@@ -355,6 +354,49 @@
             renderizarBaseDatos();
         });
 
+        // =========================================================
+        // ATAJOS DE TECLADO GLOBALES (Protegido en inputs)
+        // =========================================================
+        window.addEventListener('keydown', (e) => {
+            if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+
+            const code = e.code;
+
+            // Deck A: Q (Play), A (Cue), 1-4 (Hot Cues)
+            if (code === 'KeyQ') { togglePlay('A'); e.preventDefault(); }
+            if (code === 'KeyA') { jumpCue('A'); e.preventDefault(); }
+            if (code === 'Digit1') { handleHotCue('A', 1); e.preventDefault(); }
+            if (code === 'Digit2') { handleHotCue('A', 2); e.preventDefault(); }
+            if (code === 'Digit3') { handleHotCue('A', 3); e.preventDefault(); }
+            if (code === 'Digit4') { handleHotCue('A', 4); e.preventDefault(); }
+
+            // Deck B: P (Play), O (Cue), 7-0 (Hot Cues)
+            if (code === 'KeyP') { togglePlay('B'); e.preventDefault(); }
+            if (code === 'KeyO') { jumpCue('B'); e.preventDefault(); }
+            if (code === 'Digit7') { handleHotCue('B', 1); e.preventDefault(); }
+            if (code === 'Digit8') { handleHotCue('B', 2); e.preventDefault(); }
+            if (code === 'Digit9') { handleHotCue('B', 3); e.preventDefault(); }
+            if (code === 'Digit0') { handleHotCue('B', 4); e.preventDefault(); }
+
+            // Preview Test: Barra Espaciadora
+            if (code === 'Space') { togglePlay('Preview'); e.preventDefault(); }
+
+            // Crossfader con Flechas de dirección
+            let cfInput = document.getElementById('crossfader');
+            if (cfInput) {
+                let val = parseInt(cfInput.value);
+                if (code === 'ArrowLeft') {
+                    cfInput.value = Math.max(0, val - 4);
+                    updateVolumes();
+                    e.preventDefault();
+                } else if (code === 'ArrowRight') {
+                    cfInput.value = Math.min(100, val + 4);
+                    updateVolumes();
+                    e.preventDefault();
+                }
+            }
+        });
+
         function updateDeckTimes() {
             if (playerA && playerA.getCurrentTime && playerA.getDuration) {
                 let curA = playerA.getCurrentTime() || 0;
@@ -379,7 +421,6 @@
             return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
 
-        // Dibujo estático liviano para las formas de onda
         function drawWaveform(canvasId, isPlaying) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return;
@@ -679,7 +720,6 @@
             document.querySelectorAll(`.song-item[data-id="${videoId}"]`).forEach(el => el.classList.add('played'));
         }
 
-        // FUNCIÓN EXPULSAR (EJECT) PARA LIMPIAR EL DECK
         function ejectDeck(deck) {
             if (deck === 'A') {
                 if (playerA && playerA.stopVideo) playerA.stopVideo();

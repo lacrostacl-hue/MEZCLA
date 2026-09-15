@@ -16,6 +16,13 @@
             min-height: 100vh;
             color: #e6edf3;
         }
+
+        /* Pantalla de Login Overlay */
+        #loginOverlay {
+            position: fixed; inset: 0; background: rgba(3, 4, 6, 0.95);
+            backdrop-filter: blur(20px); z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+        }
         
         /* Cabina Superior Compacta y Elegante */
         .cabina-sticky {
@@ -133,6 +140,51 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body onclick="window.focus();" onkeydown="window.focus();">
+
+    <!-- PANTALLA DE LOGIN -->
+    <div id="loginOverlay">
+        <div class="card p-4 border-warning shadow-lg" style="width: 350px;">
+            <div class="text-center mb-3">
+                <i class="bi bi-soundwave text-info fs-1"></i>
+                <h4 class="fw-bold font-monospace mt-2 text-warning">LATIDO MUSICAL</h4>
+                <p class="text-muted small">Inicia sesión en tu consola pro</p>
+            </div>
+            <div class="mb-3">
+                <label class="form-label small text-muted font-monospace">USUARIO</label>
+                <input type="text" class="form-control bg-black text-light border-secondary" id="loginUser" placeholder="admin o dj">
+            </div>
+            <div class="mb-3">
+                <label class="form-label small text-muted font-monospace">CONTRASEÑA</label>
+                <input type="password" class="form-control bg-black text-light border-secondary" id="loginPass" placeholder="••••••••" onkeypress="handleLoginEnter(event)">
+            </div>
+            <button class="btn btn-warning text-dark fw-bold w-100 py-2 shadow-sm" onclick="intentarLogin()">
+                <i class="bi bi-box-arrow-in-right"></i> INGRESAR
+            </button>
+            <div class="text-center mt-3 text-muted" style="font-size: 11px;">
+                Por defecto: admin/1234 o dj/1234
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVBAR CON SESIÓN -->
+    <nav class="navbar navbar-dark bg-black border-bottom border-secondary px-3 py-2">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <span class="navbar-brand mb-0 h1 fw-bold tracking-wider font-monospace" style="letter-spacing: 1px;">
+                <i class="bi bi-soundwave text-info"></i> DJ RADIO <span class="text-warning">LATIDO MUSICAL</span> 
+                <span class="badge bg-secondary text-light fs-6 ms-2">PRO CONSOLE</span>
+            </span>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-success bg-opacity-25 text-success border border-success px-3 py-2 font-monospace">
+                    <i class="bi bi-cloud-fill text-success"></i> Firebase Cloud Conectado
+                </span>
+                <div class="bg-secondary bg-opacity-10 px-3 py-1 rounded border border-secondary d-flex align-items-center gap-2 font-monospace" style="font-size: 12px;">
+                    <i class="bi bi-person-circle text-warning"></i> 
+                    <span id="navUserInfo" class="text-light fw-bold">Usuario</span>
+                    <button class="btn btn-outline-danger btn-sm py-0 px-2 ms-2" onclick="cerrarSesion()" title="Cerrar Sesión" style="font-size: 10px;">Salir</button>
+                </div>
+            </div>
+        </div>
+    </nav>
 
     <!-- CABINA DE MEZCLAS FIJA SUPERIOR -->
     <div class="cabina-sticky py-2">
@@ -290,7 +342,7 @@
                             <span class="text-info fw-bold font-monospace"><i class="bi bi-music-note-list"></i> PLAYLIST CLOUD</span>
                             <span class="badge bg-warning text-dark font-monospace" style="font-size: 10px;">DJ RADIO LATIDO MUSICAL</span>
                         </div>
-                        <button class="btn btn-danger btn-sm fw-bold py-1 px-2" style="font-size: 0.75rem;" onclick="eliminarSeleccionados()">
+                        <button id="btnBorrarSeleccionados" class="btn btn-danger btn-sm fw-bold py-1 px-2" style="font-size: 0.75rem;" onclick="eliminarSeleccionados()">
                             <i class="bi bi-trash3-fill"></i> Borrar Selección
                         </button>
                     </div>
@@ -311,9 +363,9 @@
                 </div>
             </div>
 
-            <!-- BUSCADOR & GESTOR -->
+            <!-- BUSCADOR & GESTOR & ADMIN DE USUARIOS -->
             <div class="col-lg-5">
-                <div class="card shadow border-warning">
+                <div class="card shadow border-warning mb-3">
                     <div class="card-header bg-black border-warning text-warning fw-bold font-monospace py-2 px-3 d-flex justify-content-between align-items-center">
                         <span><i class="bi bi-search"></i> BUSCADOR & TRACKLOADER</span>
                         <button class="btn btn-outline-warning btn-sm py-0 px-2" style="font-size: 11px;" onclick="crearNuevaCategoria()">+ Categoría</button>
@@ -342,6 +394,26 @@
 
                     </div>
                 </div>
+
+                <!-- PANEL EXCLUSIVO ADMIN: CREAR USUARIOS -->
+                <div id="panelAdminUsuarios" class="card shadow border-info" style="display:none;">
+                    <div class="card-header bg-black border-info text-info fw-bold font-monospace py-2 px-3">
+                        <i class="bi bi-shield-lock-fill"></i> PANEL ADMIN: GESTIÓN DE USUARIOS
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="mb-2">
+                            <input type="text" class="form-control form-control-sm bg-black text-light border-secondary mb-2" id="newUsername" placeholder="Nuevo Nombre de Usuario">
+                            <input type="password" class="form-control form-control-sm bg-black text-light border-secondary mb-2" id="newPassword" placeholder="Contraseña">
+                            <select class="form-select form-select-sm bg-black text-light border-secondary mb-2" id="newRole">
+                                <option value="dj">Rol: DJ (Sin permisos de borrado)</option>
+                                <option value="admin">Rol: Administrador (Todos los privilegios)</option>
+                            </select>
+                            <button class="btn btn-info btn-sm text-dark fw-bold w-100 py-1" onclick="registrarNuevoUsuario()">
+                                <i class="bi bi-person-plus-fill"></i> Crear Usuario
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -367,6 +439,10 @@
 
         let playerA, playerB, playerPreview, playerSampler;
         let tracks = [];
+        let usersDB = {};
+        let currentUser = null;
+        let currentUserRole = null;
+
         let cuePointA = 0, cuePointB = 0;
         let activeCategory = null;
         let isSoloPreviewActive = false;
@@ -389,6 +465,22 @@
             { id: 'custom_pedidos', artist: 'Ejemplo - Pedido del Público', bpm: 100, decade: '⭐ Pedidos y Solicitudes' }
         ];
 
+        const usuariosIniciales = {
+            "admin": { pass: "1234", role: "admin" },
+            "dj": { pass: "1234", role: "dj" }
+        };
+
+        // Sincronizar Base de Datos de Usuarios y Pistas
+        db.ref('users').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                usersDB = data;
+            } else {
+                usersDB = usuariosIniciales;
+                db.ref('users').set(usuariosIniciales);
+            }
+        });
+
         db.ref('tracks').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -401,14 +493,70 @@
         });
 
         // =========================================================
-        // CONTROL DE TECLADO ROBUSTO Y PERMANENTE (Listener Global)
+        // SISTEMA DE LOGIN Y PERMISOS
+        // =========================================================
+        function handleLoginEnter(e) { if (e.key === 'Enter') intentarLogin(); }
+
+        function intentarLogin() {
+            let u = document.getElementById('loginUser').value.trim();
+            let p = document.getElementById('loginPass').value.trim();
+
+            if (!u || !p) return alert("Completa usuario y contraseña.");
+
+            if (usersDB[u] && usersDB[u].pass === p) {
+                currentUser = u;
+                currentUserRole = usersDB[u].role;
+                
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('navUserInfo').innerText = `${currentUser.toUpperCase()} (${currentUserRole.toUpperCase()})`;
+                
+                // Mostrar panel de admin si corresponde
+                if (currentUserRole === 'admin') {
+                    document.getElementById('panelAdminUsuarios').style.display = 'block';
+                } else {
+                    document.getElementById('panelAdminUsuarios').style.display = 'none';
+                }
+
+                renderizarBaseDatos();
+            } else {
+                alert("Usuario o contraseña incorrectos.");
+            }
+        }
+
+        function cerrarSesion() {
+            currentUser = null;
+            currentUserRole = null;
+            document.getElementById('loginUser').value = '';
+            document.getElementById('loginPass').value = '';
+            document.getElementById('loginOverlay').style.display = 'flex';
+        }
+
+        function registrarNuevoUsuario() {
+            if (currentUserRole !== 'admin') return alert("No tienes privilegios de administrador.");
+            let nu = document.getElementById('newUsername').value.trim();
+            let np = document.getElementById('newPassword').value.trim();
+            let nr = document.getElementById('newRole').value;
+
+            if (!nu || !np) return alert("Ingresa usuario y contraseña nuevos.");
+            if (usersDB[nu]) return alert("El usuario ya existe.");
+
+            usersDB[nu] = { pass: np, role: nr };
+            db.ref('users').set(usersDB);
+
+            document.getElementById('newUsername').value = '';
+            document.getElementById('newPassword').value = '';
+            alert(`¡Usuario "${nu}" creado con rol de ${nr.toUpperCase()} exitosamente!`);
+        }
+
+        // =========================================================
+        // CONTROL DE TECLADO ROBUSTO Y PERMANENTE
         // =========================================================
         window.addEventListener('keydown', (e) => {
+            if (currentUser === null) return;
             if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
 
             const code = e.code;
 
-            // Deck A: Q (Play), A (Cue), W/S (Vol Up/Down), 1-4 (Hot Cues)
             if (code === 'KeyQ') { togglePlay('A'); e.preventDefault(); }
             if (code === 'KeyA') { jumpCue('A'); e.preventDefault(); }
             if (code === 'KeyW') {
@@ -428,7 +576,6 @@
             if (code === 'Digit3') { handleHotCue('A', 3); e.preventDefault(); }
             if (code === 'Digit4') { handleHotCue('A', 4); e.preventDefault(); }
 
-            // Deck B: P (Play), O (Cue), I/K (Vol Up/Down), 7-0 (Hot Cues)
             if (code === 'KeyP') { togglePlay('B'); e.preventDefault(); }
             if (code === 'KeyO') { jumpCue('B'); e.preventDefault(); }
             if (code === 'KeyI') {
@@ -448,19 +595,15 @@
             if (code === 'Digit9') { handleHotCue('B', 3); e.preventDefault(); }
             if (code === 'Digit0') { handleHotCue('B', 4); e.preventDefault(); }
 
-            // Sampler FX Pads: Z (Bocina), X (Bomba), C (Sirena)
             if (code === 'KeyZ') { playSampler('BOCINA'); e.preventDefault(); }
             if (code === 'KeyX') { playSampler('BOMBA'); e.preventDefault(); }
             if (code === 'KeyC') { playSampler('SIRENA'); e.preventDefault(); }
 
-            // Auto Transiciones: [B] Fade A, [N] Fade B
             if (code === 'KeyB') { smoothTransition('A'); e.preventDefault(); }
             if (code === 'KeyN') { smoothTransition('B'); e.preventDefault(); }
 
-            // Preview Test: Barra Espaciadora
             if (code === 'Space') { togglePlay('Preview'); e.preventDefault(); }
 
-            // Crossfader con Flechas de dirección
             let cfInput = document.getElementById('crossfader');
             if (cfInput) {
                 let val = parseInt(cfInput.value);
@@ -476,7 +619,6 @@
             }
         }, true);
 
-        // FUNCIÓN SAMPLER FX (Dispara sonidos guardados en la base de datos)
         function playSampler(keyword) {
             let found = tracks.find(t => t.artist.toUpperCase().includes(keyword.toUpperCase()));
             if (found && playerSampler && playerSampler.loadVideoById) {
@@ -561,6 +703,14 @@
             const selectDiv = document.getElementById('selectCategoriaPedido');
             const searchTerm = document.getElementById('quickSearchInput') ? document.getElementById('quickSearchInput').value.toLowerCase().trim() : '';
             
+            // Ocultar botón de borrar selección masiva si es DJ
+            let btnBorrarSel = document.getElementById('btnBorrarSeleccionados');
+            if (currentUserRole === 'dj') {
+                if (btnBorrarSel) btnBorrarSel.style.display = 'none';
+            } else {
+                if (btnBorrarSel) btnBorrarSel.style.display = 'block';
+            }
+
             const estilos = [...new Set(tracks.map(t => t.decade))];
             
             if (!activeCategory || !estilos.includes(activeCategory)) {
@@ -624,6 +774,11 @@
         }
 
         function generarHtmlCancion(track, globalIndex, showCategory = false) {
+            // Si es rol DJ, ocultamos el botón de borrar
+            let botonBorrarHtml = currentUserRole === 'admin' 
+                ? `<button class="btn btn-dark text-danger border-secondary px-2" onclick="eliminarCancion(${globalIndex})" title="Borrar"><i class="bi bi-trash"></i></button>` 
+                : '';
+
             return `
                 <li class="list-group-item bg-dark text-light border-secondary d-flex justify-content-between align-items-center py-2 px-3 song-item mb-1 rounded" data-id="${track.id}">
                     <div class="d-flex align-items-center gap-2 overflow-hidden me-2">
@@ -640,13 +795,14 @@
                         <button class="btn btn-outline-warning text-warning px-2" onclick="previewSong('${track.id}')" title="Test Pre-escucha"><i class="bi bi-headphones"></i></button>
                         <button class="btn btn-outline-danger px-2 fw-bold" onclick="loadVideo('A', '${track.id}')" title="Cargar Deck A">A</button>
                         <button class="btn btn-outline-primary px-2 fw-bold" onclick="loadVideo('B', '${track.id}')" title="Cargar Deck B">B</button>
-                        <button class="btn btn-dark text-danger border-secondary px-2" onclick="eliminarCancion(${globalIndex})" title="Borrar"><i class="bi bi-trash"></i></button>
+                        ${botonBorrarHtml}
                     </div>
                 </li>
             `;
         }
 
         function eliminarCancion(index) {
+            if (currentUserRole !== 'admin') return alert("Acción restringida: Solo el Administrador puede borrar canciones.");
             if (confirm("¿Eliminar esta pista de Firebase?")) {
                 tracks.splice(index, 1);
                 db.ref('tracks').set(tracks);
@@ -654,6 +810,7 @@
         }
 
         function eliminarSeleccionados() {
+            if (currentUserRole !== 'admin') return alert("Acción restringida: Solo el Administrador puede borrar canciones.");
             const checkboxes = document.querySelectorAll('.track-checkbox:checked');
             if (checkboxes.length === 0) return alert("Selecciona al menos una pista.");
 

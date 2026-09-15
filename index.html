@@ -146,22 +146,22 @@
         <div class="card p-4 border-warning shadow-lg" style="width: 350px;">
             <div class="text-center mb-3">
                 <i class="bi bi-soundwave text-info fs-1"></i>
-                <h4 class="fw-bold font-monospace mt-2 text-warning">LATIDO MUSICAL</h4>
-                <p class="text-muted small">Inicia sesión en tu consola pro</p>
+                <h4 class="fw-bold font-monospace mt-2 text-warning" id="loginTitle">LATIDO MUSICAL</h4>
+                <p class="text-muted small" id="loginSubtitle">Inicia sesión en tu consola pro</p>
             </div>
             <div class="mb-3">
                 <label class="form-label small text-muted font-monospace">USUARIO</label>
-                <input type="text" class="form-control bg-black text-light border-secondary" id="loginUser" placeholder="admin o dj">
+                <input type="text" class="form-control bg-black text-light border-secondary" id="loginUser" placeholder="Tu usuario">
             </div>
             <div class="mb-3">
                 <label class="form-label small text-muted font-monospace">CONTRASEÑA</label>
                 <input type="password" class="form-control bg-black text-light border-secondary" id="loginPass" placeholder="••••••••" onkeypress="handleLoginEnter(event)">
             </div>
-            <button class="btn btn-warning text-dark fw-bold w-100 py-2 shadow-sm" onclick="intentarLogin()">
+            <button id="loginBtn" class="btn btn-warning text-dark fw-bold w-100 py-2 shadow-sm" onclick="intentarLogin()">
                 <i class="bi bi-box-arrow-in-right"></i> INGRESAR
             </button>
-            <div class="text-center mt-3 text-muted" style="font-size: 11px;">
-                Por defecto: admin/1234 o dj/1234
+            <div id="loginFooterNotice" class="text-center mt-3 text-muted" style="font-size: 11px;">
+                Sistema protegido por roles (Admin / DJ)
             </div>
         </div>
     </div>
@@ -465,20 +465,16 @@
             { id: 'custom_pedidos', artist: 'Ejemplo - Pedido del Público', bpm: 100, decade: '⭐ Pedidos y Solicitudes' }
         ];
 
-        const usuariosIniciales = {
-            "admin": { pass: "1234", role: "admin" },
-            "dj": { pass: "1234", role: "dj" }
-        };
-
         // Sincronizar Base de Datos de Usuarios y Pistas
         db.ref('users').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 usersDB = data;
             } else {
-                usersDB = usuariosIniciales;
-                db.ref('users').set(usuariosIniciales);
+                usersDB = {}; // Inicia vacío si no hay registros previos
+                db.ref('users').set({});
             }
+            actualizarEstadoLoginUI();
         });
 
         db.ref('tracks').on('value', (snapshot) => {
@@ -493,8 +489,27 @@
         });
 
         // =========================================================
-        // SISTEMA DE LOGIN Y PERMISOS
+        // SISTEMA DE LOGIN Y PERMISOS DINÁMICO
         // =========================================================
+        function actualizarEstadoLoginUI() {
+            const title = document.getElementById('loginTitle');
+            const subtitle = document.getElementById('loginSubtitle');
+            const btn = document.getElementById('loginBtn');
+            const notice = document.getElementById('loginFooterNotice');
+            
+            if (Object.keys(usersDB).length === 0) {
+                title.innerText = "CONFIGURACIÓN INICIAL";
+                subtitle.innerText = "Crea tu cuenta de Administrador principal";
+                btn.innerHTML = '<i class="bi bi-shield-fill-check"></i> CREAR ADMIN PRINCIPAL';
+                notice.innerText = "Este será el primer usuario administrador del sistema.";
+            } else {
+                title.innerText = "LATIDO MUSICAL";
+                subtitle.innerText = "Inicia sesión en tu consola pro";
+                btn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> INGRESAR';
+                notice.innerText = "Sistema protegido por roles (Admin / DJ)";
+            }
+        }
+
         function handleLoginEnter(e) { if (e.key === 'Enter') intentarLogin(); }
 
         function intentarLogin() {
@@ -503,6 +518,15 @@
 
             if (!u || !p) return alert("Completa usuario y contraseña.");
 
+            // Si la base de datos de usuarios está vacía, el primer registro se convierte en Admin automáticamente
+            if (Object.keys(usersDB).length === 0) {
+                usersDB[u] = { pass: p, role: "admin" };
+                db.ref('users').set(usersDB);
+                alert("¡Administrador principal creado con éxito!");
+                intentarLogin();
+                return;
+            }
+
             if (usersDB[u] && usersDB[u].pass === p) {
                 currentUser = u;
                 currentUserRole = usersDB[u].role;
@@ -510,7 +534,6 @@
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('navUserInfo').innerText = `${currentUser.toUpperCase()} (${currentUserRole.toUpperCase()})`;
                 
-                // Mostrar panel de admin si corresponde
                 if (currentUserRole === 'admin') {
                     document.getElementById('panelAdminUsuarios').style.display = 'block';
                 } else {
@@ -703,7 +726,6 @@
             const selectDiv = document.getElementById('selectCategoriaPedido');
             const searchTerm = document.getElementById('quickSearchInput') ? document.getElementById('quickSearchInput').value.toLowerCase().trim() : '';
             
-            // Ocultar botón de borrar selección masiva si es DJ
             let btnBorrarSel = document.getElementById('btnBorrarSeleccionados');
             if (currentUserRole === 'dj') {
                 if (btnBorrarSel) btnBorrarSel.style.display = 'none';
@@ -774,7 +796,6 @@
         }
 
         function generarHtmlCancion(track, globalIndex, showCategory = false) {
-            // Si es rol DJ, ocultamos el botón de borrar
             let botonBorrarHtml = currentUserRole === 'admin' 
                 ? `<button class="btn btn-dark text-danger border-secondary px-2" onclick="eliminarCancion(${globalIndex})" title="Borrar"><i class="bi bi-trash"></i></button>` 
                 : '';
